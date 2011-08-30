@@ -1,0 +1,3 @@
+
+SET(BUILDDIR "${CMAKE_CURRENT_SOURCE_DIR}/_build")
+

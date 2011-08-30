@@ -1,0 +1,10 @@
+Package: ROpenFLUID
+Type: Package
+Title: OpenFLUID interface for R
+Version: 1.6.2
+Date: 2011-08-16
+Author: Jean-Christophe Fabre <fabrejc@supagro.inra.fr>
+Maintainer: Jean-Christophe Fabre <fabrejc@supagro.inra.fr>
+Description: This pacckage allows to use the OpenFLUID software environment for modelling fluxes in landscapes with R
+License: GPL-3 + file LICENSE
+LazyLoad: yes
