@@ -119,6 +119,39 @@ void ROpenFLUID_AddExtraFunctionsPaths(const char* Paths)
 // =====================================================================
 
 
+unsigned int ROpenFLUID_GetFunctionsPathsCount()
+{
+  return openfluid::base::RuntimeEnvironment::getInstance()->getPluginsPaths().size();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+char** ROpenFLUID_GetFunctionsPaths()
+{
+  std::vector<std::string> FuncsPaths = openfluid::base::RuntimeEnvironment::getInstance()->getPluginsPaths();
+
+  const unsigned int Count = FuncsPaths.size();
+
+  char** Paths = (char**)malloc(Count*sizeof(char*));
+
+  for (unsigned int i=0;i<Count;i++)
+  {
+    Paths[i] = (char*)malloc(FuncsPaths[i].size()+1);
+    std::copy(FuncsPaths[i].begin(), FuncsPaths[i].end(), Paths[i]);
+    Paths[i][FuncsPaths[i].size()] = '\0';
+  }
+
+  return Paths;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
 ROpenFLUID_ExtBlob_t ROpenFLUID_RunProject(const char* Path)
 {
 

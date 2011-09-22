@@ -61,6 +61,7 @@ static void Rized_OpenFLUID_Dummy(SEXP Message);
 static void Rized_OpenFLUID_DeleteBlob(SEXP Blob);
 
 static void Rized_OpenFLUID_AddExtraFunctionsPaths(SEXP Paths);
+static SEXP Rized_OpenFLUID_GetFunctionsPaths();
 
 static SEXP Rized_OpenFLUID_RunProject(SEXP Path);
 static SEXP Rized_OpenFLUID_NewProject();
@@ -75,6 +76,7 @@ static SEXP Rized_OpenFLUID_RunSimulation(SEXP Blob);
 R_CallMethodDef callEntries[] = {
   { "DeleteBlob", (DL_FUNC) &Rized_OpenFLUID_DeleteBlob, 1},
   { "AddExtraFunctionsPaths", (DL_FUNC) &Rized_OpenFLUID_AddExtraFunctionsPaths, 1},
+  { "GetFunctionsPaths", (DL_FUNC) &Rized_OpenFLUID_GetFunctionsPaths, 0},
   { "RunProject", (DL_FUNC) &Rized_OpenFLUID_RunProject, 1},
   { "NewProject", (DL_FUNC) &Rized_OpenFLUID_NewProject, 0},
   { "OpenProject", (DL_FUNC) &Rized_OpenFLUID_OpenProject, 1},
@@ -138,6 +140,38 @@ void Rized_OpenFLUID_AddExtraFunctionsPaths(SEXP Paths)
 // =====================================================================
 // =====================================================================
 
+
+SEXP Rized_OpenFLUID_GetFunctionsPaths()
+{
+  SEXP Ret;
+
+  unsigned int PathsCount = ROpenFLUID_GetFunctionsPathsCount();
+
+  PROTECT(Ret = allocVector(STRSXP, PathsCount));
+
+  if (PathsCount > 0)
+  {
+    char** Paths = ROpenFLUID_GetFunctionsPaths();
+
+    for (unsigned int i=0;i<PathsCount;i++)
+    {
+      SET_STRING_ELT(Ret, i, mkChar(Paths[i]));
+    }
+
+    for (unsigned int i=0;i<PathsCount;i++)
+       free (Paths[i]);
+
+    free(Paths);
+  }
+
+  UNPROTECT(1);
+
+  return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
 
 SEXP Rized_OpenFLUID_RunProject(SEXP Path)
 {

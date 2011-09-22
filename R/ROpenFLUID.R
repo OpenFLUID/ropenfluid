@@ -85,6 +85,16 @@ OpenFLUID.addExtraFunctionsPaths <- function(paths)
 # =====================================================================
 
 
+OpenFLUID.getExtraFunctionsPaths <- function()
+{
+  .Call("GetFunctionsPaths",PACKAGE="ROpenFLUID")  
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
 OpenFLUID.runProject <- function(path)
 {
   stopifnot(is.character(path))

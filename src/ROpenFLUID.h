@@ -66,9 +66,13 @@ void ROpenFLUID_Init();
 
 void ROpenFLUID_DeleteBlob(ROpenFLUID_ExtBlob_t* BlobHandle);
 
+const char* ROpenFLUID_GetLastError();
+
 void ROpenFLUID_AddExtraFunctionsPaths(const char* Paths);
 
-const char* ROpenFLUID_GetLastError();
+char** ROpenFLUID_GetFunctionsPaths();
+
+unsigned int ROpenFLUID_GetFunctionsPathsCount();
 
 ROpenFLUID_ExtBlob_t ROpenFLUID_RunProject(const char* Path);
 
