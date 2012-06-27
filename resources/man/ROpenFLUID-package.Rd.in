@@ -1,0 +1,38 @@
+\name{ROpenFLUID-package}
+\alias{ROpenFLUID-package}
+
+\docType{package}
+
+\title{ROpenFLUID}
+
+\description{
+blah blah
+}
+
+\details{
+\tabular{ll}{
+Package: \tab ROpenFLUID\cr
+Type: \tab Package\cr
+Version: \tab @openfluid_R_VERSION@\cr
+Date: \tab @openfluid_R_DATE@\cr
+License: \tab What license is it under?\cr
+LazyLoad: \tab yes\cr
+}
+An overview of how to use the package, including the most important functions
+}
+
+\author{Jean-Christophe Fabre <fabrejc@supagro.inra.fr>}
+
+\references{
+
+}
+
+\keyword{OpenFLUID, spatial, modelling, simulation}
+
+\seealso{
+}
+
+\examples{
+
+
+}

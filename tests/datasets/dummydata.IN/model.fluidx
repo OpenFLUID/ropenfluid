@@ -1,0 +1,18 @@
+<?xml version="1.0" standalone="yes"?>
+<openfluid>
+  <model>
+
+    <function fileID="tests.funcA">
+      <param name="threshold" value="0.000005" />
+    </function>
+    
+    <function fileID="tests.funcB"/>
+          
+    <function fileID="tests.funcC">
+        <param name="maxsteps" value="100" />
+        <param name="meancel" value="0.045" />
+        <param name="meansigma" value="500" />                
+    </function>
+
+  </model>
+</openfluid>

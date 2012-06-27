@@ -1,0 +1,35 @@
+Introduction to the ROpenFLUID package
+======================================
+
+The ROpenFLUID package allows to parameterize, run and analyze OpenFLUID simulations within the R environment 
+
+The ROpenFLUID license is available in the package/LICENSE file
+
+
+
+Checking ROpenFLUID package
+===========================
+
+cmake - P check.cmake
+
+
+
+testing ROpenFLUID package
+===========================
+
+Prepare tests using the following command:
+cmake - P preparetests.cmake
+
+Tests must be run from the build directory, using R
+
+
+
+Building ROpenFLUID package
+===========================
+
+cmake - P build.cmake
+
+
+
+
+

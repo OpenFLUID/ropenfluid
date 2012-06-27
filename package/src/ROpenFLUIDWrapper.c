@@ -60,13 +60,29 @@ static void Rized_OpenFLUID_Dummy(SEXP Message);
 
 static void Rized_OpenFLUID_DeleteBlob(SEXP Blob);
 
+static SEXP Rized_OpenFLUID_GetVersion();
+
 static void Rized_OpenFLUID_AddExtraFunctionsPaths(SEXP Paths);
 static SEXP Rized_OpenFLUID_GetFunctionsPaths();
 
 static SEXP Rized_OpenFLUID_RunProject(SEXP Path);
-static SEXP Rized_OpenFLUID_NewProject();
+static SEXP Rized_OpenFLUID_NewDataBlob();
 static SEXP Rized_OpenFLUID_OpenProject(SEXP Path);
+static SEXP Rized_OpenFLUID_OpenDataset(SEXP Path);
+static SEXP Rized_OpenFLUID_SetOutputDir(SEXP Path);
 static SEXP Rized_OpenFLUID_RunSimulation(SEXP Blob);
+
+static SEXP Rized_OpenFLUID_SetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName, SEXP ParamVal);
+static SEXP Rized_OpenFLUID_GetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName);
+static SEXP Rized_OpenFLUID_SetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName, SEXP ParamVal);
+static SEXP Rized_OpenFLUID_GetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName);
+
+static SEXP Rized_OpenFLUID_CreateInputData(SEXP Blob,SEXP UnitClass, SEXP IDataName, SEXP IDataValue);
+static SEXP Rized_OpenFLUID_SetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP IDataName, SEXP IDataValue);
+static SEXP Rized_OpenFLUID_GetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP IDataName);
+
+static SEXP Rized_OpenFLUID_SetDeltaT(SEXP Blob, SEXP DeltaT);
+static SEXP Rized_OpenFLUID_GetDeltaT(SEXP Blob);
 
 
 // =====================================================================
@@ -75,13 +91,25 @@ static SEXP Rized_OpenFLUID_RunSimulation(SEXP Blob);
 
 R_CallMethodDef callEntries[] = {
   { "DeleteBlob", (DL_FUNC) &Rized_OpenFLUID_DeleteBlob, 1},
+  { "GetVersion", (DL_FUNC) &Rized_OpenFLUID_GetVersion, 0},
+  { "Dummy", (DL_FUNC) &Rized_OpenFLUID_Dummy, 1},
   { "AddExtraFunctionsPaths", (DL_FUNC) &Rized_OpenFLUID_AddExtraFunctionsPaths, 1},
   { "GetFunctionsPaths", (DL_FUNC) &Rized_OpenFLUID_GetFunctionsPaths, 0},
   { "RunProject", (DL_FUNC) &Rized_OpenFLUID_RunProject, 1},
-  { "NewProject", (DL_FUNC) &Rized_OpenFLUID_NewProject, 0},
+  { "NewDataBlob", (DL_FUNC) &Rized_OpenFLUID_NewDataBlob, 0},
+  { "OpenDataset", (DL_FUNC) &Rized_OpenFLUID_OpenDataset, 1},
+  { "SetOutputDir", (DL_FUNC) &Rized_OpenFLUID_SetOutputDir, 1},
   { "OpenProject", (DL_FUNC) &Rized_OpenFLUID_OpenProject, 1},
   { "RunSimulation", (DL_FUNC) &Rized_OpenFLUID_RunSimulation, 1},
-  { "Dummy", (DL_FUNC) &Rized_OpenFLUID_Dummy, 1},
+  { "SetFunctionParam", (DL_FUNC) &Rized_OpenFLUID_SetFunctionParam, 4},
+  { "GetFunctionParam", (DL_FUNC) &Rized_OpenFLUID_GetFunctionParam, 3},
+  { "SetGeneratorParam", (DL_FUNC) &Rized_OpenFLUID_SetGeneratorParam, 5},
+  { "GetGeneratorParam", (DL_FUNC) &Rized_OpenFLUID_GetGeneratorParam, 4},
+  { "CreateInputData", (DL_FUNC) &Rized_OpenFLUID_CreateInputData, 4},
+  { "SetInputData", (DL_FUNC) &Rized_OpenFLUID_SetInputData, 5},
+  { "GetInputData", (DL_FUNC) &Rized_OpenFLUID_GetInputData, 4},
+  { "SetDeltaT", (DL_FUNC) &Rized_OpenFLUID_SetDeltaT, 2},
+  { "GetDeltaT", (DL_FUNC) &Rized_OpenFLUID_GetDeltaT, 1},
   { NULL, NULL, 0}
 };
 
@@ -114,6 +142,28 @@ void R_unload_ROpenFLUID(DllInfo* Info)
 void Rized_OpenFLUID_Dummy(SEXP Message)
 {
   Rprintf("[Dummy] %s\n",CHAR(STRING_ELT(Message, 0)));
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_GetVersion()
+{
+  SEXP Ret = R_NilValue;
+
+  char* Version = ROpenFLUID_GetVersion();
+
+  if (Version != NULL)
+  {
+    PROTECT(Ret = allocVector(STRSXP, 1));
+    SET_STRING_ELT(Ret, 0, mkChar(Version));
+//    free(Version);
+    UNPROTECT(1);
+  }
+
+  return Ret;
 }
 
 
@@ -198,11 +248,11 @@ SEXP Rized_OpenFLUID_RunProject(SEXP Path)
 // =====================================================================
 
 
-SEXP Rized_OpenFLUID_NewProject()
+SEXP Rized_OpenFLUID_NewDataBlob()
 {
   SEXP Ret = R_NilValue;
 
-  ROpenFLUID_ExtBlob_t Ptr = (ROpenFLUID_ExtBlob_t*)ROpenFLUID_NewProject();
+  ROpenFLUID_ExtBlob_t Ptr = (ROpenFLUID_ExtBlob_t*)ROpenFLUID_NewDataBlob();
 
   if (Ptr)
   {
@@ -248,6 +298,41 @@ SEXP Rized_OpenFLUID_OpenProject(SEXP Path)
 // =====================================================================
 
 
+SEXP Rized_OpenFLUID_OpenDataset(SEXP Path)
+{
+  SEXP Ret = R_NilValue;
+
+  ROpenFLUID_ExtBlob_t Ptr = (ROpenFLUID_ExtBlob_t*)ROpenFLUID_OpenDataset(CHAR(STRING_ELT(Path, 0)));
+
+  if (Ptr)
+  {
+    PROTECT(Ret = R_MakeExternalPtr(Ptr, R_NilValue, R_NilValue));
+    R_RegisterCFinalizer(Ret, (R_CFinalizer_t) Rized_OpenFLUID_DeleteBlob);
+    UNPROTECT(1);
+  }
+  else
+  {
+    Rf_error(ROpenFLUID_GetLastError());
+  }
+
+  return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_SetOutputDir(SEXP Path)
+{
+  ROpenFLUID_SetOutputDir(CHAR(STRING_ELT(Path, 0)));
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
 SEXP Rized_OpenFLUID_RunSimulation(SEXP Blob)
 {
   SEXP Ret = R_NilValue;
@@ -264,6 +349,120 @@ SEXP Rized_OpenFLUID_RunSimulation(SEXP Blob)
   {
     Rf_error(ROpenFLUID_GetLastError());
   }
+
+  return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_SetFunctionParam(SEXP Blob,SEXP FunctionID, SEXP ParamName, SEXP ParamVal)
+{
+  Rf_error("under construction");
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_GetFunctionParam(SEXP Blob,SEXP FunctionID, SEXP ParamName)
+{
+  SEXP Ret = R_NilValue;
+
+  Rf_error("under construction");
+
+  return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_SetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName, SEXP ParamVal)
+
+{
+  Rf_error("under construction");
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_GetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName)
+
+{
+  SEXP Ret = R_NilValue;
+
+  Rf_error("under construction");
+
+  return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_CreateInputData(SEXP Blob,SEXP UnitClass, SEXP IDataName, SEXP IDataValue)
+{
+
+  Rf_error("under construction");
+
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_SetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP IDataName, SEXP IDataValue)
+{
+
+  Rf_error("under construction");
+
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_GetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP IDataName)
+{
+  SEXP Ret = R_NilValue;
+
+  Rf_error("under construction");
+
+  return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_SetDeltaT(SEXP Blob, SEXP DeltaT)
+{
+
+  Rf_error("under construction");
+
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_GetDeltaT(SEXP Blob)
+{
+  SEXP Ret = R_NilValue;
+
+  Rf_error("under construction");
 
   return Ret;
 }

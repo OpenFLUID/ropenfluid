@@ -48,6 +48,7 @@
 #include <iostream>
 #include <openfluid/base.hpp>
 #include <openfluid/machine.hpp>
+#include <openfluid/io.hpp>
 
 
 #include "ROpenFLUID.h"
@@ -76,6 +77,7 @@ std::string LastErrorMsg = "";
 // =====================================================================
 
 
+
 void ROpenFLUID_Init()
 {
   openfluid::base::Init();
@@ -88,8 +90,18 @@ void ROpenFLUID_Init()
 
 void ROpenFLUID_DeleteBlob(ROpenFLUID_ExtBlob_t* BlobHandle)
 {
-  ROpenFLUID_Blob_t*  Blob(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+  ROpenFLUID_Blob_t* Blob(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
   delete Blob;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+const char* ROpenFLUID_GetVersion()
+{
+  return openfluid::config::FULL_VERSION.c_str();
 }
 
 
@@ -152,6 +164,20 @@ char** ROpenFLUID_GetFunctionsPaths()
 // =====================================================================
 
 
+
+void ROpenFLUID_UpdateOutputsConfig(ROpenFLUID_ExtBlob_t* BlobHandle)
+{
+  ROpenFLUID_Blob_t*  Blob(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  // TODO TO BE CONTINUED
+
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
 ROpenFLUID_ExtBlob_t ROpenFLUID_RunProject(const char* Path)
 {
 
@@ -165,7 +191,6 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_RunProject(const char* Path)
     openfluid::base::RuntimeEnvironment* RunEnv;
     openfluid::io::IOListener IOListen;
     openfluid::io::FluidXReader FXReader(&IOListen);
-
 
     if (openfluid::base::ProjectManager::getInstance()->open(std::string(Path)))
     {
@@ -182,6 +207,7 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_RunProject(const char* Path)
     openfluid::machine::Factory::buildSimulationBlobFromDescriptors(FXReader.getDomainDescriptor(),
         FXReader.getRunDescriptor(),
         FXReader.getOutputDescriptor(),
+        FXReader.getDatstoreDescriptor(),
         Data->SBlob);
 
     openfluid::machine::Factory::buildModelInstanceFromDescriptor(FXReader.getModelDescriptor(),
@@ -190,11 +216,15 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_RunProject(const char* Path)
 
     Engine = new openfluid::machine::Engine(Data->SBlob, Data->Model, &(Data->MachineListen), &IOListen);
 
+    Engine->initialize();
+
     Engine->initParams();
     Engine->prepareData();
     Engine->checkConsistency();
     Engine->run();
     Engine->saveReports();
+
+    Engine->finalize();
 
     delete Engine;
 
@@ -225,9 +255,73 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_RunProject(const char* Path)
 // =====================================================================
 
 
-ROpenFLUID_ExtBlob_t ROpenFLUID_NewProject()
+ROpenFLUID_ExtBlob_t ROpenFLUID_NewDataBlob()
 {
   return (new ROpenFLUID_Blob_t());
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+ROpenFLUID_ExtBlob_t ROpenFLUID_OpenDataset(const char* Path)
+{
+  try
+  {
+
+    openfluid::base::Init();
+
+    ROpenFLUID_Blob_t* Data = new ROpenFLUID_Blob_t();
+    openfluid::base::RuntimeEnvironment* RunEnv;
+    openfluid::io::IOListener IOListen;
+    openfluid::io::FluidXReader FXReader(&IOListen);
+
+
+    openfluid::base::RuntimeEnvironment::getInstance()->setInputDir(std::string(Path));
+    FXReader.loadFromDirectory(openfluid::base::RuntimeEnvironment::getInstance()->getInputDir());
+
+
+    openfluid::machine::Factory::buildSimulationBlobFromDescriptors(FXReader.getDomainDescriptor(),
+        FXReader.getRunDescriptor(),
+        FXReader.getOutputDescriptor(),
+        FXReader.getDatstoreDescriptor(),
+        Data->SBlob);
+
+    openfluid::machine::Factory::buildModelInstanceFromDescriptor(FXReader.getModelDescriptor(),
+        Data->Model);
+
+
+    return Data;
+  }
+  catch (openfluid::base::OFException& E)
+  {
+    LastErrorMsg = "ROpenFLUID ERROR: " + std::string(E.what()) +"\n";
+  }
+  catch (std::bad_alloc& E)
+  {
+    LastErrorMsg = "MEMORY ALLOCATION ERROR: " + std::string(E.what()) + ". Possibly not enough memory available\n";
+  }
+  catch (std::exception& E)
+  {
+    LastErrorMsg = "SYSTEM ERROR: " + std::string(E.what()) +"\n";
+  }
+  catch (...)
+  {
+    LastErrorMsg = "UNKNOWN ERROR\n";
+  }
+
+  return NULL;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_SetOutputDir(const char* Path)
+{
+  openfluid::base::RuntimeEnvironment::getInstance()->setOutputDir(std::string(Path));
 }
 
 
@@ -263,6 +357,7 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenProject(const char* Path)
     openfluid::machine::Factory::buildSimulationBlobFromDescriptors(FXReader.getDomainDescriptor(),
         FXReader.getRunDescriptor(),
         FXReader.getOutputDescriptor(),
+        FXReader.getDatstoreDescriptor(),
         Data->SBlob);
 
     openfluid::machine::Factory::buildModelInstanceFromDescriptor(FXReader.getModelDescriptor(),
@@ -305,17 +400,23 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
     openfluid::base::Init();
 
     openfluid::machine::Engine* Engine;
-    ROpenFLUID_Blob_t*  Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+    ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+    // TODO clear data (variables, events) of previous simulation from blob
+
     openfluid::base::RuntimeEnvironment* RunEnv;
     openfluid::io::IOListener IOListen;
 
     Engine = new openfluid::machine::Engine(Data->SBlob, Data->Model, &(Data->MachineListen), &IOListen);
+
+    Engine->initialize();
 
     Engine->initParams();
     Engine->prepareData();
     Engine->checkConsistency();
     Engine->run();
     Engine->saveReports();
+
+    Engine->finalize();
 
     delete Engine;
 
