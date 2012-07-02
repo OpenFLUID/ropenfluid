@@ -1,0 +1,8 @@
+<?xml version="1.0" standalone="yes"?>
+<openfluid>
+  <datastore>
+    <dataitem id="XUnits" type="geovector" source="shapefiles/XUnits_wgs84.shp" unitclass="XUnit" />    
+    <dataitem id="YUnits" type="geovector" source="shapefiles/YUnits_wgs84.shp" unitclass="YUnit" />
+  </datastore>
+</openfluid>
+

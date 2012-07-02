@@ -60,6 +60,7 @@ static void Rized_OpenFLUID_Dummy(SEXP Message);
 
 static void Rized_OpenFLUID_DeleteBlob(SEXP Blob);
 
+static void Rized_OpenFLUID_GetSimulationInfo(SEXP Blob);
 static SEXP Rized_OpenFLUID_GetVersion();
 
 static void Rized_OpenFLUID_AddExtraFunctionsPaths(SEXP Paths);
@@ -91,6 +92,7 @@ static SEXP Rized_OpenFLUID_GetDeltaT(SEXP Blob);
 
 R_CallMethodDef callEntries[] = {
   { "DeleteBlob", (DL_FUNC) &Rized_OpenFLUID_DeleteBlob, 1},
+  { "GetSimulationInfo", (DL_FUNC) &Rized_OpenFLUID_GetSimulationInfo, 1},
   { "GetVersion", (DL_FUNC) &Rized_OpenFLUID_GetVersion, 0},
   { "Dummy", (DL_FUNC) &Rized_OpenFLUID_Dummy, 1},
   { "AddExtraFunctionsPaths", (DL_FUNC) &Rized_OpenFLUID_AddExtraFunctionsPaths, 1},
@@ -164,6 +166,16 @@ SEXP Rized_OpenFLUID_GetVersion()
   }
 
   return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void Rized_OpenFLUID_GetSimulationInfo(SEXP Blob)
+{
+  ROpenFLUID_GetSimulationInfo(R_ExternalPtrAddr(Blob));
 }
 
 

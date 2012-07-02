@@ -54,7 +54,8 @@
  */
 
 
-#include <openfluid/base/PlugFunction.hpp>
+#include <openfluid/base.hpp>
+#include <openfluid/core.hpp>
 
 
 // =====================================================================
@@ -81,6 +82,8 @@ BEGIN_SIGNATURE_HOOK
   DECLARE_SIGNATURE_METHOD((""));
   DECLARE_SIGNATURE_AUTHORNAME((""));
   DECLARE_SIGNATURE_AUTHOREMAIL((""));
+
+  DECLARE_PRODUCED_VAR("var.A","XUnit","","");
 
 END_SIGNATURE_HOOK
 
@@ -164,6 +167,18 @@ class FunctionA : public openfluid::base::PluggableFunction
 
   bool runStep(const openfluid::base::SimulationStatus* SimStatus)
   {
+
+    DECLARE_UNITS_ORDERED_LOOP(1);
+    openfluid::core::Unit* XU;
+
+   // std::cout << "yala" << std::endl;
+
+    BEGIN_UNITS_ORDERED_LOOP(1,"XUnit",XU)
+
+      OPENFLUID_AppendVariable(XU,"var.A",openfluid::core::DoubleValue(9.3));
+ //     OPENFLUID_Logger.getFile() << "ici";
+
+    END_LOOP
 
     return true;
   }

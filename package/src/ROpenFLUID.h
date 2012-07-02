@@ -61,7 +61,6 @@ extern "C" {
 
 typedef void* ROpenFLUID_ExtBlob_t;
 
-
 void ROpenFLUID_Init();
 
 void ROpenFLUID_DeleteBlob(ROpenFLUID_ExtBlob_t* BlobHandle);
@@ -87,6 +86,9 @@ void ROpenFLUID_SetOutputDir(const char* Path);
 ROpenFLUID_ExtBlob_t ROpenFLUID_OpenProject(const char* Path);
 
 ROpenFLUID_ExtBlob_t ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle);
+
+void ROpenFLUID_GetSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle);
+
 
 
 #ifdef __cplusplus

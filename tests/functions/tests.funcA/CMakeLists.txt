@@ -12,6 +12,10 @@ ENABLE_TESTING()
 #   checking libraries and tools
 # =========================================================================
 
+SET(Boost_USE_STATIC_LIBS OFF)
+SET(Boost_USE_MULTITHREAD ON)
+FIND_PACKAGE(Boost REQUIRED COMPONENTS system filesystem date_time regex)
+
 IF(NOT openfluid_FOUND)
   FIND_PACKAGE(PkgConfig REQUIRED)
   PKG_CHECK_MODULES(openfluid REQUIRED openfluid)

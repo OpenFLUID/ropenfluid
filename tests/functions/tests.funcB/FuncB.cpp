@@ -82,6 +82,8 @@ BEGIN_SIGNATURE_HOOK
   DECLARE_SIGNATURE_AUTHORNAME((""));
   DECLARE_SIGNATURE_AUTHOREMAIL((""));
 
+  DECLARE_PRODUCED_VAR("var.B","XUnit","","");
+
 END_SIGNATURE_HOOK
 
 /**
@@ -165,6 +167,14 @@ class FunctionB : public openfluid::base::PluggableFunction
   bool runStep(const openfluid::base::SimulationStatus* SimStatus)
   {
 
+      DECLARE_UNITS_ORDERED_LOOP(1);
+      openfluid::core::Unit* XU;
+
+      BEGIN_UNITS_ORDERED_LOOP(1,"XUnit",XU)
+
+        OPENFLUID_AppendVariable(XU,"var.B",openfluid::core::DoubleValue(6.6));
+
+      END_LOOP
     return true;
   }
 

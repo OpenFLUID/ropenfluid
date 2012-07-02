@@ -80,6 +80,19 @@ OpenFLUID.getVersion <- function()
 # =====================================================================
 # =====================================================================
 
+OpenFLUID.getSimulationInfo <- function(ofblob)
+{
+  stopifnot(!is.null(ofblob))
+  
+  .Call("GetSimulationInfo", ofblob, PACKAGE="ROpenFLUID")
+  
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
 
 OpenFLUID.addExtraFunctionsPaths <- function(paths)
 {

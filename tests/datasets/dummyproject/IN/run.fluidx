@@ -1,0 +1,12 @@
+<?xml version="1.0" standalone="yes"?>
+<openfluid>
+  <run>
+
+    <!-- period -->
+    <period begin="1997-06-05 04:04:00"	end="1997-06-05 16:16:00" />
+
+    <!-- fixed time step -->
+    <deltat>60</deltat>
+
+  </run>
+</openfluid>

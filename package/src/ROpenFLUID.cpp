@@ -53,7 +53,7 @@
 
 #include "ROpenFLUID.h"
 
-
+/*
 struct ROpenFLUID_Blob_t
 {
   openfluid::machine::SimulationBlob SBlob;
@@ -63,6 +63,33 @@ struct ROpenFLUID_Blob_t
 
   ROpenFLUID_Blob_t()
     : Model(SBlob,&MachineListen)
+  {
+
+  }
+
+};
+*/
+
+
+struct ROpenFLUID_Blob_t
+{
+
+  openfluid::base::DatastoreDescriptor DataStoreDesc;
+  openfluid::base::DomainDescriptor DomainDesc;
+  openfluid::base::ModelDescriptor ModelDesc;
+  openfluid::base::RunDescriptor RunDesc;
+  openfluid::base::OutputDescriptor OutDesc;
+
+  bool IsProject;
+  bool IsDataset;
+
+  std::string SourcePath;
+
+  bool IsSimulationRun;
+
+  ROpenFLUID_Blob_t():
+    IsProject(false),IsDataset(false),SourcePath(""),
+    IsSimulationRun(false)
   {
 
   }
@@ -183,14 +210,10 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_RunProject(const char* Path)
 
   try
   {
-
+    /*
     openfluid::base::Init();
 
-    openfluid::machine::Engine* Engine;
-    ROpenFLUID_Blob_t* Data = new ROpenFLUID_Blob_t();
-    openfluid::base::RuntimeEnvironment* RunEnv;
     openfluid::io::IOListener IOListen;
-    openfluid::io::FluidXReader FXReader(&IOListen);
 
     if (openfluid::base::ProjectManager::getInstance()->open(std::string(Path)))
     {
@@ -200,39 +223,13 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_RunProject(const char* Path)
     else
       throw openfluid::base::OFException("ROpenFLUID",std::string(Path) + " is not a correct project path");
 
-
-    FXReader.loadFromDirectory(openfluid::base::RuntimeEnvironment::getInstance()->getInputDir());
-
-
-    openfluid::machine::Factory::buildSimulationBlobFromDescriptors(FXReader.getDomainDescriptor(),
-        FXReader.getRunDescriptor(),
-        FXReader.getOutputDescriptor(),
-        FXReader.getDatstoreDescriptor(),
-        Data->SBlob);
-
-    openfluid::machine::Factory::buildModelInstanceFromDescriptor(FXReader.getModelDescriptor(),
-        Data->Model);
-
-
-    Engine = new openfluid::machine::Engine(Data->SBlob, Data->Model, &(Data->MachineListen), &IOListen);
-
-    Engine->initialize();
-
-    Engine->initParams();
-    Engine->prepareData();
-    Engine->checkConsistency();
-    Engine->run();
-    Engine->saveReports();
-
-    Engine->finalize();
-
-    delete Engine;
-
-    return Data;
+    return ROpenFLUID_RunSimulation(reinterpret_cast<ROpenFLUID_Blob_t*>(ROpenFLUID_OpenDataset(openfluid::base::RuntimeEnvironment::getInstance()->getInputDir().c_str())));
+    */
+    return NULL;
   }
   catch (openfluid::base::OFException& E)
   {
-    LastErrorMsg = "ROpenFLUID ERROR: " + std::string(E.what()) +"\n";
+    LastErrorMsg = "OpenFLUID ERROR: " + std::string(E.what()) +"\n";
   }
   catch (std::bad_alloc& E)
   {
@@ -267,13 +264,14 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_NewDataBlob()
 
 ROpenFLUID_ExtBlob_t ROpenFLUID_OpenDataset(const char* Path)
 {
+  ROpenFLUID_Blob_t* Data = new ROpenFLUID_Blob_t();
+
   try
   {
 
     openfluid::base::Init();
 
-    ROpenFLUID_Blob_t* Data = new ROpenFLUID_Blob_t();
-    openfluid::base::RuntimeEnvironment* RunEnv;
+
     openfluid::io::IOListener IOListen;
     openfluid::io::FluidXReader FXReader(&IOListen);
 
@@ -281,22 +279,26 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenDataset(const char* Path)
     openfluid::base::RuntimeEnvironment::getInstance()->setInputDir(std::string(Path));
     FXReader.loadFromDirectory(openfluid::base::RuntimeEnvironment::getInstance()->getInputDir());
 
+    Data->IsSimulationRun = false;
 
-    openfluid::machine::Factory::buildSimulationBlobFromDescriptors(FXReader.getDomainDescriptor(),
-        FXReader.getRunDescriptor(),
-        FXReader.getOutputDescriptor(),
-        FXReader.getDatstoreDescriptor(),
-        Data->SBlob);
+    Data->DomainDesc = FXReader.getDomainDescriptor();
+    Data->ModelDesc = FXReader.getModelDescriptor();
+    Data->DataStoreDesc = FXReader.getDatstoreDescriptor();
+    Data->OutDesc = FXReader.getOutputDescriptor();
+    Data->RunDesc = FXReader.getRunDescriptor();
 
-    openfluid::machine::Factory::buildModelInstanceFromDescriptor(FXReader.getModelDescriptor(),
-        Data->Model);
+    if (!Data->IsProject)
+    {
+      Data->IsDataset = true;
+      Data->SourcePath = openfluid::base::RuntimeEnvironment::getInstance()->getInputDir();
+    }
 
 
     return Data;
   }
   catch (openfluid::base::OFException& E)
   {
-    LastErrorMsg = "ROpenFLUID ERROR: " + std::string(E.what()) +"\n";
+    LastErrorMsg = "OpenFLUID ERROR: " + std::string(E.what()) +"\n";
   }
   catch (std::bad_alloc& E)
   {
@@ -310,6 +312,10 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenDataset(const char* Path)
   {
     LastErrorMsg = "UNKNOWN ERROR\n";
   }
+
+  Data->IsProject = false;
+  Data->IsDataset = false;
+  Data->SourcePath = "";
 
   return NULL;
 }
@@ -337,9 +343,8 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenProject(const char* Path)
     openfluid::base::Init();
 
     ROpenFLUID_Blob_t* Data = new ROpenFLUID_Blob_t();
-    openfluid::base::RuntimeEnvironment* RunEnv;
+
     openfluid::io::IOListener IOListen;
-    openfluid::io::FluidXReader FXReader(&IOListen);
 
 
     if (openfluid::base::ProjectManager::getInstance()->open(std::string(Path)))
@@ -350,25 +355,14 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenProject(const char* Path)
     else
       throw openfluid::base::OFException("ROpenFLUID",std::string(Path) + " is not a correct project path");
 
+    Data->IsProject = true;
+    Data->SourcePath = openfluid::base::ProjectManager::getInstance()->getPath();
 
-    FXReader.loadFromDirectory(openfluid::base::RuntimeEnvironment::getInstance()->getInputDir());
-
-
-    openfluid::machine::Factory::buildSimulationBlobFromDescriptors(FXReader.getDomainDescriptor(),
-        FXReader.getRunDescriptor(),
-        FXReader.getOutputDescriptor(),
-        FXReader.getDatstoreDescriptor(),
-        Data->SBlob);
-
-    openfluid::machine::Factory::buildModelInstanceFromDescriptor(FXReader.getModelDescriptor(),
-        Data->Model);
-
-
-    return Data;
+    return ROpenFLUID_OpenDataset(openfluid::base::RuntimeEnvironment::getInstance()->getInputDir().c_str());
   }
   catch (openfluid::base::OFException& E)
   {
-    LastErrorMsg = "ROpenFLUID ERROR: " + std::string(E.what()) +"\n";
+    LastErrorMsg = "OpenFLUID ERROR: " + std::string(E.what()) +"\n";
   }
   catch (std::bad_alloc& E)
   {
@@ -401,12 +395,29 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
 
     openfluid::machine::Engine* Engine;
     ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
-    // TODO clear data (variables, events) of previous simulation from blob
 
-    openfluid::base::RuntimeEnvironment* RunEnv;
     openfluid::io::IOListener IOListen;
+    openfluid::machine::SimulationBlob SimBlob;
 
-    Engine = new openfluid::machine::Engine(Data->SBlob, Data->Model, &(Data->MachineListen), &IOListen);
+    openfluid::machine::PluginManager::getInstance()->unloadAllPlugins();
+
+
+    openfluid::machine::Factory::buildSimulationBlobFromDescriptors(
+        Data->DomainDesc,
+        Data->RunDesc,
+        Data->OutDesc,
+        Data->DataStoreDesc,
+        SimBlob);
+
+
+    openfluid::machine::MachineListener MachineListen;
+    openfluid::machine::ModelInstance Model(SimBlob,&MachineListen);
+
+    openfluid::machine::Factory::buildModelInstanceFromDescriptor(Data->ModelDesc,
+        Model);
+
+
+    Engine = new openfluid::machine::Engine(SimBlob, Model, &MachineListen, &IOListen);
 
     Engine->initialize();
 
@@ -420,11 +431,13 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
 
     delete Engine;
 
+    Data->IsSimulationRun = true;
+
     return Data;
   }
   catch (openfluid::base::OFException& E)
   {
-    LastErrorMsg = "ROpenFLUID ERROR: " + std::string(E.what()) +"\n";
+    LastErrorMsg = "OpenFLUID ERROR: " + std::string(E.what()) +"\n";
   }
   catch (std::bad_alloc& E)
   {
@@ -443,3 +456,79 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
 }
 
 
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_GetSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+
+  // Spatial domain
+
+  std::map<openfluid::core::UnitClass_t,unsigned int> UnitsInfos;
+
+  std::list<openfluid::base::UnitDescriptor>::iterator bItUnits = Data->DomainDesc.getUnits().begin();
+  std::list<openfluid::base::UnitDescriptor>::iterator eItUnits = Data->DomainDesc.getUnits().end();
+
+  for (std::list<openfluid::base::UnitDescriptor>::iterator ItUnits = bItUnits;ItUnits != eItUnits;++ItUnits)
+  {
+    openfluid::core::UnitClass_t ClassName = (*ItUnits).getUnitClass();
+
+    if (UnitsInfos.find(ClassName) == UnitsInfos.end()) UnitsInfos[ClassName] = 0;
+    UnitsInfos[ClassName]++;
+  }
+
+  std::cout << "Spatial domain is made of " << Data->DomainDesc.getUnits().size() << " spatial units " << std::endl;
+
+  for (std::map<openfluid::core::UnitClass_t,unsigned int>::iterator ItUnitsInfos = UnitsInfos.begin();
+       ItUnitsInfos != UnitsInfos.end(); ++ItUnitsInfos)
+    std::cout << " - " << (*ItUnitsInfos).second << " units of class " << (*ItUnitsInfos).first << std::endl;
+
+
+  // Model
+
+  std::cout << "Model is made of " << Data->ModelDesc.getItems().size() << " simulation items " << std::endl;
+
+  for (openfluid::base::ModelDescriptor::ModelDescription_t::iterator ItModelInfos = Data->ModelDesc.getItems().begin();
+         ItModelInfos != Data->ModelDesc.getItems().end(); ++ItModelInfos)
+  {
+    std::cout << " - ";
+
+    if ((*ItModelInfos)->isType(openfluid::base::ModelItemDescriptor::PluggedFunction))
+    {
+      std::cout << ((openfluid::base::FunctionDescriptor*)(*ItModelInfos))->getFileID() << " simulation function" << std::endl;
+    }
+
+    if ((*ItModelInfos)->isType(openfluid::base::ModelItemDescriptor::Generator))
+    {
+      openfluid::base::GeneratorDescriptor* pGenDesc = ((openfluid::base::GeneratorDescriptor*)(*ItModelInfos));
+
+      if (pGenDesc->getGeneratorMethod() == openfluid::base::GeneratorDescriptor::Fixed)
+        std::cout << "fixed";
+
+      if (pGenDesc->getGeneratorMethod() == openfluid::base::GeneratorDescriptor::Random)
+        std::cout << "random";
+
+      if (pGenDesc->getGeneratorMethod() == openfluid::base::GeneratorDescriptor::Interp)
+        std::cout << "interp";
+
+      if (pGenDesc->getGeneratorMethod() == openfluid::base::GeneratorDescriptor::Inject)
+        std::cout << "inject";
+
+      std::cout << " generator for variable " << pGenDesc->getVariableName() << " on units " << pGenDesc->getUnitClass() << std::endl;
+    }
+  }
+
+  // Time period
+
+  std::cout << "Simulation period from " << Data->RunDesc.getBeginDate().getAsISOString()
+            << " to " << Data->RunDesc.getEndDate().getAsISOString() << std::endl;
+
+  // Time step
+
+  std::cout << "Simulation time step : " << Data->RunDesc.getDeltaT() << std::endl;
+
+}
