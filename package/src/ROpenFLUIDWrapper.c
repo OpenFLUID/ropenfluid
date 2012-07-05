@@ -61,17 +61,17 @@ static void Rized_OpenFLUID_Dummy(SEXP Message);
 static void Rized_OpenFLUID_DeleteBlob(SEXP Blob);
 
 static void Rized_OpenFLUID_GetSimulationInfo(SEXP Blob);
+static SEXP Rized_OpenFLUID_GetSimulationOutputDir(SEXP Blob);
 static SEXP Rized_OpenFLUID_GetVersion();
 
 static void Rized_OpenFLUID_AddExtraFunctionsPaths(SEXP Paths);
 static SEXP Rized_OpenFLUID_GetFunctionsPaths();
 
-static SEXP Rized_OpenFLUID_RunProject(SEXP Path);
 static SEXP Rized_OpenFLUID_NewDataBlob();
 static SEXP Rized_OpenFLUID_OpenProject(SEXP Path);
 static SEXP Rized_OpenFLUID_OpenDataset(SEXP Path);
-static SEXP Rized_OpenFLUID_SetOutputDir(SEXP Path);
-static SEXP Rized_OpenFLUID_RunSimulation(SEXP Blob);
+static void Rized_OpenFLUID_SetOutputDir(SEXP Path);
+static void Rized_OpenFLUID_RunSimulation(SEXP Blob);
 
 static SEXP Rized_OpenFLUID_SetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName, SEXP ParamVal);
 static SEXP Rized_OpenFLUID_GetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName);
@@ -93,11 +93,11 @@ static SEXP Rized_OpenFLUID_GetDeltaT(SEXP Blob);
 R_CallMethodDef callEntries[] = {
   { "DeleteBlob", (DL_FUNC) &Rized_OpenFLUID_DeleteBlob, 1},
   { "GetSimulationInfo", (DL_FUNC) &Rized_OpenFLUID_GetSimulationInfo, 1},
+  { "GetSimulationOutputDir", (DL_FUNC) &Rized_OpenFLUID_GetSimulationOutputDir, 1},
   { "GetVersion", (DL_FUNC) &Rized_OpenFLUID_GetVersion, 0},
   { "Dummy", (DL_FUNC) &Rized_OpenFLUID_Dummy, 1},
   { "AddExtraFunctionsPaths", (DL_FUNC) &Rized_OpenFLUID_AddExtraFunctionsPaths, 1},
   { "GetFunctionsPaths", (DL_FUNC) &Rized_OpenFLUID_GetFunctionsPaths, 0},
-  { "RunProject", (DL_FUNC) &Rized_OpenFLUID_RunProject, 1},
   { "NewDataBlob", (DL_FUNC) &Rized_OpenFLUID_NewDataBlob, 0},
   { "OpenDataset", (DL_FUNC) &Rized_OpenFLUID_OpenDataset, 1},
   { "SetOutputDir", (DL_FUNC) &Rized_OpenFLUID_SetOutputDir, 1},
@@ -155,7 +155,7 @@ SEXP Rized_OpenFLUID_GetVersion()
 {
   SEXP Ret = R_NilValue;
 
-  char* Version = ROpenFLUID_GetVersion();
+  const char* Version = ROpenFLUID_GetVersion();
 
   if (Version != NULL)
   {
@@ -176,6 +176,26 @@ SEXP Rized_OpenFLUID_GetVersion()
 void Rized_OpenFLUID_GetSimulationInfo(SEXP Blob)
 {
   ROpenFLUID_GetSimulationInfo(R_ExternalPtrAddr(Blob));
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_GetSimulationOutputDir(SEXP Blob)
+{
+  SEXP Ret;
+
+  const char* Path = ROpenFLUID_GetSimulationOutputDir(R_ExternalPtrAddr(Blob));
+
+  PROTECT(Ret = allocVector(STRSXP, 1));
+
+  SET_STRING_ELT(Ret, 0, mkChar(Path));
+
+  UNPROTECT(1);
+
+  return Ret;
 }
 
 
@@ -227,30 +247,6 @@ SEXP Rized_OpenFLUID_GetFunctionsPaths()
   }
 
   UNPROTECT(1);
-
-  return Ret;
-}
-
-
-// =====================================================================
-// =====================================================================
-
-SEXP Rized_OpenFLUID_RunProject(SEXP Path)
-{
-  SEXP Ret = R_NilValue;
-
-  ROpenFLUID_ExtBlob_t Ptr = (ROpenFLUID_ExtBlob_t*)ROpenFLUID_RunProject(CHAR(STRING_ELT(Path, 0)));
-
-  if (Ptr)
-  {
-    PROTECT(Ret = R_MakeExternalPtr(Ptr, R_NilValue, R_NilValue));
-    R_RegisterCFinalizer(Ret, (R_CFinalizer_t) Rized_OpenFLUID_DeleteBlob);
-    UNPROTECT(1);
-  }
-  else
-  {
-    Rf_error(ROpenFLUID_GetLastError());
-  }
 
   return Ret;
 }
@@ -335,7 +331,7 @@ SEXP Rized_OpenFLUID_OpenDataset(SEXP Path)
 // =====================================================================
 
 
-SEXP Rized_OpenFLUID_SetOutputDir(SEXP Path)
+void Rized_OpenFLUID_SetOutputDir(SEXP Path)
 {
   ROpenFLUID_SetOutputDir(CHAR(STRING_ELT(Path, 0)));
 }
@@ -345,24 +341,12 @@ SEXP Rized_OpenFLUID_SetOutputDir(SEXP Path)
 // =====================================================================
 
 
-SEXP Rized_OpenFLUID_RunSimulation(SEXP Blob)
+void Rized_OpenFLUID_RunSimulation(SEXP Blob)
 {
-  SEXP Ret = R_NilValue;
-
-  ROpenFLUID_ExtBlob_t Ptr = (ROpenFLUID_ExtBlob_t*)ROpenFLUID_RunSimulation(R_ExternalPtrAddr(Blob));
-
-  if (Ptr)
-  {
-    PROTECT(Ret = R_MakeExternalPtr(Ptr, R_NilValue, R_NilValue));
-    R_RegisterCFinalizer(Ret, (R_CFinalizer_t) Rized_OpenFLUID_DeleteBlob);
-    UNPROTECT(1);
-  }
-  else
+  if (ROpenFLUID_RunSimulation(R_ExternalPtrAddr(Blob)) != 1)
   {
     Rf_error(ROpenFLUID_GetLastError());
   }
-
-  return Ret;
 }
 
 

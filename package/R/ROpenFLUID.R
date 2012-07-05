@@ -223,11 +223,7 @@ OpenFLUID.runSimulation <- function(ofblob)
 {
   stopifnot(!is.null(ofblob))
   
-  ret <- .Call("RunSimulation", ofblob, PACKAGE="ROpenFLUID")
-  
-  stopifnot(!is.null(ret))
-  
-  return(ret)
+  .Call("RunSimulation", ofblob, PACKAGE="ROpenFLUID")  
 }
 
 
@@ -396,8 +392,31 @@ OpenFLUID.loadResult <- function(ofblob,unitclass,unitid,suffix)
 {
   stopifnot(!is.null(ofblob))  
   stopifnot(is.character(unitclass))
-  stopifnot(is.integer(unitid))
+  stopifnot(is.numeric(unitid))
   stopifnot(is.character(suffix))
   
-	stop("under construction")
+  filename = .Call("GetSimulationOutputDir", ofblob, PACKAGE="ROpenFLUID")
+  
+  filename = paste(filename,unitclass,sep="/")
+  filename = paste(filename,as.integer(unitid),sep="")
+  filename = paste(filename,suffix,sep="_")
+  filename = paste(filename,".out",sep="")
+  
+  return(OpenFLUID.loadResultFile(filename))
 }
+
+
+# =====================================================================
+# =====================================================================
+
+
+OpenFLUID.loadResultFile <- function(filepath)
+{
+  stopifnot(is.character(filepath))
+    
+  data = read.csv(file=filepath,head=TRUE,sep=" ",stringsAsFactors=F)
+  data$datetime = as.POSIXct(data$datetime,format="%Y%m%d-%H%M%S",tz="UTC")
+  
+  return(data)
+}
+

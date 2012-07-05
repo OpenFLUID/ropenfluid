@@ -3,7 +3,7 @@
   <model>
 
     <generator varname="tests.fixed" unitclass="XUnit" method="fixed">
-      <param name="fixedvalue" value="12.7" />
+      <param name="fixedvalue" value="45.3" />
     </generator>
 
     <generator varname="tests.random" unitclass="YUnit" method="random">

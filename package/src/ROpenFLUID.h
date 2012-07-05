@@ -75,17 +75,17 @@ char** ROpenFLUID_GetFunctionsPaths();
 
 unsigned int ROpenFLUID_GetFunctionsPathsCount();
 
-ROpenFLUID_ExtBlob_t ROpenFLUID_RunProject(const char* Path);
-
 ROpenFLUID_ExtBlob_t ROpenFLUID_NewDataBlob();
 
 ROpenFLUID_ExtBlob_t ROpenFLUID_OpenDataset(const char* Path);
 
 void ROpenFLUID_SetOutputDir(const char* Path);
 
+const char* ROpenFLUID_GetSimulationOutputDir(ROpenFLUID_ExtBlob_t* BlobHandle);
+
 ROpenFLUID_ExtBlob_t ROpenFLUID_OpenProject(const char* Path);
 
-ROpenFLUID_ExtBlob_t ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle);
+unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle);
 
 void ROpenFLUID_GetSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle);
 
