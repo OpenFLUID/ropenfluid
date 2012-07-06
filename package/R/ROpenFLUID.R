@@ -122,11 +122,11 @@ OpenFLUID.runProject <- function(path)
 {
   stopifnot(is.character(path))
   
-  ret <- .Call("RunProject", path, PACKAGE="ROpenFLUID")
+  data = OpenFLUID.openProject(path)
   
-  stopifnot(!is.null(ret))
+  OpenFLUID.runSimulation(data)  
   
-  return(ret)
+  return(data)
 }
 
 
