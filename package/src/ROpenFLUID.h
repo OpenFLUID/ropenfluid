@@ -79,7 +79,7 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_NewDataBlob();
 
 ROpenFLUID_ExtBlob_t ROpenFLUID_OpenDataset(const char* Path);
 
-void ROpenFLUID_SetOutputDir(const char* Path);
+void ROpenFLUID_SetCurrentOutputDir(const char* Path);
 
 const char* ROpenFLUID_GetSimulationOutputDir(ROpenFLUID_ExtBlob_t* BlobHandle);
 
@@ -87,8 +87,11 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenProject(const char* Path);
 
 unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle);
 
-void ROpenFLUID_GetSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle);
+void ROpenFLUID_PrintSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle);
 
+int ROpenFLUID_GetDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle);
+
+void ROpenFLUID_SetDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle, int DeltaT);
 
 
 #ifdef __cplusplus

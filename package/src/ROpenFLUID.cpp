@@ -51,7 +51,6 @@
 #include <openfluid/machine.hpp>
 #include <openfluid/io.hpp>
 
-
 #include "ROpenFLUID.h"
 
 /*
@@ -289,7 +288,7 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenDataset(const char* Path)
 // =====================================================================
 
 
-void ROpenFLUID_SetOutputDir(const char* Path)
+void ROpenFLUID_SetCurrentOutputDir(const char* Path)
 {
   openfluid::base::RuntimeEnvironment::getInstance()->setOutputDir(std::string(Path));
 }
@@ -369,7 +368,6 @@ unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
     openfluid::machine::PluginManager::getInstance()->unloadAllPlugins();
 
 
-
     openfluid::machine::Factory::buildSimulationBlobFromDescriptors(
         Data->DomainDesc,
         Data->RunDesc,
@@ -383,7 +381,6 @@ unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
 
     openfluid::machine::Factory::buildModelInstanceFromDescriptor(Data->ModelDesc,
         Model);
-
 
     Data->OutputDir = openfluid::base::RuntimeEnvironment::getInstance()->getOutputDir();
 
@@ -431,7 +428,7 @@ unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
 // =====================================================================
 
 
-void ROpenFLUID_GetSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle)
+void ROpenFLUID_PrintSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
@@ -503,7 +500,6 @@ void ROpenFLUID_GetSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle)
 }
 
 
-
 // =====================================================================
 // =====================================================================
 
@@ -514,3 +510,28 @@ const char* ROpenFLUID_GetSimulationOutputDir(ROpenFLUID_ExtBlob_t* BlobHandle)
 
   return Data->OutputDir.c_str();
 }
+
+
+// =====================================================================
+// =====================================================================
+
+
+int ROpenFLUID_GetDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  return Data->RunDesc.getDeltaT();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_SetDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle, int DeltaT)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  Data->RunDesc.setDeltaT(DeltaT);
+}
+

@@ -1,0 +1,6 @@
+library(RUnit)
+
+library("ROpenFLUID")
+
+
+checkEquals(OpenFLUID.getVersion(),"@openfluid_VERSION@")

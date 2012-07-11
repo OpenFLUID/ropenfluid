@@ -56,11 +56,9 @@
 // =====================================================================
 // =====================================================================
 
-static void Rized_OpenFLUID_Dummy(SEXP Message);
-
 static void Rized_OpenFLUID_DeleteBlob(SEXP Blob);
 
-static void Rized_OpenFLUID_GetSimulationInfo(SEXP Blob);
+static void Rized_OpenFLUID_PrintSimulationInfo(SEXP Blob);
 static SEXP Rized_OpenFLUID_GetSimulationOutputDir(SEXP Blob);
 static SEXP Rized_OpenFLUID_GetVersion();
 
@@ -70,7 +68,7 @@ static SEXP Rized_OpenFLUID_GetFunctionsPaths();
 static SEXP Rized_OpenFLUID_NewDataBlob();
 static SEXP Rized_OpenFLUID_OpenProject(SEXP Path);
 static SEXP Rized_OpenFLUID_OpenDataset(SEXP Path);
-static void Rized_OpenFLUID_SetOutputDir(SEXP Path);
+static void Rized_OpenFLUID_SetCurrentOutputDir(SEXP Path);
 static void Rized_OpenFLUID_RunSimulation(SEXP Blob);
 
 static SEXP Rized_OpenFLUID_SetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName, SEXP ParamVal);
@@ -92,15 +90,14 @@ static SEXP Rized_OpenFLUID_GetDeltaT(SEXP Blob);
 
 R_CallMethodDef callEntries[] = {
   { "DeleteBlob", (DL_FUNC) &Rized_OpenFLUID_DeleteBlob, 1},
-  { "GetSimulationInfo", (DL_FUNC) &Rized_OpenFLUID_GetSimulationInfo, 1},
+  { "PrintSimulationInfo", (DL_FUNC) &Rized_OpenFLUID_PrintSimulationInfo, 1},
   { "GetSimulationOutputDir", (DL_FUNC) &Rized_OpenFLUID_GetSimulationOutputDir, 1},
   { "GetVersion", (DL_FUNC) &Rized_OpenFLUID_GetVersion, 0},
-  { "Dummy", (DL_FUNC) &Rized_OpenFLUID_Dummy, 1},
   { "AddExtraFunctionsPaths", (DL_FUNC) &Rized_OpenFLUID_AddExtraFunctionsPaths, 1},
   { "GetFunctionsPaths", (DL_FUNC) &Rized_OpenFLUID_GetFunctionsPaths, 0},
   { "NewDataBlob", (DL_FUNC) &Rized_OpenFLUID_NewDataBlob, 0},
   { "OpenDataset", (DL_FUNC) &Rized_OpenFLUID_OpenDataset, 1},
-  { "SetOutputDir", (DL_FUNC) &Rized_OpenFLUID_SetOutputDir, 1},
+  { "SetCurrentOutputDir", (DL_FUNC) &Rized_OpenFLUID_SetCurrentOutputDir, 1},
   { "OpenProject", (DL_FUNC) &Rized_OpenFLUID_OpenProject, 1},
   { "RunSimulation", (DL_FUNC) &Rized_OpenFLUID_RunSimulation, 1},
   { "SetFunctionParam", (DL_FUNC) &Rized_OpenFLUID_SetFunctionParam, 4},
@@ -136,17 +133,6 @@ void R_unload_ROpenFLUID(DllInfo* Info)
 }
 
 
-
-// =====================================================================
-// =====================================================================
-
-
-void Rized_OpenFLUID_Dummy(SEXP Message)
-{
-  Rprintf("[Dummy] %s\n",CHAR(STRING_ELT(Message, 0)));
-}
-
-
 // =====================================================================
 // =====================================================================
 
@@ -173,9 +159,9 @@ SEXP Rized_OpenFLUID_GetVersion()
 // =====================================================================
 
 
-void Rized_OpenFLUID_GetSimulationInfo(SEXP Blob)
+void Rized_OpenFLUID_PrintSimulationInfo(SEXP Blob)
 {
-  ROpenFLUID_GetSimulationInfo(R_ExternalPtrAddr(Blob));
+  ROpenFLUID_PrintSimulationInfo(R_ExternalPtrAddr(Blob));
 }
 
 
@@ -331,9 +317,9 @@ SEXP Rized_OpenFLUID_OpenDataset(SEXP Path)
 // =====================================================================
 
 
-void Rized_OpenFLUID_SetOutputDir(SEXP Path)
+void Rized_OpenFLUID_SetCurrentOutputDir(SEXP Path)
 {
-  ROpenFLUID_SetOutputDir(CHAR(STRING_ELT(Path, 0)));
+  ROpenFLUID_SetCurrentOutputDir(CHAR(STRING_ELT(Path, 0)));
 }
 
 
@@ -444,9 +430,7 @@ SEXP Rized_OpenFLUID_GetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP I
 
 SEXP Rized_OpenFLUID_SetDeltaT(SEXP Blob, SEXP DeltaT)
 {
-
-  Rf_error("under construction");
-
+  ROpenFLUID_SetDeltaT(R_ExternalPtrAddr(Blob),INTEGER(DeltaT)[0]);
 }
 
 
@@ -456,9 +440,13 @@ SEXP Rized_OpenFLUID_SetDeltaT(SEXP Blob, SEXP DeltaT)
 
 SEXP Rized_OpenFLUID_GetDeltaT(SEXP Blob)
 {
-  SEXP Ret = R_NilValue;
+  SEXP Ret;
 
-  Rf_error("under construction");
+  int DeltaT = ROpenFLUID_GetDeltaT(R_ExternalPtrAddr(Blob));
+
+  PROTECT(Ret = allocVector(INTSXP, 1));
+  INTEGER(Ret)[0] = DeltaT;
+  UNPROTECT(1);
 
   return Ret;
 }

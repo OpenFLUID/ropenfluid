@@ -1,0 +1,35 @@
+<?xml version="1.0" standalone="yes"?>
+<openfluid>
+  <domain>
+    <definition>
+      <!-- units of class XUnit and RI -->
+
+      <unit class="XUnit" ID="1" pcsorder="2">
+        <to class="YUnit" ID="2" />
+      </unit>
+      <unit class="XUnit" ID="2" pcsorder="1">
+        <to class="XUnit" ID="6" />
+      </unit>
+      <unit class="XUnit" ID="3" pcsorder="2">
+        <to class="YUnit" ID="3" />
+      </unit>
+      <unit class="XUnit" ID="4" pcsorder="1">
+        <to class="XUnit" ID="3" />
+      </unit>
+      <unit class="XUnit" ID="5" pcsorder="2">
+        <to class="XUnit" ID="3" />
+      </unit>
+      <unit class="XUnit" ID="6" pcsorder="2">
+        <to class="YUnit" ID="2" />
+      </unit>     
+      <unit class="YUnit" ID="1" pcsorder="1">
+        <to class="YUnit" ID="2" />
+      </unit>
+      <unit class="YUnit" ID="2" pcsorder="2">
+        <to class="YUnit" ID="3" />
+      </unit>
+      <unit class="YUnit" ID="3" pcsorder="3"/>
+    </definition>
+  </domain>
+</openfluid>   
+

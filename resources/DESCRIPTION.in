@@ -7,4 +7,5 @@ Author: Jean-Christophe Fabre <fabrejc@supagro.inra.fr>
 Maintainer: Jean-Christophe Fabre <fabrejc@supagro.inra.fr>
 Description: This package allows to use the OpenFLUID software environment for modelling fluxes in landscapes with R
 License: GPL-3 + file LICENSE
+Depends: R (>= 2.6.2), RUnit
 LazyLoad: yes

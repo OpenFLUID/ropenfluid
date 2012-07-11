@@ -57,20 +57,6 @@
 # =====================================================================
 
 
-OpenFLUID.dummy <- function(msg)
-{
-  stopifnot(is.character(msg))
-  
-  .Call("Dummy", msg, PACKAGE="ROpenFLUID")
-  
-  return(invisible(NULL))
-}
-
-
-# =====================================================================
-# =====================================================================
-
-
 OpenFLUID.getVersion <- function()
 {  
   .Call("GetVersion",PACKAGE="ROpenFLUID")  
@@ -80,11 +66,11 @@ OpenFLUID.getVersion <- function()
 # =====================================================================
 # =====================================================================
 
-OpenFLUID.getSimulationInfo <- function(ofblob)
+OpenFLUID.printSimulationInfo <- function(ofblob)
 {
   stopifnot(!is.null(ofblob))
   
-  .Call("GetSimulationInfo", ofblob, PACKAGE="ROpenFLUID")
+  .Call("PrintSimulationInfo", ofblob, PACKAGE="ROpenFLUID")
   
   return(invisible(NULL))
 }
@@ -122,11 +108,11 @@ OpenFLUID.runProject <- function(path)
 {
   stopifnot(is.character(path))
   
-  data = OpenFLUID.openProject(path)
+  ofdata = OpenFLUID.openProject(path)
   
-  OpenFLUID.runSimulation(data)  
+  OpenFLUID.runSimulation(ofdata)  
   
-  return(data)
+  return(ofdata)
 }
 
 
@@ -180,11 +166,11 @@ OpenFLUID.openDataset <- function(path)
 # =====================================================================
 
 
-OpenFLUID.setOutputDir <- function(path)
+OpenFLUID.setCurrentOutputDir <- function(path)
 {
   stopifnot(is.character(path))
   
-  .Call("SetOutputDir", path, PACKAGE="ROpenFLUID")  
+  .Call("SetCurrentOutputDir", path, PACKAGE="ROpenFLUID")  
 
   return(invisible(NULL))
 }
@@ -194,25 +180,25 @@ OpenFLUID.setOutputDir <- function(path)
 # =====================================================================
 
 
-OpenFLUID.saveProject <- function(ofblob)
-{
-  stopifnot(!is.null(ofblob))  
-  
-  stop("under construction")
-}
+#OpenFLUID.saveProject <- function(ofblob)
+#{
+#  stopifnot(!is.null(ofblob))  
+#  
+#  stop("under construction")
+#}
 
 
 # =====================================================================
 # =====================================================================
 
 
-OpenFLUID.saveProjectAs <- function(ofblob,path)
-{
-  stopifnot(!is.null(ofblob))  
-  stopifnot(is.character(path))
+#OpenFLUID.saveProjectAs <- function(ofblob,path)
+#{
+#  stopifnot(!is.null(ofblob))  
+#  stopifnot(is.character(path))
   
-  stop("under construction")
-}
+#  stop("under construction")
+#}
 
 
 # =====================================================================
@@ -222,8 +208,10 @@ OpenFLUID.saveProjectAs <- function(ofblob,path)
 OpenFLUID.runSimulation <- function(ofblob)
 {
   stopifnot(!is.null(ofblob))
+
+  .Call("RunSimulation", ofblob, PACKAGE="ROpenFLUID")
   
-  .Call("RunSimulation", ofblob, PACKAGE="ROpenFLUID")  
+  return(invisible(NULL))  
 }
 
 
@@ -359,10 +347,10 @@ OpenFLUID.createInputData <- function(ofblob,unitclass,idataname,idataval)
 OpenFLUID.setDeltaT <- function(ofblob,deltat)
 {
   stopifnot(!is.null(ofblob))  
-  stopifnot(is.integer(deltat))  
+  stopifnot(is.numeric(deltat))  
   stopifnot(deltat > 0)
   
-  .Call("SetDeltaT", ofblob, deltat, PACKAGE="ROpenFLUID")  
+  .Call("SetDeltaT", ofblob, as.integer(deltat), PACKAGE="ROpenFLUID")  
   
   return(invisible(NULL))
 }
