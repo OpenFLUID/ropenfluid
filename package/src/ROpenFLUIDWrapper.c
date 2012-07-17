@@ -75,6 +75,8 @@ static SEXP Rized_OpenFLUID_SetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP Pa
 static SEXP Rized_OpenFLUID_GetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName);
 static SEXP Rized_OpenFLUID_SetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName, SEXP ParamVal);
 static SEXP Rized_OpenFLUID_GetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName);
+static SEXP Rized_OpenFLUID_SetModelGlobalParam(SEXP Blob, SEXP ParamName, SEXP ParamVal);
+static SEXP Rized_OpenFLUID_GetModelGlobalParam(SEXP Blob, SEXP ParamName);
 
 static SEXP Rized_OpenFLUID_CreateInputData(SEXP Blob,SEXP UnitClass, SEXP IDataName, SEXP IDataValue);
 static SEXP Rized_OpenFLUID_SetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP IDataName, SEXP IDataValue);
@@ -82,6 +84,10 @@ static SEXP Rized_OpenFLUID_GetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID,
 
 static SEXP Rized_OpenFLUID_SetDeltaT(SEXP Blob, SEXP DeltaT);
 static SEXP Rized_OpenFLUID_GetDeltaT(SEXP Blob);
+static SEXP Rized_OpenFLUID_SetPeriod(SEXP Blob, SEXP Begin, SEXP End);
+static SEXP Rized_OpenFLUID_GetPeriodBeginDate(SEXP Blob);
+static SEXP Rized_OpenFLUID_GetPeriodEndDate(SEXP Blob);
+
 
 
 // =====================================================================
@@ -104,11 +110,16 @@ R_CallMethodDef callEntries[] = {
   { "GetFunctionParam", (DL_FUNC) &Rized_OpenFLUID_GetFunctionParam, 3},
   { "SetGeneratorParam", (DL_FUNC) &Rized_OpenFLUID_SetGeneratorParam, 5},
   { "GetGeneratorParam", (DL_FUNC) &Rized_OpenFLUID_GetGeneratorParam, 4},
+  { "SetModelGlobalParam", (DL_FUNC) &Rized_OpenFLUID_SetModelGlobalParam, 3},
+  { "GetModelGlobalParam", (DL_FUNC) &Rized_OpenFLUID_GetModelGlobalParam, 2},
   { "CreateInputData", (DL_FUNC) &Rized_OpenFLUID_CreateInputData, 4},
   { "SetInputData", (DL_FUNC) &Rized_OpenFLUID_SetInputData, 5},
   { "GetInputData", (DL_FUNC) &Rized_OpenFLUID_GetInputData, 4},
   { "SetDeltaT", (DL_FUNC) &Rized_OpenFLUID_SetDeltaT, 2},
   { "GetDeltaT", (DL_FUNC) &Rized_OpenFLUID_GetDeltaT, 1},
+  { "SetPeriod", (DL_FUNC) &Rized_OpenFLUID_SetPeriod, 3},
+  { "GetPeriodBeginDate", (DL_FUNC) &Rized_OpenFLUID_GetPeriodBeginDate, 1},
+  { "GetPeriodEndDate", (DL_FUNC) &Rized_OpenFLUID_GetPeriodEndDate, 1},
   { NULL, NULL, 0}
 };
 
@@ -340,7 +351,7 @@ void Rized_OpenFLUID_RunSimulation(SEXP Blob)
 // =====================================================================
 
 
-SEXP Rized_OpenFLUID_SetFunctionParam(SEXP Blob,SEXP FunctionID, SEXP ParamName, SEXP ParamVal)
+SEXP Rized_OpenFLUID_SetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName, SEXP ParamVal)
 {
   Rf_error("under construction");
 }
@@ -350,7 +361,7 @@ SEXP Rized_OpenFLUID_SetFunctionParam(SEXP Blob,SEXP FunctionID, SEXP ParamName,
 // =====================================================================
 
 
-SEXP Rized_OpenFLUID_GetFunctionParam(SEXP Blob,SEXP FunctionID, SEXP ParamName)
+SEXP Rized_OpenFLUID_GetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName)
 {
   SEXP Ret = R_NilValue;
 
@@ -377,6 +388,30 @@ SEXP Rized_OpenFLUID_SetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, 
 
 SEXP Rized_OpenFLUID_GetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName)
 
+{
+  SEXP Ret = R_NilValue;
+
+  Rf_error("under construction");
+
+  return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_SetModelGlobalParam(SEXP Blob, SEXP ParamName, SEXP ParamVal)
+{
+  Rf_error("under construction");
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_GetModelGlobalParam(SEXP Blob, SEXP ParamName)
 {
   SEXP Ret = R_NilValue;
 
@@ -452,3 +487,51 @@ SEXP Rized_OpenFLUID_GetDeltaT(SEXP Blob)
 }
 
 
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_SetPeriod(SEXP Blob, SEXP Begin, SEXP End)
+{
+  ROpenFLUID_SetPeriod(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(Begin,0)),CHAR(STRING_ELT(End,0)));
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_GetPeriodBeginDate(SEXP Blob)
+{
+  SEXP Ret;
+
+  const char* DateStr = ROpenFLUID_GetPeriodBeginDate(R_ExternalPtrAddr(Blob));
+
+  PROTECT(Ret = allocVector(STRSXP, 1));
+
+  SET_STRING_ELT(Ret, 0, mkChar(DateStr));
+
+  UNPROTECT(1);
+
+  return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_GetPeriodEndDate(SEXP Blob)
+{
+  SEXP Ret;
+
+  const char* DateStr = ROpenFLUID_GetPeriodEndDate(R_ExternalPtrAddr(Blob));
+
+  PROTECT(Ret = allocVector(STRSXP, 1));
+
+  SET_STRING_ELT(Ret, 0, mkChar(DateStr));
+
+  UNPROTECT(1);
+
+  return Ret;
+}

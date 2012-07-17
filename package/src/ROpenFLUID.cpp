@@ -535,3 +535,47 @@ void ROpenFLUID_SetDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle, int DeltaT)
   Data->RunDesc.setDeltaT(DeltaT);
 }
 
+
+// =====================================================================
+// =====================================================================
+
+
+const char* ROpenFLUID_GetPeriodBeginDate(ROpenFLUID_ExtBlob_t* BlobHandle)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  return Data->RunDesc.getBeginDate().getAsString("%Y-%m-%d %H:%M:%S").c_str();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+const char* ROpenFLUID_GetPeriodEndDate(ROpenFLUID_ExtBlob_t* BlobHandle)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  return Data->RunDesc.getEndDate().getAsString("%Y-%m-%d %H:%M:%S").c_str();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_SetPeriod(ROpenFLUID_ExtBlob_t* BlobHandle, const char* BeginDate, const char* EndDate)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string StrBeginDate(BeginDate);
+  std::string StrEndDate(EndDate);
+  openfluid::core::DateTime DateToSet;
+
+  if (!StrBeginDate.empty() && DateToSet.setFromISOString(StrBeginDate))
+    Data->RunDesc.setBeginDate(DateToSet);
+
+  if (!StrEndDate.empty() && DateToSet.setFromISOString(StrEndDate))
+      Data->RunDesc.setEndDate(DateToSet);
+}
+

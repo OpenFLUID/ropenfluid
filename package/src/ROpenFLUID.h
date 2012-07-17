@@ -93,6 +93,13 @@ int ROpenFLUID_GetDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle);
 
 void ROpenFLUID_SetDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle, int DeltaT);
 
+const char* ROpenFLUID_GetPeriodBeginDate(ROpenFLUID_ExtBlob_t* BlobHandle);
+
+const char* ROpenFLUID_GetPeriodEndDate(ROpenFLUID_ExtBlob_t* BlobHandle);
+
+void ROpenFLUID_SetPeriod(ROpenFLUID_ExtBlob_t* BlobHandle, const char* BeginDate, const char* EndDate);
+
+
 
 #ifdef __cplusplus
 }

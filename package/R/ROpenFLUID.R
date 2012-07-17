@@ -291,6 +291,39 @@ OpenFLUID.getGeneratorParam <- function(ofblob,unitclass,varname,paramname)
 # =====================================================================
 
 
+OpenFLUID.setModelGlobalParam <- function(ofblob,paramname,paramval)
+{
+  stopifnot(!is.null(ofblob))  
+  stopifnot(is.character(paramname))
+  stopifnot(is.character(paramval))
+  
+  .Call("SetModelGlobalParam", ofblob, paramname, paramval, PACKAGE="ROpenFLUID")  
+  
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+OpenFLUID.getModelGlobalParam <- function(ofblob,paramname)
+{
+  stopifnot(!is.null(ofblob))  
+  stopifnot(is.character(paramname))
+  
+  ret <- .Call("GetModelGlobalParam", ofblob, paramname, PACKAGE="ROpenFLUID")  
+  
+  stopifnot(!is.null(ret))
+  
+  return(ret)
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
 OpenFLUID.setInputData <- function(ofblob,unitclass,unitid,idataname,idataval)
 {
   stopifnot(!is.null(ofblob))  
@@ -340,6 +373,7 @@ OpenFLUID.createInputData <- function(ofblob,unitclass,idataname,idataval)
   return(invisible(NULL))
 }
 
+
 # =====================================================================
 # =====================================================================
 
@@ -369,6 +403,59 @@ OpenFLUID.getDeltaT <- function(ofblob)
   stopifnot(!is.null(ret))
   
   return(ret)
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+OpenFLUID.setPeriodBeginDate <- function(ofblob,begindate)
+{
+  stopifnot(!is.null(ofblob))  
+  stopifnot(is.character(begindate))
+
+  .Call("SetPeriod", ofblob, begindate, "", PACKAGE="ROpenFLUID")
+
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+OpenFLUID.setPeriodEndDate <- function(ofblob,enddate)
+{
+  stopifnot(!is.null(ofblob))
+  stopifnot(is.character(enddate))
+
+  .Call("SetPeriod", ofblob, "", enddate, PACKAGE="ROpenFLUID")
+
+  return(invisible(NULL))
+}
+
+# =====================================================================
+# =====================================================================
+
+
+OpenFLUID.getPeriodBeginDate <- function(ofblob)
+{
+  stopifnot(!is.null(ofblob))  
+
+  .Call("GetPeriodBeginDate", ofblob, PACKAGE="ROpenFLUID")
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+OpenFLUID.getPeriodEndDate <- function(ofblob)
+{
+  stopifnot(!is.null(ofblob))  
+
+  .Call("GetPeriodEndDate", ofblob, PACKAGE="ROpenFLUID")
 }
 
 
