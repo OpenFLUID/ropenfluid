@@ -83,7 +83,7 @@ BEGIN_SIGNATURE_HOOK
   DECLARE_SIGNATURE_AUTHORNAME((""));
   DECLARE_SIGNATURE_AUTHOREMAIL((""));
 
-  DECLARE_PRODUCED_VAR("var.A","XUnit","","");
+  DECLARE_PRODUCED_VAR("var.A","SU","","");
 
 END_SIGNATURE_HOOK
 
@@ -169,13 +169,13 @@ class FunctionA : public openfluid::base::PluggableFunction
   {
 
     DECLARE_UNITS_ORDERED_LOOP(1);
-    openfluid::core::Unit* XU;
+    openfluid::core::Unit* SU;
 
    // std::cout << "yala" << std::endl;
 
-    BEGIN_UNITS_ORDERED_LOOP(1,"XUnit",XU)
+    BEGIN_UNITS_ORDERED_LOOP(1,"SU",SU)
 
-      OPENFLUID_AppendVariable(XU,"var.A",openfluid::core::DoubleValue(9.3));
+      OPENFLUID_AppendVariable(SU,"var.A",openfluid::core::DoubleValue(9.3));
  //     OPENFLUID_Logger.getFile() << "ici";
 
     END_LOOP

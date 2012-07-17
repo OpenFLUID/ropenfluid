@@ -82,7 +82,7 @@ BEGIN_SIGNATURE_HOOK
   DECLARE_SIGNATURE_AUTHORNAME((""));
   DECLARE_SIGNATURE_AUTHOREMAIL((""));
 
-  DECLARE_PRODUCED_VAR("var.B","XUnit","","");
+  DECLARE_PRODUCED_VAR("var.B","RS","","");
 
 END_SIGNATURE_HOOK
 
@@ -168,11 +168,11 @@ class FunctionB : public openfluid::base::PluggableFunction
   {
 
       DECLARE_UNITS_ORDERED_LOOP(1);
-      openfluid::core::Unit* XU;
+      openfluid::core::Unit* RS;
 
-      BEGIN_UNITS_ORDERED_LOOP(1,"XUnit",XU)
+      BEGIN_UNITS_ORDERED_LOOP(1,"RS",RS)
 
-        OPENFLUID_AppendVariable(XU,"var.B",openfluid::core::DoubleValue(6.6));
+        OPENFLUID_AppendVariable(RS,"var.B",openfluid::core::DoubleValue(6.6));
 
       END_LOOP
     return true;

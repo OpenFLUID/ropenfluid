@@ -1,0 +1,56 @@
+<?xml version="1.0" standalone="yes"?>
+<openfluid>
+ <domain>
+  <definition>
+   <unit class="RS" ID="1" pcsorder="1">
+    <to class="RS" ID="2" />
+   </unit>
+   <unit class="RS" ID="2" pcsorder="2">
+    <to class="RS" ID="3" />
+   </unit>
+   <unit class="RS" ID="3" pcsorder="3">
+   </unit>
+   <unit class="SU" ID="1" pcsorder="1">
+    <to class="RS" ID="1" />
+   </unit>
+   <unit class="SU" ID="2" pcsorder="1">
+    <to class="SU" ID="6" />
+   </unit>
+   <unit class="SU" ID="3" pcsorder="2">
+    <to class="RS" ID="1" />
+   </unit>
+   <unit class="SU" ID="4" pcsorder="1">
+    <to class="SU" ID="3" />
+   </unit>
+   <unit class="SU" ID="5" pcsorder="1">
+    <to class="RS" ID="3" />
+   </unit>
+   <unit class="SU" ID="6" pcsorder="2">
+    <to class="RS" ID="2" />
+   </unit>
+
+
+  
+  </definition>
+  <inputdata unitclass="RS" colorder="length;slope">
+1 161 0.01
+2 170 0.01
+3 204 0.01
+  </inputdata>
+
+  <inputdata unitclass="SU" colorder="area;flowdist;slope">
+1 1216.29 51 0.02
+2 1309.54 121 0.04
+3 2199.36 64 0.02
+4 1303.82 104 0.03
+5 3024.27 80 0.01
+6 2229.32 90 0.03
+
+  </inputdata>
+  <calendar>
+  </calendar>
+ </domain>
+
+
+</openfluid>
+

@@ -2,7 +2,7 @@ library(RUnit)
 
 library("ROpenFLUID")
 
-ofdata = OpenFLUID.openDataset("simple.IN")
+ofdata = OpenFLUID.openDataset("6fields_3reaches.IN")
 
 OpenFLUID.printSimulationInfo(ofdata)
 

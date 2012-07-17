@@ -1,0 +1,10 @@
+<?xml version="1.0" standalone="yes"?>
+<openfluid>
+ <datastore>
+  <dataitem id="myRS" type="geovector" source="shapefiles/virtual_reachs.shp" unitclass="RS" />
+  <dataitem id="mySU" type="geovector" source="shapefiles/virtual_fields.shp" unitclass="SU" />
+ </datastore>
+
+
+</openfluid>
+
