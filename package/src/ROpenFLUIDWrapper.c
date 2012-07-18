@@ -71,11 +71,11 @@ static SEXP Rized_OpenFLUID_OpenDataset(SEXP Path);
 static void Rized_OpenFLUID_SetCurrentOutputDir(SEXP Path);
 static void Rized_OpenFLUID_RunSimulation(SEXP Blob);
 
-static SEXP Rized_OpenFLUID_SetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName, SEXP ParamVal);
+static void Rized_OpenFLUID_SetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName, SEXP ParamVal);
 static SEXP Rized_OpenFLUID_GetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName);
-static SEXP Rized_OpenFLUID_SetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName, SEXP ParamVal);
+static void Rized_OpenFLUID_SetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName, SEXP ParamVal);
 static SEXP Rized_OpenFLUID_GetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName);
-static SEXP Rized_OpenFLUID_SetModelGlobalParam(SEXP Blob, SEXP ParamName, SEXP ParamVal);
+static void Rized_OpenFLUID_SetModelGlobalParam(SEXP Blob, SEXP ParamName, SEXP ParamVal);
 static SEXP Rized_OpenFLUID_GetModelGlobalParam(SEXP Blob, SEXP ParamName);
 
 static SEXP Rized_OpenFLUID_CreateInputData(SEXP Blob,SEXP UnitClass, SEXP IDataName, SEXP IDataValue);
@@ -351,9 +351,9 @@ void Rized_OpenFLUID_RunSimulation(SEXP Blob)
 // =====================================================================
 
 
-SEXP Rized_OpenFLUID_SetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName, SEXP ParamVal)
+void Rized_OpenFLUID_SetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName, SEXP ParamVal)
 {
-  Rf_error("under construction");
+  ROpenFLUID_SetFunctionParam(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(FunctionID, 0)),CHAR(STRING_ELT(ParamName, 0)),CHAR(STRING_ELT(ParamVal, 0)));
 }
 
 
@@ -363,9 +363,15 @@ SEXP Rized_OpenFLUID_SetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName
 
 SEXP Rized_OpenFLUID_GetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName)
 {
-  SEXP Ret = R_NilValue;
+  SEXP Ret;
 
-  Rf_error("under construction");
+  const char* Val = ROpenFLUID_GetFunctionParam(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(FunctionID, 0)),CHAR(STRING_ELT(ParamName, 0)));
+
+  PROTECT(Ret = allocVector(STRSXP, 1));
+
+  SET_STRING_ELT(Ret, 0, mkChar(Val));
+
+  UNPROTECT(1);
 
   return Ret;
 }
@@ -375,10 +381,10 @@ SEXP Rized_OpenFLUID_GetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName
 // =====================================================================
 
 
-SEXP Rized_OpenFLUID_SetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName, SEXP ParamVal)
+void Rized_OpenFLUID_SetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName, SEXP ParamVal)
 
 {
-  Rf_error("under construction");
+  ROpenFLUID_SetGeneratorParam(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)),CHAR(STRING_ELT(VarName, 0)),CHAR(STRING_ELT(ParamName, 0)),CHAR(STRING_ELT(ParamVal, 0)));
 }
 
 
@@ -389,9 +395,15 @@ SEXP Rized_OpenFLUID_SetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, 
 SEXP Rized_OpenFLUID_GetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName)
 
 {
-  SEXP Ret = R_NilValue;
+  SEXP Ret;
 
-  Rf_error("under construction");
+  const char* Val = ROpenFLUID_GetGeneratorParam(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)),CHAR(STRING_ELT(VarName, 0)),CHAR(STRING_ELT(ParamName, 0)));
+
+  PROTECT(Ret = allocVector(STRSXP, 1));
+
+  SET_STRING_ELT(Ret, 0, mkChar(Val));
+
+  UNPROTECT(1);
 
   return Ret;
 }
@@ -401,9 +413,9 @@ SEXP Rized_OpenFLUID_GetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, 
 // =====================================================================
 
 
-SEXP Rized_OpenFLUID_SetModelGlobalParam(SEXP Blob, SEXP ParamName, SEXP ParamVal)
+void Rized_OpenFLUID_SetModelGlobalParam(SEXP Blob, SEXP ParamName, SEXP ParamVal)
 {
-  Rf_error("under construction");
+  ROpenFLUID_SetModelGlobalParam(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(ParamName, 0)),CHAR(STRING_ELT(ParamVal, 0)));
 }
 
 
@@ -413,9 +425,15 @@ SEXP Rized_OpenFLUID_SetModelGlobalParam(SEXP Blob, SEXP ParamName, SEXP ParamVa
 
 SEXP Rized_OpenFLUID_GetModelGlobalParam(SEXP Blob, SEXP ParamName)
 {
-  SEXP Ret = R_NilValue;
+  SEXP Ret;
 
-  Rf_error("under construction");
+  const char* Val = ROpenFLUID_GetModelGlobalParam(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(ParamName, 0)));
+
+  PROTECT(Ret = allocVector(STRSXP, 1));
+
+  SET_STRING_ELT(Ret, 0, mkChar(Val));
+
+  UNPROTECT(1);
 
   return Ret;
 }

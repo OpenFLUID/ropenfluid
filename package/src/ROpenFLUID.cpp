@@ -579,3 +579,158 @@ void ROpenFLUID_SetPeriod(ROpenFLUID_ExtBlob_t* BlobHandle, const char* BeginDat
       Data->RunDesc.setEndDate(DateToSet);
 }
 
+
+// =====================================================================
+// =====================================================================
+
+
+const char* ROpenFLUID_GetFunctionParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* FuncID, const char* ParamName)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string ParamValStr("");
+  std::string FuncIDStr(FuncID);
+  std::string ParamNameStr(ParamName);
+
+  for (openfluid::base::ModelDescriptor::ModelDescription_t::iterator ItModelInfos = Data->ModelDesc.getItems().begin();
+         ItModelInfos != Data->ModelDesc.getItems().end(); ++ItModelInfos)
+  {
+    if ((*ItModelInfos)->isType(openfluid::base::ModelItemDescriptor::PluggedFunction) &&
+        ((openfluid::base::FunctionDescriptor*)(*ItModelInfos))->getFileID() == FuncIDStr)
+    {
+      openfluid::core::FuncParamsMap_t Params = (*ItModelInfos)->getParameters();
+      openfluid::core::FuncParamsMap_t::iterator ItParam = Params.find(ParamNameStr);
+
+      if (ItParam != Params.end())
+      {
+        ParamValStr = (*ItParam).second;
+        return ParamValStr.c_str();
+      }
+    }
+  }
+
+  return ParamValStr.c_str();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_SetFunctionParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* FuncID, const char* ParamName, const char* ParamVal)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string FuncIDStr(FuncID);
+  std::string ParamNameStr(ParamName);
+  std::string ParamValStr(ParamVal);
+
+  for (openfluid::base::ModelDescriptor::ModelDescription_t::iterator ItModelInfos = Data->ModelDesc.getItems().begin();
+         ItModelInfos != Data->ModelDesc.getItems().end(); ++ItModelInfos)
+  {
+    if ((*ItModelInfos)->isType(openfluid::base::ModelItemDescriptor::PluggedFunction) &&
+        ((openfluid::base::FunctionDescriptor*)(*ItModelInfos))->getFileID() == FuncIDStr)
+      (*ItModelInfos)->setParameter(ParamNameStr,ParamValStr);
+  }
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_SetGeneratorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, const char* VarName, const char* ParamName, const char* ParamVal)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string UnitClassStr(UnitClass);
+  std::string VarNameStr(VarName);
+  std::string ParamNameStr(ParamName);
+  std::string ParamValStr(ParamVal);
+
+  for (openfluid::base::ModelDescriptor::ModelDescription_t::iterator ItModelInfos = Data->ModelDesc.getItems().begin();
+         ItModelInfos != Data->ModelDesc.getItems().end(); ++ItModelInfos)
+  {
+    if ((*ItModelInfos)->isType(openfluid::base::ModelItemDescriptor::Generator) &&
+        ((openfluid::base::GeneratorDescriptor*)(*ItModelInfos))->getUnitClass() == UnitClassStr &&
+        ((openfluid::base::GeneratorDescriptor*)(*ItModelInfos))->getVariableName() == VarNameStr)
+    {
+      (*ItModelInfos)->setParameter(ParamNameStr,ParamValStr);
+    }
+  }
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+const char* ROpenFLUID_GetGeneratorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, const char* VarName, const char* ParamName)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string UnitClassStr(UnitClass);
+  std::string VarNameStr(VarName);
+  std::string ParamNameStr(ParamName);
+  std::string ParamValStr("");
+
+  for (openfluid::base::ModelDescriptor::ModelDescription_t::iterator ItModelInfos = Data->ModelDesc.getItems().begin();
+         ItModelInfos != Data->ModelDesc.getItems().end(); ++ItModelInfos)
+  {
+    if ((*ItModelInfos)->isType(openfluid::base::ModelItemDescriptor::Generator) &&
+        ((openfluid::base::GeneratorDescriptor*)(*ItModelInfos))->getUnitClass() == UnitClassStr &&
+        ((openfluid::base::GeneratorDescriptor*)(*ItModelInfos))->getVariableName() == VarNameStr)
+    {
+      openfluid::core::FuncParamsMap_t Params = (*ItModelInfos)->getParameters();
+      openfluid::core::FuncParamsMap_t::iterator ItParam = Params.find(ParamNameStr);
+
+      if (ItParam != Params.end())
+      {
+        ParamValStr = (*ItParam).second;
+        return ParamValStr.c_str();
+      }
+
+    }
+  }
+  return ParamValStr.c_str();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_SetModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* ParamName, const char* ParamVal)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string ParamNameStr(ParamName);
+  std::string ParamValStr(ParamVal);
+
+  Data->ModelDesc.setGlobalParameter(ParamNameStr,ParamValStr);
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+const char* ROpenFLUID_GetModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* ParamName)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string ParamNameStr(ParamName);
+  std::string ParamValStr("");
+
+  openfluid::core::FuncParamsMap_t Params = Data->ModelDesc.getGlobalParameters();
+  openfluid::core::FuncParamsMap_t::iterator ItParam = Params.find(ParamNameStr);
+
+  if (ItParam != Params.end())
+  {
+    ParamValStr = (*ItParam).second;
+    return ParamValStr.c_str();
+  }
+
+  return ParamValStr.c_str();
+}
+

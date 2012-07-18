@@ -1,7 +1,11 @@
 <?xml version="1.0" standalone="yes"?>
 <openfluid>
   <model>
-
+  
+    <gparams>
+      <param name="gparam1" value="1.1;2.1" />
+    </gparams>
+    
     <generator varname="tests.fixed" unitclass="SU" method="fixed">
       <param name="fixedvalue" value="12.7" />
     </generator>

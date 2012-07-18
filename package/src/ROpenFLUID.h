@@ -99,6 +99,17 @@ const char* ROpenFLUID_GetPeriodEndDate(ROpenFLUID_ExtBlob_t* BlobHandle);
 
 void ROpenFLUID_SetPeriod(ROpenFLUID_ExtBlob_t* BlobHandle, const char* BeginDate, const char* EndDate);
 
+const char* ROpenFLUID_GetFunctionParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* FuncID, const char* ParamName);
+
+void ROpenFLUID_SetFunctionParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* FuncID, const char* ParamName, const char* ParamVal);
+
+void ROpenFLUID_SetGeneratorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, const char* VarName, const char* ParamName, const char* ParamVal);
+
+const char*  ROpenFLUID_GetGeneratorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, const char* VarName, const char* ParamName);
+
+void ROpenFLUID_SetModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* ParamName, const char* ParamVal);
+
+const char*  ROpenFLUID_GetModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* ParamName);
 
 
 #ifdef __cplusplus

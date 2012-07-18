@@ -224,9 +224,9 @@ OpenFLUID.setFunctionParam <- function(ofblob,funcid,paramname,paramval)
   stopifnot(!is.null(ofblob))  
   stopifnot(is.character(funcid))
   stopifnot(is.character(paramname))
-  stopifnot(is.character(paramval))
   
-  .Call("SetFunctionParam", ofblob, funcid, paramname, paramval, PACKAGE="ROpenFLUID")  
+  
+  .Call("SetFunctionParam", ofblob, funcid, paramname, as.character(paramval), PACKAGE="ROpenFLUID")  
   
   return(invisible(NULL))
 }
@@ -242,11 +242,7 @@ OpenFLUID.getFunctionParam <- function(ofblob,funcid,paramname)
   stopifnot(is.character(funcid))
   stopifnot(is.character(paramname))
   
-  ret <- .Call("GetFunctionParam", ofblob, funcid, paramname, PACKAGE="ROpenFLUID")  
-  
-  stopifnot(!is.null(ret))
-  
-  return(ret)
+  .Call("GetFunctionParam", ofblob, funcid, paramname, PACKAGE="ROpenFLUID")  
 }
 
 
@@ -260,9 +256,8 @@ OpenFLUID.setGeneratorParam <- function(ofblob,unitclass,varname,paramname,param
   stopifnot(is.character(unitclass))
   stopifnot(is.character(varname))
   stopifnot(is.character(paramname))
-  stopifnot(is.character(paramval))
-  
-  .Call("SetGeneratorParam", ofblob, unitclass, varname, paramname, paramval, PACKAGE="ROpenFLUID")  
+
+  .Call("SetGeneratorParam", ofblob, unitclass, varname, paramname, as.character(paramval), PACKAGE="ROpenFLUID")  
   
   return(invisible(NULL))
 }
@@ -279,11 +274,7 @@ OpenFLUID.getGeneratorParam <- function(ofblob,unitclass,varname,paramname)
   stopifnot(is.character(varname))
   stopifnot(is.character(paramname))
   
-  ret <- .Call("GetGeneratorParam", ofblob, unitclass, varname, paramname, PACKAGE="ROpenFLUID")  
-  
-  stopifnot(!is.null(ret))
-  
-  return(ret)
+  .Call("GetGeneratorParam", ofblob, unitclass, varname, paramname, PACKAGE="ROpenFLUID")    
 }
 
 
@@ -295,9 +286,8 @@ OpenFLUID.setModelGlobalParam <- function(ofblob,paramname,paramval)
 {
   stopifnot(!is.null(ofblob))  
   stopifnot(is.character(paramname))
-  stopifnot(is.character(paramval))
   
-  .Call("SetModelGlobalParam", ofblob, paramname, paramval, PACKAGE="ROpenFLUID")  
+  .Call("SetModelGlobalParam", ofblob, paramname, as.character(paramval), PACKAGE="ROpenFLUID")  
   
   return(invisible(NULL))
 }
@@ -312,11 +302,7 @@ OpenFLUID.getModelGlobalParam <- function(ofblob,paramname)
   stopifnot(!is.null(ofblob))  
   stopifnot(is.character(paramname))
   
-  ret <- .Call("GetModelGlobalParam", ofblob, paramname, PACKAGE="ROpenFLUID")  
-  
-  stopifnot(!is.null(ret))
-  
-  return(ret)
+  .Call("GetModelGlobalParam", ofblob, paramname, PACKAGE="ROpenFLUID")    
 }
 
 
