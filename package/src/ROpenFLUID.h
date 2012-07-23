@@ -111,6 +111,12 @@ void ROpenFLUID_SetModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char
 
 const char*  ROpenFLUID_GetModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* ParamName);
 
+void ROpenFLUID_CreateInputData(ROpenFLUID_ExtBlob_t* BlobHandle,const char* UnitClass, const char* IDataName, const char* IDataValue);
+
+void ROpenFLUID_SetInputData(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* IDataName, const char* IDataValue);
+
+const char* ROpenFLUID_GetInputData(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* IDataName);
+
 
 #ifdef __cplusplus
 }

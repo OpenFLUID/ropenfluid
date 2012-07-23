@@ -314,11 +314,10 @@ OpenFLUID.setInputData <- function(ofblob,unitclass,unitid,idataname,idataval)
 {
   stopifnot(!is.null(ofblob))  
   stopifnot(is.character(unitclass))
-  stopifnot(is.integer(unitid))
-  stopifnot(is.character(idataname))
-  stopifnot(is.character(idataval))  
+  stopifnot(is.numeric(unitid))
+  stopifnot(is.character(idataname))    
   
-  .Call("SetInputData", ofblob, unitclass, unitid, idataname, idataval, PACKAGE="ROpenFLUID")  
+  .Call("SetInputData", ofblob, unitclass, as.integer(unitid), idataname, as.character(idataval), PACKAGE="ROpenFLUID")  
   
   return(invisible(NULL))
 }
@@ -332,10 +331,10 @@ OpenFLUID.getInputData <- function(ofblob,unitclass,unitid,idataname)
 {
   stopifnot(!is.null(ofblob))  
   stopifnot(is.character(unitclass))
-  stopifnot(is.integer(unitid))
+  stopifnot(is.numeric(unitid))
   stopifnot(is.character(idataname))
   
-  ret <- .Call("GetInputData", ofblob, unitclass, unitid, idataname, PACKAGE="ROpenFLUID")  
+  ret <- .Call("GetInputData", ofblob, unitclass, as.integer(unitid), idataname, PACKAGE="ROpenFLUID")  
   
   stopifnot(!is.null(ret))
   
@@ -351,10 +350,9 @@ OpenFLUID.createInputData <- function(ofblob,unitclass,idataname,idataval)
 {
   stopifnot(!is.null(ofblob))  
   stopifnot(is.character(unitclass))
-  stopifnot(is.character(idataname))
-  stopifnot(is.character(idataval))  
+  stopifnot(is.character(idataname))  
   
-  .Call("CreateInputData", ofblob, unitclass, idataname, idataval, PACKAGE="ROpenFLUID")  
+  .Call("CreateInputData", ofblob, unitclass, idataname, as.character(idataval), PACKAGE="ROpenFLUID")  
   
   return(invisible(NULL))
 }

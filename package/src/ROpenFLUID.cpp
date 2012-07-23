@@ -53,22 +53,6 @@
 
 #include "ROpenFLUID.h"
 
-/*
-struct ROpenFLUID_Blob_t
-{
-  openfluid::machine::SimulationBlob SBlob;
-  openfluid::machine::MachineListener MachineListen;
-  openfluid::machine::ModelInstance Model;
-
-
-  ROpenFLUID_Blob_t()
-    : Model(SBlob,&MachineListen)
-  {
-
-  }
-
-};
-*/
 
 
 struct ROpenFLUID_Blob_t
@@ -732,5 +716,94 @@ const char* ROpenFLUID_GetModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, con
   }
 
   return ParamValStr.c_str();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_CreateInputData(ROpenFLUID_ExtBlob_t* BlobHandle,const char* UnitClass, const char* IDataName, const char* IDataValue)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string UnitClassStr(UnitClass);
+  std::string IDataNameStr(IDataName);
+  std::string IDataValStr(IDataValue);
+
+  std::list<openfluid::base::InputDataDescriptor>& IData = Data->DomainDesc.getInputData();
+
+  for (std::list<openfluid::base::InputDataDescriptor>::iterator ItIData = IData.begin();ItIData != IData.end();++ItIData)
+  {
+    if ((*ItIData).getUnitsClass() == UnitClassStr)
+    {
+      openfluid::base::InputDataDescriptor::UnitIDInputData_t::iterator ItUnitData = (*ItIData).getData().begin();
+
+      for (ItUnitData;ItUnitData!=(*ItIData).getData().end();++ItUnitData)
+        (*ItUnitData).second[IDataNameStr] = IDataValStr;
+    }
+  }
+
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_SetInputData(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* IDataName, const char* IDataValue)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string UnitClassStr(UnitClass);
+  std::string IDataNameStr(IDataName);
+  std::string IDataValStr(IDataValue);
+
+  std::list<openfluid::base::InputDataDescriptor>& IData = Data->DomainDesc.getInputData();
+
+  for (std::list<openfluid::base::InputDataDescriptor>::iterator ItIData = IData.begin();ItIData != IData.end();++ItIData)
+  {
+    if ((*ItIData).getUnitsClass() == UnitClassStr)
+    {
+      openfluid::base::InputDataDescriptor::UnitIDInputData_t::iterator ItUnitData = (*ItIData).getData().find(UnitID);
+      if (ItUnitData != (*ItIData).getData().end())
+      {
+        if ((*ItUnitData).second.find(IDataNameStr) != (*ItUnitData).second.end())
+          (*ItUnitData).second[IDataNameStr] = IDataValStr;
+      }
+    }
+  }
+
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+const char* ROpenFLUID_GetInputData(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* IDataName)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string UnitClassStr(UnitClass);
+  std::string IDataNameStr(IDataName);
+  std::string IDataValStr("");
+
+  std::list<openfluid::base::InputDataDescriptor>& IData = Data->DomainDesc.getInputData();
+
+  for (std::list<openfluid::base::InputDataDescriptor>::iterator ItIData = IData.begin();ItIData != IData.end();++ItIData)
+  {
+    if ((*ItIData).getUnitsClass() == UnitClassStr)
+    {
+      openfluid::base::InputDataDescriptor::UnitIDInputData_t::const_iterator ItUnitData = (*ItIData).getData().find(UnitID);
+      if (ItUnitData != (*ItIData).getData().end())
+      {
+        if ((*ItUnitData).second.find(IDataNameStr) != (*ItUnitData).second.end())
+          return ((*ItUnitData).second.at(IDataNameStr).c_str());
+      }
+    }
+  }
+
+  return "";
 }
 

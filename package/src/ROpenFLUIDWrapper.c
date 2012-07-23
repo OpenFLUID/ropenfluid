@@ -78,8 +78,8 @@ static SEXP Rized_OpenFLUID_GetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP Va
 static void Rized_OpenFLUID_SetModelGlobalParam(SEXP Blob, SEXP ParamName, SEXP ParamVal);
 static SEXP Rized_OpenFLUID_GetModelGlobalParam(SEXP Blob, SEXP ParamName);
 
-static SEXP Rized_OpenFLUID_CreateInputData(SEXP Blob,SEXP UnitClass, SEXP IDataName, SEXP IDataValue);
-static SEXP Rized_OpenFLUID_SetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP IDataName, SEXP IDataValue);
+static void Rized_OpenFLUID_CreateInputData(SEXP Blob,SEXP UnitClass, SEXP IDataName, SEXP IDataValue);
+static void Rized_OpenFLUID_SetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP IDataName, SEXP IDataValue);
 static SEXP Rized_OpenFLUID_GetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP IDataName);
 
 static SEXP Rized_OpenFLUID_SetDeltaT(SEXP Blob, SEXP DeltaT);
@@ -443,11 +443,9 @@ SEXP Rized_OpenFLUID_GetModelGlobalParam(SEXP Blob, SEXP ParamName)
 // =====================================================================
 
 
-SEXP Rized_OpenFLUID_CreateInputData(SEXP Blob,SEXP UnitClass, SEXP IDataName, SEXP IDataValue)
+void Rized_OpenFLUID_CreateInputData(SEXP Blob,SEXP UnitClass, SEXP IDataName, SEXP IDataValue)
 {
-
-  Rf_error("under construction");
-
+  ROpenFLUID_CreateInputData(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)),CHAR(STRING_ELT(IDataName, 0)),CHAR(STRING_ELT(IDataValue, 0)));
 }
 
 
@@ -455,11 +453,9 @@ SEXP Rized_OpenFLUID_CreateInputData(SEXP Blob,SEXP UnitClass, SEXP IDataName, S
 // =====================================================================
 
 
-SEXP Rized_OpenFLUID_SetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP IDataName, SEXP IDataValue)
+void Rized_OpenFLUID_SetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP IDataName, SEXP IDataValue)
 {
-
-  Rf_error("under construction");
-
+  ROpenFLUID_SetInputData(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)),INTEGER(UnitID)[0],CHAR(STRING_ELT(IDataName, 0)),CHAR(STRING_ELT(IDataValue, 0)));
 }
 
 
@@ -469,9 +465,15 @@ SEXP Rized_OpenFLUID_SetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP I
 
 SEXP Rized_OpenFLUID_GetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP IDataName)
 {
-  SEXP Ret = R_NilValue;
+  SEXP Ret;
 
-  Rf_error("under construction");
+  const char* Val = ROpenFLUID_GetInputData(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)),INTEGER(UnitID)[0],CHAR(STRING_ELT(IDataName, 0)));
+
+  PROTECT(Ret = allocVector(STRSXP, 1));
+
+  SET_STRING_ELT(Ret, 0, mkChar(Val));
+
+  UNPROTECT(1);
 
   return Ret;
 }
