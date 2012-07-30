@@ -1,12 +1,12 @@
-\name{ROpenFLUID-package}
-\alias{ROpenFLUID-package}
+\name{ROpenFLUID}
+\alias{ROpenFLUID}
 
 \docType{package}
 
-\title{ROpenFLUID}
+\title{@openfluid_R_TITLE@}
 
 \description{
-blah blah
+@openfluid_R_DESC@
 }
 
 \details{
@@ -15,24 +15,24 @@ Package: \tab ROpenFLUID\cr
 Type: \tab Package\cr
 Version: \tab @openfluid_R_VERSION@\cr
 Date: \tab @openfluid_R_DATE@\cr
-License: \tab What license is it under?\cr
+License: \tab GPLv3 with special exception\cr
 LazyLoad: \tab yes\cr
 }
-An overview of how to use the package, including the most important functions
+TO BE COMPLETED
 }
 
 \author{Jean-Christophe Fabre <fabrejc@supagro.inra.fr>}
 
-\references{
-
-}
 
 \keyword{OpenFLUID, spatial, modelling, simulation}
 
-\seealso{
-}
 
 \examples{
-
-
+\dontrun{
+library("ROpenFLUID")
+OpenFLUID.addExtraFunctionsPaths("/path/to/simfuncs")
+ofsim = OpenFLUID.openDataset("/path/to/dataset")
+OpenFLUID.setCurrentOutputDir("/path/to/output")
+OpenFLUID.runSimulation(ofsim)
+}
 }
