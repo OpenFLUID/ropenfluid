@@ -18,7 +18,6 @@ Date: \tab @openfluid_R_DATE@\cr
 License: \tab GPLv3 with special exception\cr
 LazyLoad: \tab yes\cr
 }
-TO BE COMPLETED
 }
 
 \author{Jean-Christophe Fabre <fabrejc@supagro.inra.fr>}
@@ -29,10 +28,19 @@ TO BE COMPLETED
 
 \examples{
 \dontrun{
+# load OpenFLUID library
 library("ROpenFLUID")
+
+# add optional paths to search for simulation functions
 OpenFLUID.addExtraFunctionsPaths("/path/to/simfuncs")
+
+# open an input dataset
 ofsim = OpenFLUID.openDataset("/path/to/dataset")
+
+# set the output dir
 OpenFLUID.setCurrentOutputDir("/path/to/output")
+
+# run the simulation
 OpenFLUID.runSimulation(ofsim)
 }
 }

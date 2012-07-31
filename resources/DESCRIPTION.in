@@ -6,6 +6,7 @@ Date: @openfluid_R_DATE@
 Author: Jean-Christophe Fabre <fabrejc@supagro.inra.fr>
 Maintainer: Jean-Christophe Fabre <fabrejc@supagro.inra.fr>
 Description: @openfluid_R_DESC@
+URL: http://www.umr-lisah.fr/openfluid
 License: GPL-3 + file LICENSE
 Depends: R (>= 2.6.2), RUnit
 LazyLoad: yes
