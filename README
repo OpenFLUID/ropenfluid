@@ -15,7 +15,7 @@ This package requires the following packages:
 Checking ROpenFLUID package
 ===========================
 
-cmake - P check.cmake
+cmake -P check.cmake
 
 
 
@@ -23,7 +23,7 @@ testing ROpenFLUID package
 ===========================
 
 Prepare external tests using the following command:
-cmake - P preparetests.cmake
+cmake -P preparetests.cmake
 
 Tests must be run from the build directory, using R
 
@@ -32,7 +32,7 @@ Tests must be run from the build directory, using R
 Building ROpenFLUID package
 ===========================
 
-cmake - P build.cmake
+cmake -P build.cmake
 
 
 
