@@ -1,6 +1,3 @@
-# CMake script for building R OpenFLUID package
-# usage : cmake -P build.cmake 
-
 
 INCLUDE("config.in.cmake")
 

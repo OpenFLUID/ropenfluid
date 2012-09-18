@@ -5,8 +5,8 @@ SET(BUILDDIR "${CMAKE_CURRENT_SOURCE_DIR}/_build")
 SET(PACKAGEBUILDDIR "${BUILDDIR}/ROpenFLUID")
 
 
-SET(openfluid_R_TITLE "Package for using OpenFLUID from the GNU R environment")
-SET(openfluid_R_DESC "This package allows to load, parameterize, run and analyse OpenFLUID simulations from the GNU R environment")
+SET(openfluid_R_TITLE "Package for using OpenFLUID within the GNU R environment")
+SET(openfluid_R_DESC "This package allows to load, parameterize, run and analyse OpenFLUID simulations within the GNU R environment")
 
 FIND_PACKAGE(PkgConfig REQUIRED)
 PKG_CHECK_MODULES(openfluid REQUIRED openfluid)
