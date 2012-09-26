@@ -2,6 +2,8 @@ library(RUnit)
 
 library("ROpenFLUID")
 
+OpenFLUID.setCurrentOutputDir(paste(getwd(),'/6fields_3reaches.OUT', sep = ""))
+
 ofdata = OpenFLUID.openDataset("6fields_3reaches.IN")
 
 OpenFLUID.printSimulationInfo(ofdata)
