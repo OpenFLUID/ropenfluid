@@ -290,6 +290,51 @@ OpenFLUID.getPeriodBeginDate <- function(ofblob)
 # =====================================================================
 
 
+#' Returns the existing units classes
+#' 
+#' @param ofblob the simulation definition blob
+#' @return a vector of units classes
+#' 
+#' @examples \dontrun{
+#' cls = OpenFLUID.getUnitsClasses(ofsim)
+#' }
+#' 
+#' @seealso \code{\link{OpenFLUID.getUnitsIDs}}
+OpenFLUID.getUnitsClasses <- function(ofblob)
+{
+  stopifnot(!is.null(ofblob))  
+  
+  .Call("GetUnitsClasses", ofblob, PACKAGE="ROpenFLUID")
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+#' Returns the existing units IDs for a given units class
+#' 
+#' @param ofblob the simulation definition blob
+#' @param unitclass the units class
+#' @return a vector of units IDs
+#' 
+#' @examples \dontrun{
+#' ids = OpenFLUID.getUnitsIDs(ofsim,"SU")
+#' }
+#' 
+#' @seealso \code{\link{OpenFLUID.getUnitsClasses}}
+OpenFLUID.getUnitsIDs <- function(ofblob,unitclass)
+{
+  stopifnot(!is.null(ofblob))  
+  
+  .Call("GetUnitsIDs", ofblob, unitclass, PACKAGE="ROpenFLUID")
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
 #' Returns the simulation period end date
 #' 
 #' @param ofblob the simulation definition blob

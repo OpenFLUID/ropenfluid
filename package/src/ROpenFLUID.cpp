@@ -723,6 +723,121 @@ const char* ROpenFLUID_GetModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, con
 // =====================================================================
 
 
+std::map<openfluid::core::UnitClass_t,unsigned int> GetUnitsCountByClasses(ROpenFLUID_ExtBlob_t* BlobHandle)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::map<openfluid::core::UnitClass_t,unsigned int> RetMap;
+
+  std::list<openfluid::base::UnitDescriptor>& Units = Data->DomainDesc.getUnits();
+
+  for (std::list<openfluid::base::UnitDescriptor>::iterator ItUnits = Units.begin();ItUnits != Units.end();++ItUnits)
+  {
+    if (RetMap.find((*ItUnits).getUnitClass()) == RetMap.end()) RetMap[(*ItUnits).getUnitClass()] = 0;
+    RetMap[(*ItUnits).getUnitClass()]++;
+  }
+
+  return RetMap;
+}
+
+
+
+// =====================================================================
+// =====================================================================
+
+
+char** ROpenFLUID_GetUnitsClasses(ROpenFLUID_ExtBlob_t* BlobHandle)
+{
+  std::map<openfluid::core::UnitClass_t,unsigned int> UnitsCountByClasses;
+  UnitsCountByClasses = GetUnitsCountByClasses(BlobHandle);
+
+  std::map<openfluid::core::UnitClass_t,unsigned int>::iterator ItUCC;
+  const unsigned int Count = UnitsCountByClasses.size();
+
+  char** Classes = (char**)malloc(Count*sizeof(char*));
+
+  unsigned int i=0;
+  for (ItUCC=UnitsCountByClasses.begin();ItUCC!=UnitsCountByClasses.end();++ItUCC)
+  {
+    Classes[i] = (char*)malloc((*ItUCC).first.size()+1);
+    std::copy((*ItUCC).first.begin(), (*ItUCC).first.end(), Classes[i]);
+    Classes[i][(*ItUCC).first.size()] = '\0';
+    i++;
+  }
+
+  return Classes;
+
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+unsigned int ROpenFLUID_GetUnitsClassesCount(ROpenFLUID_ExtBlob_t* BlobHandle)
+{
+  std::map<openfluid::core::UnitClass_t,unsigned int> UnitsCountByClasses;
+  UnitsCountByClasses = GetUnitsCountByClasses(BlobHandle);
+
+  return UnitsCountByClasses.size();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+int* ROpenFLUID_GetUnitsIDs(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass)
+{
+  int Count = ROpenFLUID_GetUnitsIDsCount(BlobHandle,UnitClass);
+
+  int* IDs = NULL;
+
+  if (Count > 0)
+  {
+    IDs = (int*)malloc(Count*sizeof(int));
+
+    ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+    std::list<openfluid::base::UnitDescriptor>& Units = Data->DomainDesc.getUnits();
+
+    unsigned int i=0;
+    for (std::list<openfluid::base::UnitDescriptor>::iterator ItUnits = Units.begin();ItUnits != Units.end();++ItUnits)
+    {
+      if ((*ItUnits).getUnitClass() == std::string(UnitClass))
+      {
+        IDs[i] = (*ItUnits).getUnitID();
+        i++;
+      }
+    }
+  }
+
+  return IDs;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+unsigned int ROpenFLUID_GetUnitsIDsCount(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass)
+{
+  std::map<openfluid::core::UnitClass_t,unsigned int> UnitsCountByClasses;
+  UnitsCountByClasses = GetUnitsCountByClasses(BlobHandle);
+
+  unsigned int Count = 0;
+
+  if (UnitsCountByClasses.find(std::string(UnitClass)) != UnitsCountByClasses.end())
+    Count = UnitsCountByClasses[std::string(UnitClass)];
+
+  return Count;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
 void ROpenFLUID_CreateInputData(ROpenFLUID_ExtBlob_t* BlobHandle,const char* UnitClass, const char* IDataName, const char* IDataValue)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));

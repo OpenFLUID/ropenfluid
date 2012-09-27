@@ -22,12 +22,26 @@ checkEqualsNumeric(as.numeric(OpenFLUID.getGeneratorParam(ofdata,"RS","tests.ran
 checkEqualsNumeric(as.numeric(OpenFLUID.getGeneratorParam(ofdata,"RS","tests.random","max")),50)
 checkEquals(OpenFLUID.getModelGlobalParam(ofdata,"gparam1"),"1.1;2.1")
 checkEquals(OpenFLUID.getModelGlobalParam(ofdata,"gfakeparam"),"")
+
 checkEqualsNumeric(as.numeric(OpenFLUID.getInputData(ofdata,"SU",1,"area")),1216.29)
 checkEqualsNumeric(as.numeric(OpenFLUID.getInputData(ofdata,"SU",5,"area")),3024.27)
 checkEqualsNumeric(as.numeric(OpenFLUID.getInputData(ofdata,"SU",3,"slope")),0.02)
 checkEqualsNumeric(as.numeric(OpenFLUID.getInputData(ofdata,"RS",2,"length")),170)
 checkEqualsNumeric(OpenFLUID.getInputData(ofdata,"RS",18,"length"),"")
 checkEqualsNumeric(OpenFLUID.getInputData(ofdata,"RS",1,"fakedata"),"")
+
+uclasses = OpenFLUID.getUnitsClasses(ofdata)
+print(uclasses)
+checkEqualsNumeric(length(uclasses),2)
+uRS = OpenFLUID.getUnitsIDs(ofdata,"RS")
+print(uRS)
+checkEqualsNumeric(length(uRS),3)
+uSU = OpenFLUID.getUnitsIDs(ofdata,"SU")
+print(uSU)
+checkEqualsNumeric(length(uSU),6)
+uFU = OpenFLUID.getUnitsIDs(ofdata,"FU")
+print(uFU)
+checkEqualsNumeric(length(uFU),0)
 
 
 # dataset modifications

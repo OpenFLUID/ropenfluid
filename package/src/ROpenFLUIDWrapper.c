@@ -78,6 +78,9 @@ static SEXP Rized_OpenFLUID_GetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP Va
 static void Rized_OpenFLUID_SetModelGlobalParam(SEXP Blob, SEXP ParamName, SEXP ParamVal);
 static SEXP Rized_OpenFLUID_GetModelGlobalParam(SEXP Blob, SEXP ParamName);
 
+static SEXP Rized_OpenFLUID_GetUnitsClasses(SEXP Blob);
+static SEXP Rized_OpenFLUID_GetUnitsIDs(SEXP Blob, SEXP UnitClass);
+
 static void Rized_OpenFLUID_CreateInputData(SEXP Blob,SEXP UnitClass, SEXP IDataName, SEXP IDataValue);
 static void Rized_OpenFLUID_SetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP IDataName, SEXP IDataValue);
 static SEXP Rized_OpenFLUID_GetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP IDataName);
@@ -112,6 +115,8 @@ R_CallMethodDef callEntries[] = {
   { "GetGeneratorParam", (DL_FUNC) &Rized_OpenFLUID_GetGeneratorParam, 4},
   { "SetModelGlobalParam", (DL_FUNC) &Rized_OpenFLUID_SetModelGlobalParam, 3},
   { "GetModelGlobalParam", (DL_FUNC) &Rized_OpenFLUID_GetModelGlobalParam, 2},
+  { "GetUnitsClasses", (DL_FUNC) &Rized_OpenFLUID_GetUnitsClasses, 1},
+  { "GetUnitsIDs", (DL_FUNC) &Rized_OpenFLUID_GetUnitsIDs, 2},
   { "CreateInputData", (DL_FUNC) &Rized_OpenFLUID_CreateInputData, 4},
   { "SetInputData", (DL_FUNC) &Rized_OpenFLUID_SetInputData, 5},
   { "GetInputData", (DL_FUNC) &Rized_OpenFLUID_GetInputData, 4},
@@ -432,6 +437,67 @@ SEXP Rized_OpenFLUID_GetModelGlobalParam(SEXP Blob, SEXP ParamName)
   PROTECT(Ret = allocVector(STRSXP, 1));
 
   SET_STRING_ELT(Ret, 0, mkChar(Val));
+
+  UNPROTECT(1);
+
+  return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_GetUnitsClasses(SEXP Blob)
+{
+  SEXP Ret;
+
+  unsigned int ClassesCount = ROpenFLUID_GetUnitsClassesCount(R_ExternalPtrAddr(Blob));
+
+  PROTECT(Ret = allocVector(STRSXP, ClassesCount));
+
+  if (ClassesCount > 0)
+  {
+    char** Classes = ROpenFLUID_GetUnitsClasses(R_ExternalPtrAddr(Blob));
+
+    for (unsigned int i=0;i<ClassesCount;i++)
+    {
+      SET_STRING_ELT(Ret, i, mkChar(Classes[i]));
+    }
+
+    for (unsigned int i=0;i<ClassesCount;i++)
+       free (Classes[i]);
+
+    free(Classes);
+  }
+
+  UNPROTECT(1);
+
+  return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_GetUnitsIDs(SEXP Blob, SEXP UnitClass)
+{
+  SEXP Ret;
+
+  unsigned int IDsCount = ROpenFLUID_GetUnitsIDsCount(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)));
+
+  PROTECT(Ret = allocVector(INTSXP, IDsCount));
+
+  if (IDsCount > 0)
+  {
+    int* IDs = ROpenFLUID_GetUnitsIDs(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)));
+
+    for (unsigned int i=0;i<IDsCount;i++)
+      INTEGER(Ret)[i] = IDs[i];
+
+    free(IDs);
+  }
 
   UNPROTECT(1);
 
