@@ -56,21 +56,46 @@
 # =====================================================================
 # =====================================================================
 
-#' Adds paths to search for simulation functions
+#' Adds paths to search for simulators
 #' 
 #' @param paths the semicolon separated paths to add
 #' 
 #' @examples \dontrun{
-#' OpenFLUID.addExtraFunctionsPaths("/first/path/to/add")
-#' OpenFLUID.addExtraFunctionsPaths("/second/path/to/add:/third/path/to/add")
+#' OpenFLUID.addExtraSimulatorsPaths("/first/path/to/add")
+#' OpenFLUID.addExtraSimulatorsPaths("/second/path/to/add:/third/path/to/add")
 #' }
 #'
-#' @seealso \code{\link{OpenFLUID.getExtraFunctionsPaths}}
-OpenFLUID.addExtraFunctionsPaths <- function(paths)
+#' @seealso \code{\link{OpenFLUID.getExtraSimulatorsPaths}}
+OpenFLUID.addExtraSimulatorsPaths <- function(paths)
 {
   stopifnot(is.character(paths))
   
-  .Call("AddExtraFunctionsPaths", paths, PACKAGE="ROpenFLUID")  
+  .Call("AddExtraSimulatorsPaths", paths, PACKAGE="ROpenFLUID")  
+  
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
+#' Adds export of simulation variables as CSV files for a given units class
+#' 
+#' @param ofblob the simulation definition blob
+#' @param unitclass the units class to add for simulation variables export
+#' 
+#' @examples \dontrun{
+#' OpenFLUID.addVariablesExportAsCSV("TU")
+#' OpenFLUID.addVariablesExportAsCSV("RS")
+#' }
+#'
+#' @seealso \code{\link{OpenFLUID.loadResult}}
+OpenFLUID.addVariablesExportAsCSV <- function(ofblob,unitclass)
+{
+  stopifnot(!is.null(ofblob))
+  stopifnot(is.character(unitclass))
+  
+  .Call("AddVariablesExportAsCSV", ofblob, unitclass, PACKAGE="ROpenFLUID")  
   
   return(invisible(NULL))
 }
@@ -136,18 +161,18 @@ OpenFLUID.getDeltaT <- function(ofblob)
 # =====================================================================
 
 
-#' Returns the added paths to search for simulation functions
+#' Returns the added paths to search for simulators
 #' 
 #' @return a vector of paths
 #' 
 #' @examples \dontrun{
-#' paths = OpenFLUID.getExtraFunctionsPaths()
+#' paths = OpenFLUID.getExtraSimulatorsPaths()
 #' }
 #' 
-#' @seealso \code{\link{OpenFLUID.addExtraFunctionsPaths}}
-OpenFLUID.getExtraFunctionsPaths <- function()
+#' @seealso \code{\link{OpenFLUID.addExtraSimulatorsPaths}}
+OpenFLUID.getExtraSimulatorsPaths <- function()
 {
-  .Call("GetFunctionsPaths",PACKAGE="ROpenFLUID")  
+  .Call("GetSimulatorsPaths",PACKAGE="ROpenFLUID")  
 }
 
 
@@ -155,25 +180,25 @@ OpenFLUID.getExtraFunctionsPaths <- function()
 # =====================================================================
 
 
-#' Returns a function parameter value
+#' Returns a simulator parameter value
 #' 
 #' @param ofblob the simulation definition blob
-#' @param funcid the simulation function id
+#' @param simid the simulator ID
 #' @param paramname the name of the parameter
 #' @return the parameter value
 #' 
 #' @examples \dontrun{
-#' val = OpenFLUID.getFunctionParam(ofsim,"my.function","coeff")
+#' val = OpenFLUID.getSimulatorParam(ofsim,"my.simulator","coeff")
 #' }
 #' 
-#' @seealso \code{\link{OpenFLUID.setFunctionParam}}
-OpenFLUID.getFunctionParam <- function(ofblob,funcid,paramname)
+#' @seealso \code{\link{OpenFLUID.setSimulatorParam}}
+OpenFLUID.getSimulatorParam <- function(ofblob,simid,paramname)
 {
   stopifnot(!is.null(ofblob))  
-  stopifnot(is.character(funcid))
+  stopifnot(is.character(simid))
   stopifnot(is.character(paramname))
   
-  .Call("GetFunctionParam", ofblob, funcid, paramname, PACKAGE="ROpenFLUID")  
+  .Call("GetSimulatorParam", ofblob, simid, paramname, PACKAGE="ROpenFLUID")  
 }
 
 
@@ -376,33 +401,35 @@ OpenFLUID.getVersion <- function()
 # =====================================================================
 
 
-#' Loads results as a dataframe, giving output dataset informations
+#' Loads results as a dataframe, giving dataset informations
 #' 
 #' @param ofblob the simulation definition blob
 #' @param unitclass the unit class
 #' @param unitid the unit ID
-#' @param suffix the output dataset suffix
+#' @param varname the variable name
 #' @return a dataframe containing the simulation results
 #' 
 #' @examples \dontrun{
-#' resSU18 = OpenFLUID.loadResult(ofsim,"SU",18,"full")
+#' resSU18 = OpenFLUID.loadResult(ofsim,"SU",18,"runoff")
 #' resRS1 = OpenFLUID.loadResult(ofsim,"RS",1,"waterlevel")
 #' }
 #' 
 #' @seealso \code{\link{OpenFLUID.loadResultFile}}
-OpenFLUID.loadResult <- function(ofblob,unitclass,unitid,suffix)
+OpenFLUID.loadResult <- function(ofblob,unitclass,unitid,varname)
 {
   stopifnot(!is.null(ofblob))  
   stopifnot(is.character(unitclass))
   stopifnot(is.numeric(unitid))
-  stopifnot(is.character(suffix))
+  stopifnot(is.character(varname))
   
   filename = .Call("GetSimulationOutputDir", ofblob, PACKAGE="ROpenFLUID")
   
-  filename = paste(filename,unitclass,sep="/")
+  filename = paste(filename,"ropenfluid",sep="/")
+  filename = paste(filename,unitclass,sep="")
+  filename = paste(filename,unitclass,sep="_")
   filename = paste(filename,as.integer(unitid),sep="")
-  filename = paste(filename,suffix,sep="_")
-  filename = paste(filename,".out",sep="")
+  filename = paste(filename,varname,sep="_")
+  filename = paste(filename,".csv",sep="")
   
   return(OpenFLUID.loadResultFile(filename))
 }
@@ -627,26 +654,26 @@ OpenFLUID.setDeltaT <- function(ofblob,deltat)
 # =====================================================================
 
 
-#' Sets a function parameter value
+#' Sets a simulator parameter value
 #' 
 #' @param ofblob the simulation definition blob
-#' @param funcid the simulation function id
+#' @param simid the simulation simulator id
 #' @param paramname the name of the parameter
 #' @param paramval the parameter value
 #' 
 #' @examples \dontrun{
-#' OpenFLUID.setFunctionParam(ofsim,"my.function","coeff",3)
+#' OpenFLUID.setSimulatorParam(ofsim,"my.simulator","coeff",3)
 #' }
 #' 
-#' @seealso \code{\link{OpenFLUID.getFunctionParam}}
-OpenFLUID.setFunctionParam <- function(ofblob,funcid,paramname,paramval)
+#' @seealso \code{\link{OpenFLUID.getSimulatorParam}}
+OpenFLUID.setSimulatorParam <- function(ofblob,simid,paramname,paramval)
 {
   stopifnot(!is.null(ofblob))  
-  stopifnot(is.character(funcid))
+  stopifnot(is.character(simid))
   stopifnot(is.character(paramname))
   
   
-  .Call("SetFunctionParam", ofblob, funcid, paramname, as.character(paramval), PACKAGE="ROpenFLUID")  
+  .Call("SetSimulatorParam", ofblob, simid, paramname, as.character(paramval), PACKAGE="ROpenFLUID")  
   
   return(invisible(NULL))
 }

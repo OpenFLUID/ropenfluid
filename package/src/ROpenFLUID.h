@@ -69,11 +69,11 @@ const char* ROpenFLUID_GetVersion();
 
 const char* ROpenFLUID_GetLastError();
 
-void ROpenFLUID_AddExtraFunctionsPaths(const char* Paths);
+void ROpenFLUID_AddExtraSimulatorsPaths(const char* Paths);
 
-char** ROpenFLUID_GetFunctionsPaths();
+char** ROpenFLUID_GetSimulatorsPaths();
 
-unsigned int ROpenFLUID_GetFunctionsPathsCount();
+unsigned int ROpenFLUID_GetSimulatorsPathsCount();
 
 ROpenFLUID_ExtBlob_t ROpenFLUID_NewDataBlob();
 
@@ -99,9 +99,9 @@ const char* ROpenFLUID_GetPeriodEndDate(ROpenFLUID_ExtBlob_t* BlobHandle);
 
 void ROpenFLUID_SetPeriod(ROpenFLUID_ExtBlob_t* BlobHandle, const char* BeginDate, const char* EndDate);
 
-const char* ROpenFLUID_GetFunctionParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* FuncID, const char* ParamName);
+const char* ROpenFLUID_GetSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* SimID, const char* ParamName);
 
-void ROpenFLUID_SetFunctionParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* FuncID, const char* ParamName, const char* ParamVal);
+void ROpenFLUID_SetSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* SimID, const char* ParamName, const char* ParamVal);
 
 void ROpenFLUID_SetGeneratorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, const char* VarName, const char* ParamName, const char* ParamVal);
 
@@ -124,6 +124,8 @@ void ROpenFLUID_CreateInputData(ROpenFLUID_ExtBlob_t* BlobHandle,const char* Uni
 void ROpenFLUID_SetInputData(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* IDataName, const char* IDataValue);
 
 const char* ROpenFLUID_GetInputData(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* IDataName);
+
+void ROpenFLUID_AddVariablesExportAsCSV(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass);
 
 
 #ifdef __cplusplus

@@ -1,0 +1,22 @@
+library(RUnit)
+
+library("ROpenFLUID")
+
+ofsim = OpenFLUID.openDataset("@openfluid_PREFIX@/share/doc/openfluid/examples/projects/Primitives/IN")
+
+OpenFLUID.setCurrentOutputDir(paste(getwd(),'/Primitives.OUT', sep = ""))
+
+OpenFLUID.addExtraSimulatorsPaths("@openfluid_PREFIX@/lib/openfluid/simulators")
+
+OpenFLUID.addVariablesExportAsCSV(ofsim,"unitsB")
+OpenFLUID.addVariablesExportAsCSV(ofsim,"unitsA")
+
+OpenFLUID.printSimulationInfo(ofsim)
+
+OpenFLUID.runSimulation(ofsim)
+
+out=OpenFLUID.loadResult(ofsim,"unitsB",7,"var5")
+plot(out$var5,type='l',col='blue')
+
+out=OpenFLUID.loadResult(ofsim,"unitsA",1,"var1")
+lines(out$var1,type='l',col='green')

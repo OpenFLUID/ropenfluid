@@ -19,22 +19,17 @@ cmake -P check.cmake
 
 
 
-testing ROpenFLUID package
-===========================
-
-Prepare external tests using the following command:
-cmake -P preparetests.cmake
-
-Tests must be run from the build directory, using R
-
-
-
 Building ROpenFLUID package
 ===========================
 
 cmake -P build.cmake
 
 
+
+Generating HTML doc for ROpenFLUID package
+===========================
+
+cmake -P htmldoc.cmake
 
 
 

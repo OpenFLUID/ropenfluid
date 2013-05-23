@@ -31,8 +31,8 @@ LazyLoad: \tab yes\cr
 # load OpenFLUID library
 library("ROpenFLUID")
 
-# add optional paths to search for simulation functions
-OpenFLUID.addExtraFunctionsPaths("/path/to/simfuncs")
+# add optional paths to search for simulators
+OpenFLUID.addExtraSimulatorsPaths("/path/to/simulators")
 
 # open an input dataset
 ofsim = OpenFLUID.openDataset("/path/to/dataset")
