@@ -62,8 +62,8 @@ static void Rized_OpenFLUID_PrintSimulationInfo(SEXP Blob);
 static SEXP Rized_OpenFLUID_GetSimulationOutputDir(SEXP Blob);
 static SEXP Rized_OpenFLUID_GetVersion();
 
-static void Rized_OpenFLUID_AddExtraFunctionsPaths(SEXP Paths);
-static SEXP Rized_OpenFLUID_GetFunctionsPaths();
+static void Rized_OpenFLUID_AddExtraSimulatorsPaths(SEXP Paths);
+static SEXP Rized_OpenFLUID_GetSimulatorsPaths();
 
 static SEXP Rized_OpenFLUID_NewDataBlob();
 static SEXP Rized_OpenFLUID_OpenProject(SEXP Path);
@@ -71,8 +71,8 @@ static SEXP Rized_OpenFLUID_OpenDataset(SEXP Path);
 static void Rized_OpenFLUID_SetCurrentOutputDir(SEXP Path);
 static void Rized_OpenFLUID_RunSimulation(SEXP Blob);
 
-static void Rized_OpenFLUID_SetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName, SEXP ParamVal);
-static SEXP Rized_OpenFLUID_GetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName);
+static void Rized_OpenFLUID_SetSimulatorParam(SEXP Blob, SEXP SimulatorID, SEXP ParamName, SEXP ParamVal);
+static SEXP Rized_OpenFLUID_GetSimulatorParam(SEXP Blob, SEXP SimulatorID, SEXP ParamName);
 static void Rized_OpenFLUID_SetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName, SEXP ParamVal);
 static SEXP Rized_OpenFLUID_GetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName);
 static void Rized_OpenFLUID_SetModelGlobalParam(SEXP Blob, SEXP ParamName, SEXP ParamVal);
@@ -91,6 +91,8 @@ static SEXP Rized_OpenFLUID_SetPeriod(SEXP Blob, SEXP Begin, SEXP End);
 static SEXP Rized_OpenFLUID_GetPeriodBeginDate(SEXP Blob);
 static SEXP Rized_OpenFLUID_GetPeriodEndDate(SEXP Blob);
 
+static SEXP Rized_OpenFLUID_AddVariablesExportAsCSV(SEXP Blob, SEXP UnitClass);
+
 
 
 // =====================================================================
@@ -102,15 +104,15 @@ R_CallMethodDef callEntries[] = {
   { "PrintSimulationInfo", (DL_FUNC) &Rized_OpenFLUID_PrintSimulationInfo, 1},
   { "GetSimulationOutputDir", (DL_FUNC) &Rized_OpenFLUID_GetSimulationOutputDir, 1},
   { "GetVersion", (DL_FUNC) &Rized_OpenFLUID_GetVersion, 0},
-  { "AddExtraFunctionsPaths", (DL_FUNC) &Rized_OpenFLUID_AddExtraFunctionsPaths, 1},
-  { "GetFunctionsPaths", (DL_FUNC) &Rized_OpenFLUID_GetFunctionsPaths, 0},
+  { "AddExtraSimulatorsPaths", (DL_FUNC) &Rized_OpenFLUID_AddExtraSimulatorsPaths, 1},
+  { "GetSimulatorsPaths", (DL_FUNC) &Rized_OpenFLUID_GetSimulatorsPaths, 0},
   { "NewDataBlob", (DL_FUNC) &Rized_OpenFLUID_NewDataBlob, 0},
   { "OpenDataset", (DL_FUNC) &Rized_OpenFLUID_OpenDataset, 1},
   { "SetCurrentOutputDir", (DL_FUNC) &Rized_OpenFLUID_SetCurrentOutputDir, 1},
   { "OpenProject", (DL_FUNC) &Rized_OpenFLUID_OpenProject, 1},
   { "RunSimulation", (DL_FUNC) &Rized_OpenFLUID_RunSimulation, 1},
-  { "SetFunctionParam", (DL_FUNC) &Rized_OpenFLUID_SetFunctionParam, 4},
-  { "GetFunctionParam", (DL_FUNC) &Rized_OpenFLUID_GetFunctionParam, 3},
+  { "SetSimulatorParam", (DL_FUNC) &Rized_OpenFLUID_SetSimulatorParam, 4},
+  { "GetSimulatorParam", (DL_FUNC) &Rized_OpenFLUID_GetSimulatorParam, 3},
   { "SetGeneratorParam", (DL_FUNC) &Rized_OpenFLUID_SetGeneratorParam, 5},
   { "GetGeneratorParam", (DL_FUNC) &Rized_OpenFLUID_GetGeneratorParam, 4},
   { "SetModelGlobalParam", (DL_FUNC) &Rized_OpenFLUID_SetModelGlobalParam, 3},
@@ -125,6 +127,7 @@ R_CallMethodDef callEntries[] = {
   { "SetPeriod", (DL_FUNC) &Rized_OpenFLUID_SetPeriod, 3},
   { "GetPeriodBeginDate", (DL_FUNC) &Rized_OpenFLUID_GetPeriodBeginDate, 1},
   { "GetPeriodEndDate", (DL_FUNC) &Rized_OpenFLUID_GetPeriodEndDate, 1},
+  { "AddVariablesExportAsCSV", (DL_FUNC) &Rized_OpenFLUID_AddVariablesExportAsCSV, 2},
   { NULL, NULL, 0}
 };
 
@@ -215,9 +218,9 @@ void Rized_OpenFLUID_DeleteBlob(SEXP Blob)
 // =====================================================================
 
 
-void Rized_OpenFLUID_AddExtraFunctionsPaths(SEXP Paths)
+void Rized_OpenFLUID_AddExtraSimulatorsPaths(SEXP Paths)
 {
-  ROpenFLUID_AddExtraFunctionsPaths(CHAR(STRING_ELT(Paths, 0)));
+  ROpenFLUID_AddExtraSimulatorsPaths(CHAR(STRING_ELT(Paths, 0)));
 }
 
 
@@ -225,17 +228,17 @@ void Rized_OpenFLUID_AddExtraFunctionsPaths(SEXP Paths)
 // =====================================================================
 
 
-SEXP Rized_OpenFLUID_GetFunctionsPaths()
+SEXP Rized_OpenFLUID_GetSimulatorsPaths()
 {
   SEXP Ret;
 
-  unsigned int PathsCount = ROpenFLUID_GetFunctionsPathsCount();
+  unsigned int PathsCount = ROpenFLUID_GetSimulatorsPathsCount();
 
   PROTECT(Ret = allocVector(STRSXP, PathsCount));
 
   if (PathsCount > 0)
   {
-    char** Paths = ROpenFLUID_GetFunctionsPaths();
+    char** Paths = ROpenFLUID_GetSimulatorsPaths();
 
     for (unsigned int i=0;i<PathsCount;i++)
     {
@@ -356,9 +359,9 @@ void Rized_OpenFLUID_RunSimulation(SEXP Blob)
 // =====================================================================
 
 
-void Rized_OpenFLUID_SetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName, SEXP ParamVal)
+void Rized_OpenFLUID_SetSimulatorParam(SEXP Blob, SEXP SimulatorID, SEXP ParamName, SEXP ParamVal)
 {
-  ROpenFLUID_SetFunctionParam(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(FunctionID, 0)),CHAR(STRING_ELT(ParamName, 0)),CHAR(STRING_ELT(ParamVal, 0)));
+  ROpenFLUID_SetSimulatorParam(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(SimulatorID, 0)),CHAR(STRING_ELT(ParamName, 0)),CHAR(STRING_ELT(ParamVal, 0)));
 }
 
 
@@ -366,11 +369,11 @@ void Rized_OpenFLUID_SetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName
 // =====================================================================
 
 
-SEXP Rized_OpenFLUID_GetFunctionParam(SEXP Blob, SEXP FunctionID, SEXP ParamName)
+SEXP Rized_OpenFLUID_GetSimulatorParam(SEXP Blob, SEXP SimulatorID, SEXP ParamName)
 {
   SEXP Ret;
 
-  const char* Val = ROpenFLUID_GetFunctionParam(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(FunctionID, 0)),CHAR(STRING_ELT(ParamName, 0)));
+  const char* Val = ROpenFLUID_GetSimulatorParam(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(SimulatorID, 0)),CHAR(STRING_ELT(ParamName, 0)));
 
   PROTECT(Ret = allocVector(STRSXP, 1));
 
@@ -621,3 +624,14 @@ SEXP Rized_OpenFLUID_GetPeriodEndDate(SEXP Blob)
 
   return Ret;
 }
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_AddVariablesExportAsCSV(SEXP Blob, SEXP UnitClass)
+{
+  ROpenFLUID_AddVariablesExportAsCSV(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)));
+}
+

@@ -49,7 +49,12 @@
 #include <R_ext/Print.h>
 #include <openfluid/base.hpp>
 #include <openfluid/machine.hpp>
-#include <openfluid/io.hpp>
+#include <openfluid/fluidx/FluidXDescriptor.hpp>
+#include <openfluid/fluidx/AdvancedMonitoringDescriptor.hpp>
+#include <openfluid/fluidx/SimulatorDescriptor.hpp>
+#include <openfluid/fluidx/GeneratorDescriptor.hpp>
+#include <openfluid/machine/MonitoringInstance.hpp>
+#include <openfluid/ware/PluggableWare.hpp>
 
 #include "ROpenFLUID.h"
 
@@ -58,11 +63,7 @@
 struct ROpenFLUID_Blob_t
 {
 
-  openfluid::base::DatastoreDescriptor DataStoreDesc;
-  openfluid::base::DomainDescriptor DomainDesc;
-  openfluid::base::ModelDescriptor ModelDesc;
-  openfluid::base::RunDescriptor RunDesc;
-  openfluid::base::OutputDescriptor OutDesc;
+  openfluid::fluidx::FluidXDescriptor FluidXDesc;
 
   bool IsProject;
   bool IsDataset;
@@ -75,7 +76,7 @@ struct ROpenFLUID_Blob_t
   ROpenFLUID_Blob_t():
     IsProject(false),IsDataset(false),
     SourcePath(""),OutputDir(""),
-    IsSimulationRun(false)
+    IsSimulationRun(false), FluidXDesc(NULL)
   {
 
   }
@@ -132,11 +133,11 @@ const char* ROpenFLUID_GetLastError()
 // =====================================================================
 
 
-void ROpenFLUID_AddExtraFunctionsPaths(const char* Paths)
+void ROpenFLUID_AddExtraSimulatorsPaths(const char* Paths)
 {
   openfluid::base::Init();
 
-  openfluid::base::RuntimeEnvironment::getInstance()->addExtraPluginsPaths(std::string(Paths));
+  openfluid::base::RuntimeEnvironment::getInstance()->addExtraSimulatorsPluginsPaths(std::string(Paths));
 }
 
 
@@ -144,9 +145,9 @@ void ROpenFLUID_AddExtraFunctionsPaths(const char* Paths)
 // =====================================================================
 
 
-unsigned int ROpenFLUID_GetFunctionsPathsCount()
+unsigned int ROpenFLUID_GetSimulatorsPathsCount()
 {
-  return openfluid::base::RuntimeEnvironment::getInstance()->getPluginsPaths().size();
+  return openfluid::base::RuntimeEnvironment::getInstance()->getSimulatorsPluginsPaths().size();
 }
 
 
@@ -154,19 +155,19 @@ unsigned int ROpenFLUID_GetFunctionsPathsCount()
 // =====================================================================
 
 
-char** ROpenFLUID_GetFunctionsPaths()
+char** ROpenFLUID_GetSimulatorsPaths()
 {
-  std::vector<std::string> FuncsPaths = openfluid::base::RuntimeEnvironment::getInstance()->getPluginsPaths();
+  std::vector<std::string> SimsPaths = openfluid::base::RuntimeEnvironment::getInstance()->getSimulatorsPluginsPaths();
 
-  const unsigned int Count = FuncsPaths.size();
+  const unsigned int Count = SimsPaths.size();
 
   char** Paths = (char**)malloc(Count*sizeof(char*));
 
   for (unsigned int i=0;i<Count;i++)
   {
-    Paths[i] = (char*)malloc(FuncsPaths[i].size()+1);
-    std::copy(FuncsPaths[i].begin(), FuncsPaths[i].end(), Paths[i]);
-    Paths[i][FuncsPaths[i].size()] = '\0';
+    Paths[i] = (char*)malloc(SimsPaths[i].size()+1);
+    std::copy(SimsPaths[i].begin(), SimsPaths[i].end(), Paths[i]);
+    Paths[i][SimsPaths[i].size()] = '\0';
   }
 
   return Paths;
@@ -177,7 +178,7 @@ char** ROpenFLUID_GetFunctionsPaths()
 // =====================================================================
 
 
-
+/*
 void UpdateOutputsConfig(ROpenFLUID_ExtBlob_t* BlobHandle)
 {
   ROpenFLUID_Blob_t*  Blob(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
@@ -192,7 +193,7 @@ void UpdateOutputsConfig(ROpenFLUID_ExtBlob_t* BlobHandle)
     (*DescIt).setDateFormat("%Y%m%d-%H%M%S");
   }
 
-}
+}*/
 
 
 // =====================================================================
@@ -219,20 +220,12 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenDataset(const char* Path)
     openfluid::base::Init();
 
 
-    openfluid::io::IOListener IOListen;
-    openfluid::io::FluidXReader FXReader(&IOListen);
-
+    openfluid::base::IOListener IOListen;
 
     openfluid::base::RuntimeEnvironment::getInstance()->setInputDir(std::string(Path));
-    FXReader.loadFromDirectory(openfluid::base::RuntimeEnvironment::getInstance()->getInputDir());
+    Data->FluidXDesc.loadFromDirectory(openfluid::base::RuntimeEnvironment::getInstance()->getInputDir());
 
     Data->IsSimulationRun = false;
-
-    Data->DomainDesc = FXReader.getDomainDescriptor();
-    Data->ModelDesc = FXReader.getModelDescriptor();
-    Data->DataStoreDesc = FXReader.getDatstoreDescriptor();
-    Data->OutDesc = FXReader.getOutputDescriptor();
-    Data->RunDesc = FXReader.getRunDescriptor();
 
     if (!Data->IsProject)
     {
@@ -291,9 +284,6 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenProject(const char* Path)
 
     ROpenFLUID_Blob_t* Data = new ROpenFLUID_Blob_t();
 
-    openfluid::io::IOListener IOListen;
-
-
     if (openfluid::base::ProjectManager::getInstance()->open(std::string(Path)))
     {
       openfluid::base::RuntimeEnvironment::getInstance()->linkToProject();
@@ -342,33 +332,37 @@ unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
 
     openfluid::machine::Engine* Engine;
 
-    UpdateOutputsConfig(BlobHandle);
+
+    //UpdateOutputsConfig(BlobHandle);
 
     ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-    openfluid::io::IOListener IOListen;
+    openfluid::base::IOListener IOListen;
     openfluid::machine::SimulationBlob SimBlob;
 
-    openfluid::machine::PluginManager::getInstance()->unloadAllPlugins();
+    openfluid::machine::SimulatorPluginsManager::getInstance()->unloadAllWares();
 
 
     openfluid::machine::Factory::buildSimulationBlobFromDescriptors(
-        Data->DomainDesc,
-        Data->RunDesc,
-        Data->OutDesc,
-        Data->DataStoreDesc,
+        Data->FluidXDesc,
         SimBlob);
 
 
     openfluid::machine::MachineListener MachineListen;
     openfluid::machine::ModelInstance Model(SimBlob,&MachineListen);
 
-    openfluid::machine::Factory::buildModelInstanceFromDescriptor(Data->ModelDesc,
+    openfluid::machine::Factory::buildModelInstanceFromDescriptor(Data->FluidXDesc.getModelDescriptor(),
         Model);
+
+    openfluid::machine::MonitoringInstance Monitoring(SimBlob);
+
+    openfluid::machine::Factory::buildMonitoringInstanceFromDescriptor(Data->FluidXDesc.getMonitoringDescriptor(),
+                                                                       Monitoring);
+
 
     Data->OutputDir = openfluid::base::RuntimeEnvironment::getInstance()->getOutputDir();
 
-    Engine = new openfluid::machine::Engine(SimBlob, Model, &MachineListen, &IOListen);
+    Engine = new openfluid::machine::Engine(SimBlob, Model, Monitoring, &MachineListen);
 
     Engine->initialize();
 
@@ -376,7 +370,6 @@ unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
     Engine->prepareData();
     Engine->checkConsistency();
     Engine->run();
-    Engine->saveReports();
 
     Engine->finalize();
 
@@ -421,10 +414,10 @@ void ROpenFLUID_PrintSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle)
 
   std::map<openfluid::core::UnitClass_t,unsigned int> UnitsInfos;
 
-  std::list<openfluid::base::UnitDescriptor>::iterator bItUnits = Data->DomainDesc.getUnits().begin();
-  std::list<openfluid::base::UnitDescriptor>::iterator eItUnits = Data->DomainDesc.getUnits().end();
+  std::list<openfluid::fluidx::UnitDescriptor>::iterator bItUnits = Data->FluidXDesc.getDomainDescriptor().getUnits().begin();
+  std::list<openfluid::fluidx::UnitDescriptor>::iterator eItUnits = Data->FluidXDesc.getDomainDescriptor().getUnits().end();
 
-  for (std::list<openfluid::base::UnitDescriptor>::iterator ItUnits = bItUnits;ItUnits != eItUnits;++ItUnits)
+  for (std::list<openfluid::fluidx::UnitDescriptor>::iterator ItUnits = bItUnits;ItUnits != eItUnits;++ItUnits)
   {
     openfluid::core::UnitClass_t ClassName = (*ItUnits).getUnitClass();
 
@@ -432,7 +425,7 @@ void ROpenFLUID_PrintSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle)
     UnitsInfos[ClassName]++;
   }
 
-  Rprintf("Spatial domain is made of %i spatial units\n",Data->DomainDesc.getUnits().size());
+  Rprintf("Spatial domain is made of %i spatial units\n",Data->FluidXDesc.getDomainDescriptor().getUnits().size());
 
   for (std::map<openfluid::core::UnitClass_t,unsigned int>::iterator ItUnitsInfos = UnitsInfos.begin();
        ItUnitsInfos != UnitsInfos.end(); ++ItUnitsInfos)
@@ -441,32 +434,32 @@ void ROpenFLUID_PrintSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle)
 
   // Model
 
-  Rprintf("Model is made of %i simulation items\n",Data->ModelDesc.getItems().size());
+  Rprintf("Model is made of %i simulation items\n",Data->FluidXDesc.getModelDescriptor().getItems().size());
 
-  for (openfluid::base::ModelDescriptor::ModelDescription_t::iterator ItModelInfos = Data->ModelDesc.getItems().begin();
-         ItModelInfos != Data->ModelDesc.getItems().end(); ++ItModelInfos)
+  for (openfluid::fluidx::CoupledModelDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getModelDescriptor().getItems().begin();
+         ItModelInfos != Data->FluidXDesc.getModelDescriptor().getItems().end(); ++ItModelInfos)
   {
     Rprintf(" - ");
 
-    if ((*ItModelInfos)->isType(openfluid::base::ModelItemDescriptor::PluggedFunction))
+    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator))
     {
-      Rprintf("%s simulation function\n",((openfluid::base::FunctionDescriptor*)(*ItModelInfos))->getFileID().c_str());
+      Rprintf("%s simulator\n",((openfluid::fluidx::SimulatorDescriptor*)(*ItModelInfos))->getFileID().c_str());
     }
 
-    if ((*ItModelInfos)->isType(openfluid::base::ModelItemDescriptor::Generator))
+    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::Generator))
     {
-      openfluid::base::GeneratorDescriptor* pGenDesc = ((openfluid::base::GeneratorDescriptor*)(*ItModelInfos));
+      openfluid::fluidx::GeneratorDescriptor* pGenDesc = ((openfluid::fluidx::GeneratorDescriptor*)(*ItModelInfos));
 
-      if (pGenDesc->getGeneratorMethod() == openfluid::base::GeneratorDescriptor::Fixed)
+      if (pGenDesc->getGeneratorMethod() == openfluid::fluidx::GeneratorDescriptor::Fixed)
         Rprintf("fixed");
 
-      if (pGenDesc->getGeneratorMethod() == openfluid::base::GeneratorDescriptor::Random)
+      if (pGenDesc->getGeneratorMethod() == openfluid::fluidx::GeneratorDescriptor::Random)
         Rprintf("random");
 
-      if (pGenDesc->getGeneratorMethod() == openfluid::base::GeneratorDescriptor::Interp)
+      if (pGenDesc->getGeneratorMethod() == openfluid::fluidx::GeneratorDescriptor::Interp)
         Rprintf("interp");
 
-      if (pGenDesc->getGeneratorMethod() == openfluid::base::GeneratorDescriptor::Inject)
+      if (pGenDesc->getGeneratorMethod() == openfluid::fluidx::GeneratorDescriptor::Inject)
         Rprintf("inject");
 
       Rprintf(" generator for variable %s on units %s\n",pGenDesc->getVariableName().c_str(),pGenDesc->getUnitClass().c_str());
@@ -475,11 +468,11 @@ void ROpenFLUID_PrintSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle)
 
   // Time period
 
-  Rprintf("Simulation period from %s to %s\n",Data->RunDesc.getBeginDate().getAsISOString().c_str(),Data->RunDesc.getEndDate().getAsISOString().c_str());
+  Rprintf("Simulation period from %s to %s\n",Data->FluidXDesc.getRunDescriptor().getBeginDate().getAsISOString().c_str(),Data->FluidXDesc.getRunDescriptor().getEndDate().getAsISOString().c_str());
 
   // Time step
 
-  Rprintf("Simulation time step : %i\n",Data->RunDesc.getDeltaT());
+  Rprintf("Simulation time step : %i\n",Data->FluidXDesc.getRunDescriptor().getDeltaT());
 
 }
 
@@ -504,7 +497,7 @@ int ROpenFLUID_GetDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-  return Data->RunDesc.getDeltaT();
+  return Data->FluidXDesc.getRunDescriptor().getDeltaT();
 }
 
 
@@ -516,7 +509,7 @@ void ROpenFLUID_SetDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle, int DeltaT)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-  Data->RunDesc.setDeltaT(DeltaT);
+  Data->FluidXDesc.getRunDescriptor().setDeltaT(DeltaT);
 }
 
 
@@ -528,7 +521,7 @@ const char* ROpenFLUID_GetPeriodBeginDate(ROpenFLUID_ExtBlob_t* BlobHandle)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-  return Data->RunDesc.getBeginDate().getAsString("%Y-%m-%d %H:%M:%S").c_str();
+  return Data->FluidXDesc.getRunDescriptor().getBeginDate().getAsString("%Y-%m-%d %H:%M:%S").c_str();
 }
 
 
@@ -540,7 +533,7 @@ const char* ROpenFLUID_GetPeriodEndDate(ROpenFLUID_ExtBlob_t* BlobHandle)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-  return Data->RunDesc.getEndDate().getAsString("%Y-%m-%d %H:%M:%S").c_str();
+  return Data->FluidXDesc.getRunDescriptor().getEndDate().getAsString("%Y-%m-%d %H:%M:%S").c_str();
 }
 
 
@@ -557,10 +550,10 @@ void ROpenFLUID_SetPeriod(ROpenFLUID_ExtBlob_t* BlobHandle, const char* BeginDat
   openfluid::core::DateTime DateToSet;
 
   if (!StrBeginDate.empty() && DateToSet.setFromISOString(StrBeginDate))
-    Data->RunDesc.setBeginDate(DateToSet);
+    Data->FluidXDesc.getRunDescriptor().setBeginDate(DateToSet);
 
   if (!StrEndDate.empty() && DateToSet.setFromISOString(StrEndDate))
-      Data->RunDesc.setEndDate(DateToSet);
+      Data->FluidXDesc.getRunDescriptor().setEndDate(DateToSet);
 }
 
 
@@ -568,22 +561,22 @@ void ROpenFLUID_SetPeriod(ROpenFLUID_ExtBlob_t* BlobHandle, const char* BeginDat
 // =====================================================================
 
 
-const char* ROpenFLUID_GetFunctionParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* FuncID, const char* ParamName)
+const char* ROpenFLUID_GetSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* SimID, const char* ParamName)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
   std::string ParamValStr("");
-  std::string FuncIDStr(FuncID);
+  std::string SimIDStr(SimID);
   std::string ParamNameStr(ParamName);
 
-  for (openfluid::base::ModelDescriptor::ModelDescription_t::iterator ItModelInfos = Data->ModelDesc.getItems().begin();
-         ItModelInfos != Data->ModelDesc.getItems().end(); ++ItModelInfos)
+  for (openfluid::fluidx::CoupledModelDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getModelDescriptor().getItems().begin();
+         ItModelInfos != Data->FluidXDesc.getModelDescriptor().getItems().end(); ++ItModelInfos)
   {
-    if ((*ItModelInfos)->isType(openfluid::base::ModelItemDescriptor::PluggedFunction) &&
-        ((openfluid::base::FunctionDescriptor*)(*ItModelInfos))->getFileID() == FuncIDStr)
+    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator) &&
+        ((openfluid::fluidx::SimulatorDescriptor*)(*ItModelInfos))->getFileID() == SimIDStr)
     {
-      openfluid::core::FuncParamsMap_t Params = (*ItModelInfos)->getParameters();
-      openfluid::core::FuncParamsMap_t::iterator ItParam = Params.find(ParamNameStr);
+      openfluid::ware::WareParams_t Params = (*ItModelInfos)->getParameters();
+      openfluid::ware::WareParams_t::iterator ItParam = Params.find(ParamNameStr);
 
       if (ItParam != Params.end())
       {
@@ -601,19 +594,19 @@ const char* ROpenFLUID_GetFunctionParam(ROpenFLUID_ExtBlob_t* BlobHandle, const 
 // =====================================================================
 
 
-void ROpenFLUID_SetFunctionParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* FuncID, const char* ParamName, const char* ParamVal)
+void ROpenFLUID_SetSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* SimID, const char* ParamName, const char* ParamVal)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-  std::string FuncIDStr(FuncID);
+  std::string SimIDStr(SimID);
   std::string ParamNameStr(ParamName);
   std::string ParamValStr(ParamVal);
 
-  for (openfluid::base::ModelDescriptor::ModelDescription_t::iterator ItModelInfos = Data->ModelDesc.getItems().begin();
-         ItModelInfos != Data->ModelDesc.getItems().end(); ++ItModelInfos)
+  for (openfluid::fluidx::CoupledModelDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getModelDescriptor().getItems().begin();
+         ItModelInfos != Data->FluidXDesc.getModelDescriptor().getItems().end(); ++ItModelInfos)
   {
-    if ((*ItModelInfos)->isType(openfluid::base::ModelItemDescriptor::PluggedFunction) &&
-        ((openfluid::base::FunctionDescriptor*)(*ItModelInfos))->getFileID() == FuncIDStr)
+    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator) &&
+        ((openfluid::fluidx::SimulatorDescriptor*)(*ItModelInfos))->getFileID() == SimIDStr)
       (*ItModelInfos)->setParameter(ParamNameStr,ParamValStr);
   }
 }
@@ -632,12 +625,12 @@ void ROpenFLUID_SetGeneratorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* 
   std::string ParamNameStr(ParamName);
   std::string ParamValStr(ParamVal);
 
-  for (openfluid::base::ModelDescriptor::ModelDescription_t::iterator ItModelInfos = Data->ModelDesc.getItems().begin();
-         ItModelInfos != Data->ModelDesc.getItems().end(); ++ItModelInfos)
+  for (openfluid::fluidx::CoupledModelDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getModelDescriptor().getItems().begin();
+         ItModelInfos != Data->FluidXDesc.getModelDescriptor().getItems().end(); ++ItModelInfos)
   {
-    if ((*ItModelInfos)->isType(openfluid::base::ModelItemDescriptor::Generator) &&
-        ((openfluid::base::GeneratorDescriptor*)(*ItModelInfos))->getUnitClass() == UnitClassStr &&
-        ((openfluid::base::GeneratorDescriptor*)(*ItModelInfos))->getVariableName() == VarNameStr)
+    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::Generator) &&
+        ((openfluid::fluidx::GeneratorDescriptor*)(*ItModelInfos))->getUnitClass() == UnitClassStr &&
+        ((openfluid::fluidx::GeneratorDescriptor*)(*ItModelInfos))->getVariableName() == VarNameStr)
     {
       (*ItModelInfos)->setParameter(ParamNameStr,ParamValStr);
     }
@@ -658,15 +651,15 @@ const char* ROpenFLUID_GetGeneratorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const
   std::string ParamNameStr(ParamName);
   std::string ParamValStr("");
 
-  for (openfluid::base::ModelDescriptor::ModelDescription_t::iterator ItModelInfos = Data->ModelDesc.getItems().begin();
-         ItModelInfos != Data->ModelDesc.getItems().end(); ++ItModelInfos)
+  for (openfluid::fluidx::CoupledModelDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getModelDescriptor().getItems().begin();
+         ItModelInfos != Data->FluidXDesc.getModelDescriptor().getItems().end(); ++ItModelInfos)
   {
-    if ((*ItModelInfos)->isType(openfluid::base::ModelItemDescriptor::Generator) &&
-        ((openfluid::base::GeneratorDescriptor*)(*ItModelInfos))->getUnitClass() == UnitClassStr &&
-        ((openfluid::base::GeneratorDescriptor*)(*ItModelInfos))->getVariableName() == VarNameStr)
+    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::Generator) &&
+        ((openfluid::fluidx::GeneratorDescriptor*)(*ItModelInfos))->getUnitClass() == UnitClassStr &&
+        ((openfluid::fluidx::GeneratorDescriptor*)(*ItModelInfos))->getVariableName() == VarNameStr)
     {
-      openfluid::core::FuncParamsMap_t Params = (*ItModelInfos)->getParameters();
-      openfluid::core::FuncParamsMap_t::iterator ItParam = Params.find(ParamNameStr);
+      openfluid::ware::WareParams_t Params = (*ItModelInfos)->getParameters();
+      openfluid::ware::WareParams_t::iterator ItParam = Params.find(ParamNameStr);
 
       if (ItParam != Params.end())
       {
@@ -691,7 +684,7 @@ void ROpenFLUID_SetModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char
   std::string ParamNameStr(ParamName);
   std::string ParamValStr(ParamVal);
 
-  Data->ModelDesc.setGlobalParameter(ParamNameStr,ParamValStr);
+  Data->FluidXDesc.getModelDescriptor().setGlobalParameter(ParamNameStr,ParamValStr);
 }
 
 
@@ -706,8 +699,8 @@ const char* ROpenFLUID_GetModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, con
   std::string ParamNameStr(ParamName);
   std::string ParamValStr("");
 
-  openfluid::core::FuncParamsMap_t Params = Data->ModelDesc.getGlobalParameters();
-  openfluid::core::FuncParamsMap_t::iterator ItParam = Params.find(ParamNameStr);
+  openfluid::ware::WareParams_t Params = Data->FluidXDesc.getModelDescriptor().getGlobalParameters();
+  openfluid::ware::WareParams_t::iterator ItParam = Params.find(ParamNameStr);
 
   if (ItParam != Params.end())
   {
@@ -729,9 +722,9 @@ std::map<openfluid::core::UnitClass_t,unsigned int> GetUnitsCountByClasses(ROpen
 
   std::map<openfluid::core::UnitClass_t,unsigned int> RetMap;
 
-  std::list<openfluid::base::UnitDescriptor>& Units = Data->DomainDesc.getUnits();
+  std::list<openfluid::fluidx::UnitDescriptor>& Units = Data->FluidXDesc.getDomainDescriptor().getUnits();
 
-  for (std::list<openfluid::base::UnitDescriptor>::iterator ItUnits = Units.begin();ItUnits != Units.end();++ItUnits)
+  for (std::list<openfluid::fluidx::UnitDescriptor>::iterator ItUnits = Units.begin();ItUnits != Units.end();++ItUnits)
   {
     if (RetMap.find((*ItUnits).getUnitClass()) == RetMap.end()) RetMap[(*ItUnits).getUnitClass()] = 0;
     RetMap[(*ItUnits).getUnitClass()]++;
@@ -799,10 +792,10 @@ int* ROpenFLUID_GetUnitsIDs(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitCl
 
     ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-    std::list<openfluid::base::UnitDescriptor>& Units = Data->DomainDesc.getUnits();
+    std::list<openfluid::fluidx::UnitDescriptor>& Units = Data->FluidXDesc.getDomainDescriptor().getUnits();
 
     unsigned int i=0;
-    for (std::list<openfluid::base::UnitDescriptor>::iterator ItUnits = Units.begin();ItUnits != Units.end();++ItUnits)
+    for (std::list<openfluid::fluidx::UnitDescriptor>::iterator ItUnits = Units.begin();ItUnits != Units.end();++ItUnits)
     {
       if ((*ItUnits).getUnitClass() == std::string(UnitClass))
       {
@@ -846,13 +839,13 @@ void ROpenFLUID_CreateInputData(ROpenFLUID_ExtBlob_t* BlobHandle,const char* Uni
   std::string IDataNameStr(IDataName);
   std::string IDataValStr(IDataValue);
 
-  std::list<openfluid::base::InputDataDescriptor>& IData = Data->DomainDesc.getInputData();
+  std::list<openfluid::fluidx::InputDataDescriptor>& IData = Data->FluidXDesc.getDomainDescriptor().getInputData();
 
-  for (std::list<openfluid::base::InputDataDescriptor>::iterator ItIData = IData.begin();ItIData != IData.end();++ItIData)
+  for (std::list<openfluid::fluidx::InputDataDescriptor>::iterator ItIData = IData.begin();ItIData != IData.end();++ItIData)
   {
     if ((*ItIData).getUnitsClass() == UnitClassStr)
     {
-      openfluid::base::InputDataDescriptor::UnitIDInputData_t::iterator ItUnitData = (*ItIData).getData().begin();
+      openfluid::fluidx::InputDataDescriptor::UnitIDInputData_t::iterator ItUnitData = (*ItIData).getData().begin();
 
       for (ItUnitData;ItUnitData!=(*ItIData).getData().end();++ItUnitData)
         (*ItUnitData).second[IDataNameStr] = IDataValStr;
@@ -874,13 +867,13 @@ void ROpenFLUID_SetInputData(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitC
   std::string IDataNameStr(IDataName);
   std::string IDataValStr(IDataValue);
 
-  std::list<openfluid::base::InputDataDescriptor>& IData = Data->DomainDesc.getInputData();
+  std::list<openfluid::fluidx::InputDataDescriptor>& IData = Data->FluidXDesc.getDomainDescriptor().getInputData();
 
-  for (std::list<openfluid::base::InputDataDescriptor>::iterator ItIData = IData.begin();ItIData != IData.end();++ItIData)
+  for (std::list<openfluid::fluidx::InputDataDescriptor>::iterator ItIData = IData.begin();ItIData != IData.end();++ItIData)
   {
     if ((*ItIData).getUnitsClass() == UnitClassStr)
     {
-      openfluid::base::InputDataDescriptor::UnitIDInputData_t::iterator ItUnitData = (*ItIData).getData().find(UnitID);
+      openfluid::fluidx::InputDataDescriptor::UnitIDInputData_t::iterator ItUnitData = (*ItIData).getData().find(UnitID);
       if (ItUnitData != (*ItIData).getData().end())
       {
         if ((*ItUnitData).second.find(IDataNameStr) != (*ItUnitData).second.end())
@@ -904,13 +897,13 @@ const char* ROpenFLUID_GetInputData(ROpenFLUID_ExtBlob_t* BlobHandle, const char
   std::string IDataNameStr(IDataName);
   std::string IDataValStr("");
 
-  std::list<openfluid::base::InputDataDescriptor>& IData = Data->DomainDesc.getInputData();
+  std::list<openfluid::fluidx::InputDataDescriptor>& IData = Data->FluidXDesc.getDomainDescriptor().getInputData();
 
-  for (std::list<openfluid::base::InputDataDescriptor>::iterator ItIData = IData.begin();ItIData != IData.end();++ItIData)
+  for (std::list<openfluid::fluidx::InputDataDescriptor>::iterator ItIData = IData.begin();ItIData != IData.end();++ItIData)
   {
     if ((*ItIData).getUnitsClass() == UnitClassStr)
     {
-      openfluid::base::InputDataDescriptor::UnitIDInputData_t::const_iterator ItUnitData = (*ItIData).getData().find(UnitID);
+      openfluid::fluidx::InputDataDescriptor::UnitIDInputData_t::const_iterator ItUnitData = (*ItIData).getData().find(UnitID);
       if (ItUnitData != (*ItIData).getData().end())
       {
         if ((*ItUnitData).second.find(IDataNameStr) != (*ItUnitData).second.end())
@@ -922,3 +915,37 @@ const char* ROpenFLUID_GetInputData(ROpenFLUID_ExtBlob_t* BlobHandle, const char
   return "";
 }
 
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_AddVariablesExportAsCSV(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string UnitClassStr(UnitClass);
+  openfluid::fluidx::AdvancedMonitoringDescriptor AdvMonDesc(Data->FluidXDesc.getMonitoringDescriptor());
+
+  // 1. add CSV observer if not present
+
+  try
+  {
+    AdvMonDesc.getDescriptor("export.vars.files.csv");
+  }
+  catch (openfluid::base::OFException& E)
+  {
+    AdvMonDesc.addToObserverList("export.vars.files.csv");
+  }
+
+  // 2. add ropenfluid format
+  AdvMonDesc.getDescriptor("export.vars.files.csv").setParameter("format.ropenfluid.header",openfluid::core::StringValue("colnames-as-data"));
+  AdvMonDesc.getDescriptor("export.vars.files.csv").setParameter("format.ropenfluid.date",openfluid::core::StringValue("%Y%m%d-%H%M%S"));
+  AdvMonDesc.getDescriptor("export.vars.files.csv").setParameter("format.ropenfluid.colsep",openfluid::core::StringValue(" "));
+
+  // 3. add ropenfluidUnitClass output set
+  AdvMonDesc.getDescriptor("export.vars.files.csv").setParameter("set.ropenfluid"+UnitClassStr+".unitclass",openfluid::core::StringValue(UnitClassStr));
+  AdvMonDesc.getDescriptor("export.vars.files.csv").setParameter("set.ropenfluid"+UnitClassStr+".unitsIDs",openfluid::core::StringValue("*"));
+  AdvMonDesc.getDescriptor("export.vars.files.csv").setParameter("set.ropenfluid"+UnitClassStr+".vars",openfluid::core::StringValue("*"));
+  AdvMonDesc.getDescriptor("export.vars.files.csv").setParameter("set.ropenfluid"+UnitClassStr+".format",openfluid::core::StringValue("ropenfluid"));
+}
