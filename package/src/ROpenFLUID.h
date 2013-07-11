@@ -119,11 +119,11 @@ int* ROpenFLUID_GetUnitsIDs(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitCl
 
 unsigned int ROpenFLUID_GetUnitsIDsCount(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass);
 
-void ROpenFLUID_CreateInputData(ROpenFLUID_ExtBlob_t* BlobHandle,const char* UnitClass, const char* IDataName, const char* IDataValue);
+void ROpenFLUID_CreateAttribute(ROpenFLUID_ExtBlob_t* BlobHandle,const char* UnitClass, const char* AttrName, const char* AttrValue);
 
-void ROpenFLUID_SetInputData(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* IDataName, const char* IDataValue);
+void ROpenFLUID_SetAttribute(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* AttrName, const char* AttrValue);
 
-const char* ROpenFLUID_GetInputData(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* IDataName);
+const char* ROpenFLUID_GetAttribute(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* AttrName);
 
 void ROpenFLUID_AddVariablesExportAsCSV(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass);
 

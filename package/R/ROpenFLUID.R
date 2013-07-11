@@ -105,27 +105,27 @@ OpenFLUID.addVariablesExportAsCSV <- function(ofblob,unitclass)
 # =====================================================================
 
 
-#' Creates an inputdata for alla spatial units of a class, initialized with a default value
+#' Creates an attribute for all spatial units of a class, initialized with a default value
 #' 
 #' @param ofblob the simulation definition blob
 #' @param unitclass the unit class
-#' @param idataname the inpudata name
-#' @param idataval the default inpudata value for alla units
+#' @param attrname the attribute name
+#' @param attrval the default attribute value for alla units
 #' 
 #' @examples \dontrun{
-#' OpenFLUID.createInputData(ofsim,"SU","area",1.0)
-#' OpenFLUID.createInputData(ofsim,"SU","code","NONE")
+#' OpenFLUID.createAttribute(ofsim,"SU","area",1.0)
+#' OpenFLUID.createAttribute(ofsim,"SU","code","NONE")
 #' }
 #' 
-#' @seealso \code{\link{OpenFLUID.getInputData}}
-#' @seealso \code{\link{OpenFLUID.setInputData}}
-OpenFLUID.createInputData <- function(ofblob,unitclass,idataname,idataval)
+#' @seealso \code{\link{OpenFLUID.getAttribute}}
+#' @seealso \code{\link{OpenFLUID.setAttribute}}
+OpenFLUID.createAttribute <- function(ofblob,unitclass,attrname,attrval)
 {
   stopifnot(!is.null(ofblob))  
   stopifnot(is.character(unitclass))
-  stopifnot(is.character(idataname))  
+  stopifnot(is.character(attrname))  
   
-  .Call("CreateInputData", ofblob, unitclass, idataname, as.character(idataval), PACKAGE="ROpenFLUID")  
+  .Call("CreateAttribute", ofblob, unitclass, attrname, as.character(attrval), PACKAGE="ROpenFLUID")  
   
   return(invisible(NULL))
 }
@@ -234,28 +234,28 @@ OpenFLUID.getGeneratorParam <- function(ofblob,unitclass,varname,paramname)
 # =====================================================================
 
 
-#' Returns an inputdata value for a given spatial unit
+#' Returns an attribute value for a given spatial unit
 #' 
 #' @param ofblob the simulation definition blob
 #' @param unitclass the unit class
 #' @param unitid the unit ID
-#' @param idataname the name of the inputdata
-#' @return the inputdata value
+#' @param attrname the name of the attribute
+#' @return the attribute value
 #' 
 #' @examples \dontrun{
-#' val = OpenFLUID.getInputData(ofsim,"SU",18,"length")
+#' val = OpenFLUID.getAttribute(ofsim,"SU",18,"length")
 #' }
 #' 
-#' @seealso \code{\link{OpenFLUID.createInputData}}
-#' @seealso \code{\link{OpenFLUID.setInputData}}
-OpenFLUID.getInputData <- function(ofblob,unitclass,unitid,idataname)
+#' @seealso \code{\link{OpenFLUID.createAttribute}}
+#' @seealso \code{\link{OpenFLUID.setAttribute}}
+OpenFLUID.getAttribute <- function(ofblob,unitclass,unitid,attrname)
 {
   stopifnot(!is.null(ofblob))  
   stopifnot(is.character(unitclass))
   stopifnot(is.numeric(unitid))
-  stopifnot(is.character(idataname))
+  stopifnot(is.character(attrname))
   
-  ret <- .Call("GetInputData", ofblob, unitclass, as.integer(unitid), idataname, PACKAGE="ROpenFLUID")  
+  ret <- .Call("GetAttribute", ofblob, unitclass, as.integer(unitid), attrname, PACKAGE="ROpenFLUID")  
   
   stopifnot(!is.null(ret))
   
@@ -713,29 +713,29 @@ OpenFLUID.setGeneratorParam <- function(ofblob,unitclass,varname,paramname,param
 # =====================================================================
 
 
-#' Sets an inputdata value for a given spatial unit
+#' Sets an attribute value for a given spatial unit
 #' 
 #' @param ofblob the simulation definition blob
 #' @param unitclass the unit class
 #' @param unitid the unit ID
-#' @param idataname the name of the inputdata
-#' @param idataval the value of the inputdata
+#' @param attrname the name of the attribute
+#' @param attrval the value of the attribute
 #' 
 #' @examples \dontrun{
-#' OpenFLUID.setInputData(ofsim,"SU",18,"length",12.3)
-#' OpenFLUID.setInputData(ofsim,"SU",18,"CODE","ABC")
+#' OpenFLUID.setAttribute(ofsim,"SU",18,"length",12.3)
+#' OpenFLUID.setAttribute(ofsim,"SU",18,"CODE","ABC")
 #' }
 #' 
-#' @seealso \code{\link{OpenFLUID.createInputData}}
-#' @seealso \code{\link{OpenFLUID.getInputData}}
-OpenFLUID.setInputData <- function(ofblob,unitclass,unitid,idataname,idataval)
+#' @seealso \code{\link{OpenFLUID.createAttribute}}
+#' @seealso \code{\link{OpenFLUID.getAttribute}}
+OpenFLUID.setAttribute <- function(ofblob,unitclass,unitid,attrname,attrval)
 {
   stopifnot(!is.null(ofblob))  
   stopifnot(is.character(unitclass))
   stopifnot(is.numeric(unitid))
-  stopifnot(is.character(idataname))    
+  stopifnot(is.character(attrname))    
   
-  .Call("SetInputData", ofblob, unitclass, as.integer(unitid), idataname, as.character(idataval), PACKAGE="ROpenFLUID")  
+  .Call("SetAttribute", ofblob, unitclass, as.integer(unitid), attrname, as.character(attrval), PACKAGE="ROpenFLUID")  
   
   return(invisible(NULL))
 }
