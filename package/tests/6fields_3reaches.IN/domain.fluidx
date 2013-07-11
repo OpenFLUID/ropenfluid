@@ -32,13 +32,13 @@
 
   
   </definition>
-  <inputdata unitclass="RS" colorder="length;slope">
+  <attributes unitclass="RS" colorder="length;slope">
 1 161 0.01
 2 170 0.01
 3 204 0.01
-  </inputdata>
+  </attributes>
 
-  <inputdata unitclass="SU" colorder="area;flowdist;slope">
+  <attributes unitclass="SU" colorder="area;flowdist;slope">
 1 1216.29 51 0.02
 2 1309.54 121 0.04
 3 2199.36 64 0.02
@@ -46,7 +46,7 @@
 5 3024.27 80 0.01
 6 2229.32 90 0.03
 
-  </inputdata>
+  </attributes>
   <calendar>
   </calendar>
  </domain>

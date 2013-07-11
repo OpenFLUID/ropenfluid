@@ -831,24 +831,24 @@ unsigned int ROpenFLUID_GetUnitsIDsCount(ROpenFLUID_ExtBlob_t* BlobHandle, const
 // =====================================================================
 
 
-void ROpenFLUID_CreateInputData(ROpenFLUID_ExtBlob_t* BlobHandle,const char* UnitClass, const char* IDataName, const char* IDataValue)
+void ROpenFLUID_CreateAttribute(ROpenFLUID_ExtBlob_t* BlobHandle,const char* UnitClass, const char* AttrName, const char* AttrValue)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
   std::string UnitClassStr(UnitClass);
-  std::string IDataNameStr(IDataName);
-  std::string IDataValStr(IDataValue);
+  std::string AttrNameStr(AttrName);
+  std::string AttrValStr(AttrValue);
 
-  std::list<openfluid::fluidx::InputDataDescriptor>& IData = Data->FluidXDesc.getDomainDescriptor().getInputData();
+  std::list<openfluid::fluidx::AttributesDescriptor>& Attrs = Data->FluidXDesc.getDomainDescriptor().getAttributes();
 
-  for (std::list<openfluid::fluidx::InputDataDescriptor>::iterator ItIData = IData.begin();ItIData != IData.end();++ItIData)
+  for (std::list<openfluid::fluidx::AttributesDescriptor>::iterator ItAttr = Attrs.begin();ItAttr != Attrs.end();++ItAttr)
   {
-    if ((*ItIData).getUnitsClass() == UnitClassStr)
+    if ((*ItAttr).getUnitsClass() == UnitClassStr)
     {
-      openfluid::fluidx::InputDataDescriptor::UnitIDInputData_t::iterator ItUnitData = (*ItIData).getData().begin();
+      openfluid::fluidx::AttributesDescriptor::UnitIDAttribute_t::iterator ItUnitData = (*ItAttr).getAttributes().begin();
 
-      for (ItUnitData;ItUnitData!=(*ItIData).getData().end();++ItUnitData)
-        (*ItUnitData).second[IDataNameStr] = IDataValStr;
+      for (ItUnitData;ItUnitData!=(*ItAttr).getAttributes().end();++ItUnitData)
+        (*ItUnitData).second[AttrNameStr] = AttrValStr;
     }
   }
 
@@ -859,25 +859,25 @@ void ROpenFLUID_CreateInputData(ROpenFLUID_ExtBlob_t* BlobHandle,const char* Uni
 // =====================================================================
 
 
-void ROpenFLUID_SetInputData(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* IDataName, const char* IDataValue)
+void ROpenFLUID_SetAttribute(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* AttrName, const char* AttrValue)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
   std::string UnitClassStr(UnitClass);
-  std::string IDataNameStr(IDataName);
-  std::string IDataValStr(IDataValue);
+  std::string AttrNameStr(AttrName);
+  std::string AttrValStr(AttrValue);
 
-  std::list<openfluid::fluidx::InputDataDescriptor>& IData = Data->FluidXDesc.getDomainDescriptor().getInputData();
+  std::list<openfluid::fluidx::AttributesDescriptor>& Attrs = Data->FluidXDesc.getDomainDescriptor().getAttributes();
 
-  for (std::list<openfluid::fluidx::InputDataDescriptor>::iterator ItIData = IData.begin();ItIData != IData.end();++ItIData)
+  for (std::list<openfluid::fluidx::AttributesDescriptor>::iterator ItAttr = Attrs.begin();ItAttr != Attrs.end();++ItAttr)
   {
-    if ((*ItIData).getUnitsClass() == UnitClassStr)
+    if ((*ItAttr).getUnitsClass() == UnitClassStr)
     {
-      openfluid::fluidx::InputDataDescriptor::UnitIDInputData_t::iterator ItUnitData = (*ItIData).getData().find(UnitID);
-      if (ItUnitData != (*ItIData).getData().end())
+      openfluid::fluidx::AttributesDescriptor::UnitIDAttribute_t::iterator ItUnitData = (*ItAttr).getAttributes().find(UnitID);
+      if (ItUnitData != (*ItAttr).getAttributes().end())
       {
-        if ((*ItUnitData).second.find(IDataNameStr) != (*ItUnitData).second.end())
-          (*ItUnitData).second[IDataNameStr] = IDataValStr;
+        if ((*ItUnitData).second.find(AttrNameStr) != (*ItUnitData).second.end())
+          (*ItUnitData).second[AttrNameStr] = AttrValStr;
       }
     }
   }
@@ -889,25 +889,25 @@ void ROpenFLUID_SetInputData(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitC
 // =====================================================================
 
 
-const char* ROpenFLUID_GetInputData(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* IDataName)
+const char* ROpenFLUID_GetAttribute(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* AttrName)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
   std::string UnitClassStr(UnitClass);
-  std::string IDataNameStr(IDataName);
-  std::string IDataValStr("");
+  std::string AttrNameStr(AttrName);
+  std::string AttrValStr("");
 
-  std::list<openfluid::fluidx::InputDataDescriptor>& IData = Data->FluidXDesc.getDomainDescriptor().getInputData();
+  std::list<openfluid::fluidx::AttributesDescriptor>& Attrs = Data->FluidXDesc.getDomainDescriptor().getAttributes();
 
-  for (std::list<openfluid::fluidx::InputDataDescriptor>::iterator ItIData = IData.begin();ItIData != IData.end();++ItIData)
+  for (std::list<openfluid::fluidx::AttributesDescriptor>::iterator ItAttr = Attrs.begin();ItAttr != Attrs.end();++ItAttr)
   {
-    if ((*ItIData).getUnitsClass() == UnitClassStr)
+    if ((*ItAttr).getUnitsClass() == UnitClassStr)
     {
-      openfluid::fluidx::InputDataDescriptor::UnitIDInputData_t::const_iterator ItUnitData = (*ItIData).getData().find(UnitID);
-      if (ItUnitData != (*ItIData).getData().end())
+      openfluid::fluidx::AttributesDescriptor::UnitIDAttribute_t::const_iterator ItUnitData = (*ItAttr).getAttributes().find(UnitID);
+      if (ItUnitData != (*ItAttr).getAttributes().end())
       {
-        if ((*ItUnitData).second.find(IDataNameStr) != (*ItUnitData).second.end())
-          return ((*ItUnitData).second.at(IDataNameStr).c_str());
+        if ((*ItUnitData).second.find(AttrNameStr) != (*ItUnitData).second.end())
+          return ((*ItUnitData).second.at(AttrNameStr).c_str());
       }
     }
   }

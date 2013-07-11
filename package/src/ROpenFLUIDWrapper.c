@@ -81,9 +81,9 @@ static SEXP Rized_OpenFLUID_GetModelGlobalParam(SEXP Blob, SEXP ParamName);
 static SEXP Rized_OpenFLUID_GetUnitsClasses(SEXP Blob);
 static SEXP Rized_OpenFLUID_GetUnitsIDs(SEXP Blob, SEXP UnitClass);
 
-static void Rized_OpenFLUID_CreateInputData(SEXP Blob,SEXP UnitClass, SEXP IDataName, SEXP IDataValue);
-static void Rized_OpenFLUID_SetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP IDataName, SEXP IDataValue);
-static SEXP Rized_OpenFLUID_GetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP IDataName);
+static void Rized_OpenFLUID_CreateAttribute(SEXP Blob,SEXP UnitClass, SEXP AttrName, SEXP AttrValue);
+static void Rized_OpenFLUID_SetAttribute(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP AttrName, SEXP AttrValue);
+static SEXP Rized_OpenFLUID_GetAttribute(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP AttrName);
 
 static SEXP Rized_OpenFLUID_SetDeltaT(SEXP Blob, SEXP DeltaT);
 static SEXP Rized_OpenFLUID_GetDeltaT(SEXP Blob);
@@ -119,9 +119,9 @@ R_CallMethodDef callEntries[] = {
   { "GetModelGlobalParam", (DL_FUNC) &Rized_OpenFLUID_GetModelGlobalParam, 2},
   { "GetUnitsClasses", (DL_FUNC) &Rized_OpenFLUID_GetUnitsClasses, 1},
   { "GetUnitsIDs", (DL_FUNC) &Rized_OpenFLUID_GetUnitsIDs, 2},
-  { "CreateInputData", (DL_FUNC) &Rized_OpenFLUID_CreateInputData, 4},
-  { "SetInputData", (DL_FUNC) &Rized_OpenFLUID_SetInputData, 5},
-  { "GetInputData", (DL_FUNC) &Rized_OpenFLUID_GetInputData, 4},
+  { "CreateAttribute", (DL_FUNC) &Rized_OpenFLUID_CreateAttribute, 4},
+  { "SetAttribute", (DL_FUNC) &Rized_OpenFLUID_SetAttribute, 5},
+  { "GetAttribute", (DL_FUNC) &Rized_OpenFLUID_GetAttribute, 4},
   { "SetDeltaT", (DL_FUNC) &Rized_OpenFLUID_SetDeltaT, 2},
   { "GetDeltaT", (DL_FUNC) &Rized_OpenFLUID_GetDeltaT, 1},
   { "SetPeriod", (DL_FUNC) &Rized_OpenFLUID_SetPeriod, 3},
@@ -512,9 +512,9 @@ SEXP Rized_OpenFLUID_GetUnitsIDs(SEXP Blob, SEXP UnitClass)
 // =====================================================================
 
 
-void Rized_OpenFLUID_CreateInputData(SEXP Blob,SEXP UnitClass, SEXP IDataName, SEXP IDataValue)
+void Rized_OpenFLUID_CreateAttribute(SEXP Blob,SEXP UnitClass, SEXP AttrName, SEXP AttrValue)
 {
-  ROpenFLUID_CreateInputData(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)),CHAR(STRING_ELT(IDataName, 0)),CHAR(STRING_ELT(IDataValue, 0)));
+  ROpenFLUID_CreateAttribute(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)),CHAR(STRING_ELT(AttrName, 0)),CHAR(STRING_ELT(AttrValue, 0)));
 }
 
 
@@ -522,9 +522,9 @@ void Rized_OpenFLUID_CreateInputData(SEXP Blob,SEXP UnitClass, SEXP IDataName, S
 // =====================================================================
 
 
-void Rized_OpenFLUID_SetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP IDataName, SEXP IDataValue)
+void Rized_OpenFLUID_SetAttribute(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP AttrName, SEXP AttrValue)
 {
-  ROpenFLUID_SetInputData(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)),INTEGER(UnitID)[0],CHAR(STRING_ELT(IDataName, 0)),CHAR(STRING_ELT(IDataValue, 0)));
+  ROpenFLUID_SetAttribute(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)),INTEGER(UnitID)[0],CHAR(STRING_ELT(AttrName, 0)),CHAR(STRING_ELT(AttrValue, 0)));
 }
 
 
@@ -532,11 +532,11 @@ void Rized_OpenFLUID_SetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP I
 // =====================================================================
 
 
-SEXP Rized_OpenFLUID_GetInputData(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP IDataName)
+SEXP Rized_OpenFLUID_GetAttribute(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP AttrName)
 {
   SEXP Ret;
 
-  const char* Val = ROpenFLUID_GetInputData(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)),INTEGER(UnitID)[0],CHAR(STRING_ELT(IDataName, 0)));
+  const char* Val = ROpenFLUID_GetAttribute(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)),INTEGER(UnitID)[0],CHAR(STRING_ELT(AttrName, 0)));
 
   PROTECT(Ret = allocVector(STRSXP, 1));
 
