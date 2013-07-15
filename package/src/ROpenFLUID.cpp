@@ -48,6 +48,7 @@
 #include <iostream>
 #include <R_ext/Print.h>
 #include <openfluid/base.hpp>
+#include <openfluid/base/ApplicationException.hpp>
 #include <openfluid/machine.hpp>
 #include <openfluid/fluidx/FluidXDescriptor.hpp>
 #include <openfluid/fluidx/AdvancedMonitoringDescriptor.hpp>
@@ -236,7 +237,7 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenDataset(const char* Path)
 
     return Data;
   }
-  catch (openfluid::base::OFException& E)
+  catch (openfluid::base::Exception& E)
   {
     LastErrorMsg = "OpenFLUID ERROR: " + std::string(E.what()) +"\n";
   }
@@ -290,14 +291,14 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenProject(const char* Path)
       openfluid::base::ProjectManager::getInstance()->updateOutputDir();
     }
     else
-      throw openfluid::base::OFException("ROpenFLUID",std::string(Path) + " is not a correct project path");
+      throw openfluid::base::ApplicationException("ROpenFLUID",std::string(Path) + " is not a correct project path");
 
     Data->IsProject = true;
     Data->SourcePath = openfluid::base::ProjectManager::getInstance()->getPath();
 
     return ROpenFLUID_OpenDataset(openfluid::base::RuntimeEnvironment::getInstance()->getInputDir().c_str());
   }
-  catch (openfluid::base::OFException& E)
+  catch (openfluid::base::Exception& E)
   {
     LastErrorMsg = "OpenFLUID ERROR: " + std::string(E.what()) +"\n";
   }
@@ -379,7 +380,7 @@ unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
 
     return 1;
   }
-  catch (openfluid::base::OFException& E)
+  catch (openfluid::base::Exception& E)
   {
     LastErrorMsg = "OpenFLUID ERROR: " + std::string(E.what()) +"\n";
   }
@@ -933,7 +934,7 @@ void ROpenFLUID_AddVariablesExportAsCSV(ROpenFLUID_ExtBlob_t* BlobHandle, const 
   {
     AdvMonDesc.getDescriptor("export.vars.files.csv");
   }
-  catch (openfluid::base::OFException& E)
+  catch (openfluid::base::Exception& E)
   {
     AdvMonDesc.addToObserverList("export.vars.files.csv");
   }
