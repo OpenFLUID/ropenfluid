@@ -63,7 +63,13 @@ static SEXP Rized_OpenFLUID_GetSimulationOutputDir(SEXP Blob);
 static SEXP Rized_OpenFLUID_GetVersion();
 
 static void Rized_OpenFLUID_AddExtraSimulatorsPaths(SEXP Paths);
+static void Rized_OpenFLUID_ResetExtraSimulatorsPaths();
 static SEXP Rized_OpenFLUID_GetSimulatorsPaths();
+static SEXP Rized_OpenFLUID_GetExtraSimulatorsPaths();
+static void Rized_OpenFLUID_AddExtraObserversPaths(SEXP Paths);
+static void Rized_OpenFLUID_ResetExtraObserversPaths();
+static SEXP Rized_OpenFLUID_GetObserversPaths();
+static SEXP Rized_OpenFLUID_GetExtraObserversPaths();
 
 static SEXP Rized_OpenFLUID_NewDataBlob();
 static SEXP Rized_OpenFLUID_OpenProject(SEXP Path);
@@ -105,7 +111,13 @@ R_CallMethodDef callEntries[] = {
   { "GetSimulationOutputDir", (DL_FUNC) &Rized_OpenFLUID_GetSimulationOutputDir, 1},
   { "GetVersion", (DL_FUNC) &Rized_OpenFLUID_GetVersion, 0},
   { "AddExtraSimulatorsPaths", (DL_FUNC) &Rized_OpenFLUID_AddExtraSimulatorsPaths, 1},
+  { "ResetExtraSimulatorsPaths", (DL_FUNC) &Rized_OpenFLUID_ResetExtraSimulatorsPaths, 0},
   { "GetSimulatorsPaths", (DL_FUNC) &Rized_OpenFLUID_GetSimulatorsPaths, 0},
+  { "GetExtraSimulatorsPaths", (DL_FUNC) &Rized_OpenFLUID_GetExtraSimulatorsPaths, 0},
+  { "AddExtraObserversPaths", (DL_FUNC) &Rized_OpenFLUID_AddExtraObserversPaths, 1},
+  { "ResetExtraObserversPaths", (DL_FUNC) &Rized_OpenFLUID_ResetExtraObserversPaths, 0},
+  { "GetObserversPaths", (DL_FUNC) &Rized_OpenFLUID_GetObserversPaths, 0},
+  { "GetExtraObserversPaths", (DL_FUNC) &Rized_OpenFLUID_GetExtraObserversPaths, 0},
   { "NewDataBlob", (DL_FUNC) &Rized_OpenFLUID_NewDataBlob, 0},
   { "OpenDataset", (DL_FUNC) &Rized_OpenFLUID_OpenDataset, 1},
   { "SetCurrentOutputDir", (DL_FUNC) &Rized_OpenFLUID_SetCurrentOutputDir, 1},
@@ -228,6 +240,16 @@ void Rized_OpenFLUID_AddExtraSimulatorsPaths(SEXP Paths)
 // =====================================================================
 
 
+void Rized_OpenFLUID_ResetExtraSimulatorsPaths()
+{
+  ROpenFLUID_ResetExtraSimulatorsPaths();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
 SEXP Rized_OpenFLUID_GetSimulatorsPaths()
 {
   SEXP Ret;
@@ -239,6 +261,125 @@ SEXP Rized_OpenFLUID_GetSimulatorsPaths()
   if (PathsCount > 0)
   {
     char** Paths = ROpenFLUID_GetSimulatorsPaths();
+
+    for (unsigned int i=0;i<PathsCount;i++)
+    {
+      SET_STRING_ELT(Ret, i, mkChar(Paths[i]));
+    }
+
+    for (unsigned int i=0;i<PathsCount;i++)
+       free (Paths[i]);
+
+    free(Paths);
+  }
+
+  UNPROTECT(1);
+
+  return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_GetExtraSimulatorsPaths()
+{
+  SEXP Ret;
+
+  unsigned int PathsCount = ROpenFLUID_GetExtraSimulatorsPathsCount();
+
+  PROTECT(Ret = allocVector(STRSXP, PathsCount));
+
+  if (PathsCount > 0)
+  {
+    char** Paths = ROpenFLUID_GetExtraSimulatorsPaths();
+
+    for (unsigned int i=0;i<PathsCount;i++)
+    {
+      SET_STRING_ELT(Ret, i, mkChar(Paths[i]));
+    }
+
+    for (unsigned int i=0;i<PathsCount;i++)
+       free (Paths[i]);
+
+    free(Paths);
+  }
+
+  UNPROTECT(1);
+
+  return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void Rized_OpenFLUID_AddExtraObserversPaths(SEXP Paths)
+{
+  ROpenFLUID_AddExtraObserversPaths(CHAR(STRING_ELT(Paths, 0)));
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void Rized_OpenFLUID_ResetExtraObserversPaths()
+{
+  ROpenFLUID_ResetExtraObserversPaths();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_GetObserversPaths()
+{
+  SEXP Ret;
+
+  unsigned int PathsCount = ROpenFLUID_GetObserversPathsCount();
+
+  PROTECT(Ret = allocVector(STRSXP, PathsCount));
+
+  if (PathsCount > 0)
+  {
+    char** Paths = ROpenFLUID_GetObserversPaths();
+
+    for (unsigned int i=0;i<PathsCount;i++)
+    {
+      SET_STRING_ELT(Ret, i, mkChar(Paths[i]));
+    }
+
+    for (unsigned int i=0;i<PathsCount;i++)
+       free (Paths[i]);
+
+    free(Paths);
+  }
+
+  UNPROTECT(1);
+
+  return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_GetExtraObserversPaths()
+{
+  SEXP Ret;
+
+  unsigned int PathsCount = ROpenFLUID_GetExtraObserversPathsCount();
+
+  PROTECT(Ret = allocVector(STRSXP, PathsCount));
+
+  if (PathsCount > 0)
+  {
+    char** Paths = ROpenFLUID_GetExtraObserversPaths();
 
     for (unsigned int i=0;i<PathsCount;i++)
     {

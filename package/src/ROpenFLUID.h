@@ -71,9 +71,27 @@ const char* ROpenFLUID_GetLastError();
 
 void ROpenFLUID_AddExtraSimulatorsPaths(const char* Paths);
 
+void ROpenFLUID_ResetExtraSimulatorsPaths();
+
 char** ROpenFLUID_GetSimulatorsPaths();
 
 unsigned int ROpenFLUID_GetSimulatorsPathsCount();
+
+char** ROpenFLUID_GetExtraSimulatorsPaths();
+
+unsigned int ROpenFLUID_GetExtraSimulatorsPathsCount();
+
+void ROpenFLUID_AddExtraObserversPaths(const char* Paths);
+
+void ROpenFLUID_ResetExtraObserversPaths();
+
+char** ROpenFLUID_GetObserversPaths();
+
+unsigned int ROpenFLUID_GetObserversPathsCount();
+
+char** ROpenFLUID_GetExtraObserversPaths();
+
+unsigned int ROpenFLUID_GetExtraObserversPathsCount();
 
 ROpenFLUID_ExtBlob_t ROpenFLUID_NewDataBlob();
 
