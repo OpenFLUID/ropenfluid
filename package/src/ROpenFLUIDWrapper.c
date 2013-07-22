@@ -95,6 +95,7 @@ static SEXP Rized_OpenFLUID_GetUnitsIDs(SEXP Blob, SEXP UnitClass);
 static void Rized_OpenFLUID_CreateAttribute(SEXP Blob,SEXP UnitClass, SEXP AttrName, SEXP AttrValue);
 static void Rized_OpenFLUID_SetAttribute(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP AttrName, SEXP AttrValue);
 static SEXP Rized_OpenFLUID_GetAttribute(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP AttrName);
+static void Rized_OpenFLUID_RemoveAttribute(SEXP Blob, SEXP UnitClass, SEXP AttrName);
 
 static SEXP Rized_OpenFLUID_SetDeltaT(SEXP Blob, SEXP DeltaT);
 static SEXP Rized_OpenFLUID_GetDeltaT(SEXP Blob);
@@ -144,6 +145,7 @@ R_CallMethodDef callEntries[] = {
   { "CreateAttribute", (DL_FUNC) &Rized_OpenFLUID_CreateAttribute, 4},
   { "SetAttribute", (DL_FUNC) &Rized_OpenFLUID_SetAttribute, 5},
   { "GetAttribute", (DL_FUNC) &Rized_OpenFLUID_GetAttribute, 4},
+  { "RemoveAttribute", (DL_FUNC) &Rized_OpenFLUID_RemoveAttribute, 3},
   { "SetDeltaT", (DL_FUNC) &Rized_OpenFLUID_SetDeltaT, 2},
   { "GetDeltaT", (DL_FUNC) &Rized_OpenFLUID_GetDeltaT, 1},
   { "SetPeriod", (DL_FUNC) &Rized_OpenFLUID_SetPeriod, 3},
@@ -756,6 +758,16 @@ SEXP Rized_OpenFLUID_GetAttribute(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP A
   UNPROTECT(1);
 
   return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void Rized_OpenFLUID_RemoveAttribute(SEXP Blob, SEXP UnitClass, SEXP AttrName)
+{
+  ROpenFLUID_RemoveAttribute(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)),CHAR(STRING_ELT(AttrName, 0)));
 }
 
 

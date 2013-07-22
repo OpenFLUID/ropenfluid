@@ -1163,6 +1163,32 @@ const char* ROpenFLUID_GetAttribute(ROpenFLUID_ExtBlob_t* BlobHandle, const char
 // =====================================================================
 
 
+void ROpenFLUID_RemoveAttribute(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, const char* AttrName)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string UnitClassStr(UnitClass);
+  std::string AttrNameStr(AttrName);
+
+  std::list<openfluid::fluidx::AttributesDescriptor>& Attrs = Data->FluidXDesc.getDomainDescriptor().getAttributes();
+
+  for (std::list<openfluid::fluidx::AttributesDescriptor>::iterator ItAttr = Attrs.begin();ItAttr != Attrs.end();++ItAttr)
+  {
+    if ((*ItAttr).getUnitsClass() == UnitClassStr)
+    {
+      openfluid::fluidx::AttributesDescriptor::UnitIDAttribute_t::iterator ItUnitData = (*ItAttr).getAttributes().begin();
+
+      for (ItUnitData;ItUnitData!=(*ItAttr).getAttributes().end();++ItUnitData)
+        (*ItUnitData).second.erase(AttrNameStr);
+    }
+  }
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
 void ROpenFLUID_AddVariablesExportAsCSV(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));

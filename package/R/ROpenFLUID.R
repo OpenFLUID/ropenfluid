@@ -148,6 +148,7 @@ OpenFLUID.addVariablesExportAsCSV <- function(ofblob,unitclass)
 #' 
 #' @seealso \code{\link{OpenFLUID.getAttribute}}
 #' @seealso \code{\link{OpenFLUID.setAttribute}}
+#' @seealso \code{\link{OpenFLUID.removeAttribute}}
 OpenFLUID.createAttribute <- function(ofblob,unitclass,attrname,attrval)
 {
   stopifnot(!is.null(ofblob))  
@@ -178,6 +179,7 @@ OpenFLUID.createAttribute <- function(ofblob,unitclass,attrname,attrval)
 #' 
 #' @seealso \code{\link{OpenFLUID.createAttribute}}
 #' @seealso \code{\link{OpenFLUID.setAttribute}}
+#' @seealso \code{\link{OpenFLUID.removeAttribute}}
 OpenFLUID.getAttribute <- function(ofblob,unitclass,unitid,attrname)
 {
   stopifnot(!is.null(ofblob))  
@@ -677,6 +679,34 @@ OpenFLUID.printSimulationInfo <- function(ofblob)
 # =====================================================================
 # =====================================================================
 
+#' Removes an attribute value for a given spatial unit
+#' 
+#' @param ofblob the simulation definition blob
+#' @param unitclass the unit class
+#' @param attrname the name of the attribute
+#' 
+#' @examples \dontrun{
+#' OpenFLUID.removeAttribute(ofsim,"SU","length")
+#' }
+#' 
+#' @seealso \code{\link{OpenFLUID.createAttribute}}
+#' @seealso \code{\link{OpenFLUID.getAttribute}}
+#' @seealso \code{\link{OpenFLUID.setAttribute}}
+OpenFLUID.removeAttribute <- function(ofblob,unitclass,attrname)
+{
+  stopifnot(!is.null(ofblob))  
+  stopifnot(is.character(unitclass))
+  stopifnot(is.character(attrname))    
+  
+  .Call("RemoveAttribute", ofblob, unitclass, attrname, PACKAGE="ROpenFLUID")  
+  
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
 #' Removes a model global parameter value
 #' 
 #' @param ofblob the simulation definition blob
@@ -866,6 +896,7 @@ OpenFLUID.runSimulation <- function(ofblob)
 #' 
 #' @seealso \code{\link{OpenFLUID.createAttribute}}
 #' @seealso \code{\link{OpenFLUID.getAttribute}}
+#' @seealso \code{\link{OpenFLUID.removeAttribute}}
 OpenFLUID.setAttribute <- function(ofblob,unitclass,unitid,attrname,attrval)
 {
   stopifnot(!is.null(ofblob))  

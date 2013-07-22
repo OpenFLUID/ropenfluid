@@ -95,6 +95,9 @@ OpenFLUID.removeModelGlobalParam(ofdata,"gparam2")
 OpenFLUID.removeObserverParam(ofdata,"tests.obsA","pA1")
 OpenFLUID.removeObserverParam(ofdata,"tests.obsB","format")
 
+OpenFLUID.removeAttribute(ofdata,"SU","coeff")
+OpenFLUID.removeAttribute(ofdata,"RS","coeffv")
+
 
 checkEquals(OpenFLUID.getSimulatorParam(ofdata,"tests.funcA","pA1"),"")
 checkEquals(OpenFLUID.getSimulatorParam(ofdata,"tests.funcB","pB1"),"")
@@ -102,6 +105,11 @@ checkEquals(OpenFLUID.getModelGlobalParam(ofdata,"gparam1"),"")
 checkEquals(OpenFLUID.getModelGlobalParam(ofdata,"gparam2"),"")
 checkEquals(OpenFLUID.getObserverParam(ofdata,"tests.obsA","pA1"),"")
 checkEquals(OpenFLUID.getObserverParam(ofdata,"tests.obsB","format"),"")
+
+checkEqualsNumeric(OpenFLUID.getAttribute(ofdata,"SU",1,"coeff"),"")
+checkEqualsNumeric(OpenFLUID.getAttribute(ofdata,"SU",3,"coeff"),"")
+checkEquals(OpenFLUID.getAttribute(ofdata,"RS",1,"coeffv"),"")
+checkEquals(OpenFLUID.getAttribute(ofdata,"RS",2,"coeffv"),"")
 
 
 
