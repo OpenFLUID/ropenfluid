@@ -107,9 +107,9 @@ unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle);
 
 void ROpenFLUID_PrintSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle);
 
-int ROpenFLUID_GetDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle);
+int ROpenFLUID_GetDefaultDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle);
 
-void ROpenFLUID_SetDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle, int DeltaT);
+void ROpenFLUID_SetDefaultDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle, int DeltaT);
 
 const char* ROpenFLUID_GetPeriodBeginDate(ROpenFLUID_ExtBlob_t* BlobHandle);
 

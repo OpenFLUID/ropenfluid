@@ -9,7 +9,7 @@ ofdata = OpenFLUID.openDataset("6fields_3reaches.IN")
 OpenFLUID.printSimulationInfo(ofdata)
 
 
-checkEquals(OpenFLUID.getDeltaT(ofdata),60)
+checkEquals(OpenFLUID.getDefaultDeltaT(ofdata),60)
 checkEquals(OpenFLUID.getPeriodBeginDate(ofdata),"1997-06-05 04:04:00")
 checkEquals(OpenFLUID.getPeriodEndDate(ofdata),"1997-06-05 16:16:00")
 
@@ -50,7 +50,7 @@ checkEqualsNumeric(length(uFU),0)
 
 # dataset modifications
 
-OpenFLUID.setDeltaT(ofdata,300)
+OpenFLUID.setDefaultDeltaT(ofdata,300)
 OpenFLUID.setPeriodBeginDate(ofdata,"1997-06-05 00:00:00")
 OpenFLUID.setPeriodEndDate(ofdata,"1997-06-05 20:00:00")
 OpenFLUID.setSimulatorParam(ofdata,"tests.funcA","pA1",1.9)
@@ -66,7 +66,7 @@ OpenFLUID.setAttribute(ofdata,"SU",3,"coeff",37.1)
 OpenFLUID.createAttribute(ofdata,"RS","coeffv","0.0;10.0")
 OpenFLUID.setAttribute(ofdata,"RS",2,"coeffv","100.1;110.1")
 
-checkEquals(OpenFLUID.getDeltaT(ofdata),300)
+checkEquals(OpenFLUID.getDefaultDeltaT(ofdata),300)
 checkEquals(OpenFLUID.getPeriodBeginDate(ofdata),"1997-06-05 00:00:00")
 checkEquals(OpenFLUID.getPeriodEndDate(ofdata),"1997-06-05 20:00:00")
 checkEqualsNumeric(as.numeric(OpenFLUID.getSimulatorParam(ofdata,"tests.funcA","pA1")),1.9)

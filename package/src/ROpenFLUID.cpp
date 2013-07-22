@@ -625,7 +625,7 @@ const char* ROpenFLUID_GetSimulationOutputDir(ROpenFLUID_ExtBlob_t* BlobHandle)
 // =====================================================================
 
 
-int ROpenFLUID_GetDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle)
+int ROpenFLUID_GetDefaultDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
@@ -637,7 +637,7 @@ int ROpenFLUID_GetDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle)
 // =====================================================================
 
 
-void ROpenFLUID_SetDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle, int DeltaT)
+void ROpenFLUID_SetDefaultDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle, int DeltaT)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 

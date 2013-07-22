@@ -205,15 +205,15 @@ OpenFLUID.getAttribute <- function(ofblob,unitclass,unitid,attrname)
 #' @return the time step value in seconds
 #' 
 #' @examples \dontrun{
-#' deltat = OpenFLUID.getDeltaT(ofsim)
+#' deltat = OpenFLUID.getDefaultDeltaT(ofsim)
 #' }
 #' 
-#' @seealso \code{\link{OpenFLUID.setDeltaT}}
-OpenFLUID.getDeltaT <- function(ofblob)
+#' @seealso \code{\link{OpenFLUID.setDefaultDeltaT}}
+OpenFLUID.getDefaultDeltaT <- function(ofblob)
 {
   stopifnot(!is.null(ofblob))  
   
-  ret <- .Call("GetDeltaT", ofblob, PACKAGE="ROpenFLUID")  
+  ret <- .Call("GetDefaultDeltaT", ofblob, PACKAGE="ROpenFLUID")  
   
   stopifnot(!is.null(ret))
   
@@ -941,18 +941,18 @@ OpenFLUID.setCurrentOutputDir <- function(path)
 #' @param deltat the time step value in seconds
 #' 
 #' @examples \dontrun{
-#' OpenFLUID.setDeltaT(60)
-#' OpenFLUID.setDeltaT(86400) 
+#' OpenFLUID.setDefaultDeltaT(60)
+#' OpenFLUID.setDefaultDeltaT(86400) 
 #' }
 #'
-#' @seealso \code{\link{OpenFLUID.getDeltaT}}
-OpenFLUID.setDeltaT <- function(ofblob,deltat)
+#' @seealso \code{\link{OpenFLUID.getDefaultDeltaT}}
+OpenFLUID.setDefaultDeltaT <- function(ofblob,deltat)
 {
   stopifnot(!is.null(ofblob))  
   stopifnot(is.numeric(deltat))  
   stopifnot(deltat > 0)
   
-  .Call("SetDeltaT", ofblob, as.integer(deltat), PACKAGE="ROpenFLUID")  
+  .Call("SetDefaultDeltaT", ofblob, as.integer(deltat), PACKAGE="ROpenFLUID")  
   
   return(invisible(NULL))
 }

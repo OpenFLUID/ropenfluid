@@ -97,8 +97,8 @@ static void Rized_OpenFLUID_SetAttribute(SEXP Blob, SEXP UnitClass, SEXP UnitID,
 static SEXP Rized_OpenFLUID_GetAttribute(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP AttrName);
 static void Rized_OpenFLUID_RemoveAttribute(SEXP Blob, SEXP UnitClass, SEXP AttrName);
 
-static SEXP Rized_OpenFLUID_SetDeltaT(SEXP Blob, SEXP DeltaT);
-static SEXP Rized_OpenFLUID_GetDeltaT(SEXP Blob);
+static SEXP Rized_OpenFLUID_SetDefaultDeltaT(SEXP Blob, SEXP DeltaT);
+static SEXP Rized_OpenFLUID_GetDefaultDeltaT(SEXP Blob);
 static SEXP Rized_OpenFLUID_SetPeriod(SEXP Blob, SEXP Begin, SEXP End);
 static SEXP Rized_OpenFLUID_GetPeriodBeginDate(SEXP Blob);
 static SEXP Rized_OpenFLUID_GetPeriodEndDate(SEXP Blob);
@@ -146,8 +146,8 @@ R_CallMethodDef callEntries[] = {
   { "SetAttribute", (DL_FUNC) &Rized_OpenFLUID_SetAttribute, 5},
   { "GetAttribute", (DL_FUNC) &Rized_OpenFLUID_GetAttribute, 4},
   { "RemoveAttribute", (DL_FUNC) &Rized_OpenFLUID_RemoveAttribute, 3},
-  { "SetDeltaT", (DL_FUNC) &Rized_OpenFLUID_SetDeltaT, 2},
-  { "GetDeltaT", (DL_FUNC) &Rized_OpenFLUID_GetDeltaT, 1},
+  { "SetDefaultDeltaT", (DL_FUNC) &Rized_OpenFLUID_SetDefaultDeltaT, 2},
+  { "GetDefaultDeltaT", (DL_FUNC) &Rized_OpenFLUID_GetDefaultDeltaT, 1},
   { "SetPeriod", (DL_FUNC) &Rized_OpenFLUID_SetPeriod, 3},
   { "GetPeriodBeginDate", (DL_FUNC) &Rized_OpenFLUID_GetPeriodBeginDate, 1},
   { "GetPeriodEndDate", (DL_FUNC) &Rized_OpenFLUID_GetPeriodEndDate, 1},
@@ -775,9 +775,9 @@ void Rized_OpenFLUID_RemoveAttribute(SEXP Blob, SEXP UnitClass, SEXP AttrName)
 // =====================================================================
 
 
-SEXP Rized_OpenFLUID_SetDeltaT(SEXP Blob, SEXP DeltaT)
+SEXP Rized_OpenFLUID_SetDefaultDeltaT(SEXP Blob, SEXP DeltaT)
 {
-  ROpenFLUID_SetDeltaT(R_ExternalPtrAddr(Blob),INTEGER(DeltaT)[0]);
+  ROpenFLUID_SetDefaultDeltaT(R_ExternalPtrAddr(Blob),INTEGER(DeltaT)[0]);
 }
 
 
@@ -785,11 +785,11 @@ SEXP Rized_OpenFLUID_SetDeltaT(SEXP Blob, SEXP DeltaT)
 // =====================================================================
 
 
-SEXP Rized_OpenFLUID_GetDeltaT(SEXP Blob)
+SEXP Rized_OpenFLUID_GetDefaultDeltaT(SEXP Blob)
 {
   SEXP Ret;
 
-  int DeltaT = ROpenFLUID_GetDeltaT(R_ExternalPtrAddr(Blob));
+  int DeltaT = ROpenFLUID_GetDefaultDeltaT(R_ExternalPtrAddr(Blob));
 
   PROTECT(Ret = allocVector(INTSXP, 1));
   INTEGER(Ret)[0] = DeltaT;
