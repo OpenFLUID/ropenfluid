@@ -79,10 +79,15 @@ static void Rized_OpenFLUID_RunSimulation(SEXP Blob);
 
 static void Rized_OpenFLUID_SetSimulatorParam(SEXP Blob, SEXP SimulatorID, SEXP ParamName, SEXP ParamVal);
 static SEXP Rized_OpenFLUID_GetSimulatorParam(SEXP Blob, SEXP SimulatorID, SEXP ParamName);
+static void Rized_OpenFLUID_RemoveSimulatorParam(SEXP Blob, SEXP SimulatorID, SEXP ParamName);
 static void Rized_OpenFLUID_SetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName, SEXP ParamVal);
 static SEXP Rized_OpenFLUID_GetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName);
 static void Rized_OpenFLUID_SetModelGlobalParam(SEXP Blob, SEXP ParamName, SEXP ParamVal);
 static SEXP Rized_OpenFLUID_GetModelGlobalParam(SEXP Blob, SEXP ParamName);
+static void Rized_OpenFLUID_RemoveModelGlobalParam(SEXP Blob, SEXP ParamName);
+static void Rized_OpenFLUID_SetObserverParam(SEXP Blob, SEXP ObserverID, SEXP ParamName, SEXP ParamVal);
+static SEXP Rized_OpenFLUID_GetObserverParam(SEXP Blob, SEXP ObserverID, SEXP ParamName);
+static void Rized_OpenFLUID_RemoveObserverParam(SEXP Blob, SEXP ObserverID, SEXP ParamName);
 
 static SEXP Rized_OpenFLUID_GetUnitsClasses(SEXP Blob);
 static SEXP Rized_OpenFLUID_GetUnitsIDs(SEXP Blob, SEXP UnitClass);
@@ -125,10 +130,15 @@ R_CallMethodDef callEntries[] = {
   { "RunSimulation", (DL_FUNC) &Rized_OpenFLUID_RunSimulation, 1},
   { "SetSimulatorParam", (DL_FUNC) &Rized_OpenFLUID_SetSimulatorParam, 4},
   { "GetSimulatorParam", (DL_FUNC) &Rized_OpenFLUID_GetSimulatorParam, 3},
+  { "RemoveSimulatorParam", (DL_FUNC) &Rized_OpenFLUID_RemoveSimulatorParam, 3},
   { "SetGeneratorParam", (DL_FUNC) &Rized_OpenFLUID_SetGeneratorParam, 5},
   { "GetGeneratorParam", (DL_FUNC) &Rized_OpenFLUID_GetGeneratorParam, 4},
   { "SetModelGlobalParam", (DL_FUNC) &Rized_OpenFLUID_SetModelGlobalParam, 3},
   { "GetModelGlobalParam", (DL_FUNC) &Rized_OpenFLUID_GetModelGlobalParam, 2},
+  { "RemoveModelGlobalParam", (DL_FUNC) &Rized_OpenFLUID_RemoveModelGlobalParam, 2},
+  { "SetObserverParam", (DL_FUNC) &Rized_OpenFLUID_SetObserverParam, 4},
+  { "GetObserverParam", (DL_FUNC) &Rized_OpenFLUID_GetObserverParam, 3},
+  { "RemoveObserverParam", (DL_FUNC) &Rized_OpenFLUID_RemoveObserverParam, 3},
   { "GetUnitsClasses", (DL_FUNC) &Rized_OpenFLUID_GetUnitsClasses, 1},
   { "GetUnitsIDs", (DL_FUNC) &Rized_OpenFLUID_GetUnitsIDs, 2},
   { "CreateAttribute", (DL_FUNC) &Rized_OpenFLUID_CreateAttribute, 4},
@@ -530,6 +540,16 @@ SEXP Rized_OpenFLUID_GetSimulatorParam(SEXP Blob, SEXP SimulatorID, SEXP ParamNa
 // =====================================================================
 
 
+void Rized_OpenFLUID_RemoveSimulatorParam(SEXP Blob, SEXP SimulatorID, SEXP ParamName)
+{
+  ROpenFLUID_RemoveSimulatorParam(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(SimulatorID, 0)),CHAR(STRING_ELT(ParamName, 0)));
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
 void Rized_OpenFLUID_SetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName, SEXP ParamVal)
 
 {
@@ -585,6 +605,56 @@ SEXP Rized_OpenFLUID_GetModelGlobalParam(SEXP Blob, SEXP ParamName)
   UNPROTECT(1);
 
   return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void Rized_OpenFLUID_RemoveModelGlobalParam(SEXP Blob, SEXP ParamName)
+{
+  ROpenFLUID_RemoveModelGlobalParam(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(ParamName, 0)));
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void Rized_OpenFLUID_SetObserverParam(SEXP Blob, SEXP ObserverID, SEXP ParamName, SEXP ParamVal)
+{
+  ROpenFLUID_SetObserverParam(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(ObserverID, 0)),CHAR(STRING_ELT(ParamName, 0)),CHAR(STRING_ELT(ParamVal, 0)));
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+SEXP Rized_OpenFLUID_GetObserverParam(SEXP Blob, SEXP ObserverID, SEXP ParamName)
+{
+  SEXP Ret;
+
+  const char* Val = ROpenFLUID_GetObserverParam(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(ObserverID, 0)),CHAR(STRING_ELT(ParamName, 0)));
+
+  PROTECT(Ret = allocVector(STRSXP, 1));
+
+  SET_STRING_ELT(Ret, 0, mkChar(Val));
+
+  UNPROTECT(1);
+
+  return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void Rized_OpenFLUID_RemoveObserverParam(SEXP Blob, SEXP ObserverID, SEXP ParamName)
+{
+  ROpenFLUID_RemoveObserverParam(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(ObserverID, 0)),CHAR(STRING_ELT(ParamName, 0)));
 }
 
 

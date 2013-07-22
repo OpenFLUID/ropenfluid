@@ -748,6 +748,27 @@ void ROpenFLUID_SetSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* 
 // =====================================================================
 
 
+void ROpenFLUID_RemoveSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* SimID, const char* ParamName)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string SimIDStr(SimID);
+  std::string ParamNameStr(ParamName);
+
+  for (openfluid::fluidx::CoupledModelDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getModelDescriptor().getItems().begin();
+         ItModelInfos != Data->FluidXDesc.getModelDescriptor().getItems().end(); ++ItModelInfos)
+  {
+    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator) &&
+        ((openfluid::fluidx::SimulatorDescriptor*)(*ItModelInfos))->getFileID() == SimIDStr)
+      (*ItModelInfos)->eraseParameter(ParamNameStr);
+  }
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
 void ROpenFLUID_SetGeneratorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, const char* VarName, const char* ParamName, const char* ParamVal)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
@@ -841,6 +862,96 @@ const char* ROpenFLUID_GetModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, con
   }
 
   return ParamValStr.c_str();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_RemoveModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* ParamName)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string ParamNameStr(ParamName);
+
+  Data->FluidXDesc.getModelDescriptor().eraseGlobalParameter(ParamNameStr);
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+const char* ROpenFLUID_GetObserverParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* ObsID, const char* ParamName)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string ParamValStr("");
+  std::string ObsIDStr(ObsID);
+  std::string ParamNameStr(ParamName);
+
+  for (openfluid::fluidx::MonitoringDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getMonitoringDescriptor().getItems().begin();
+         ItModelInfos != Data->FluidXDesc.getMonitoringDescriptor().getItems().end(); ++ItModelInfos)
+  {
+    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedObserver) &&
+        ((openfluid::fluidx::ObserverDescriptor*)(*ItModelInfos))->getID() == ObsIDStr)
+    {
+      openfluid::ware::WareParams_t Params = (*ItModelInfos)->getParameters();
+      openfluid::ware::WareParams_t::iterator ItParam = Params.find(ParamNameStr);
+
+      if (ItParam != Params.end())
+      {
+        ParamValStr = (*ItParam).second;
+        return ParamValStr.c_str();
+      }
+    }
+  }
+
+  return ParamValStr.c_str();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_SetObserverParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* ObsID, const char* ParamName, const char* ParamVal)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string ObsIDStr(ObsID);
+  std::string ParamNameStr(ParamName);
+  std::string ParamValStr(ParamVal);
+
+  for (openfluid::fluidx::MonitoringDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getMonitoringDescriptor().getItems().begin();
+         ItModelInfos != Data->FluidXDesc.getMonitoringDescriptor().getItems().end(); ++ItModelInfos)
+  {
+    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedObserver) &&
+        ((openfluid::fluidx::ObserverDescriptor*)(*ItModelInfos))->getID() == ObsIDStr)
+      (*ItModelInfos)->setParameter(ParamNameStr,ParamValStr);
+  }
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_RemoveObserverParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* ObsID, const char* ParamName)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string ObsIDStr(ObsID);
+  std::string ParamNameStr(ParamName);
+
+  for (openfluid::fluidx::MonitoringDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getMonitoringDescriptor().getItems().begin();
+         ItModelInfos != Data->FluidXDesc.getMonitoringDescriptor().getItems().end(); ++ItModelInfos)
+  {
+    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedObserver) &&
+        ((openfluid::fluidx::ObserverDescriptor*)(*ItModelInfos))->getID() == ObsIDStr)
+      (*ItModelInfos)->eraseParameter(ParamNameStr);
+  }
 }
 
 
