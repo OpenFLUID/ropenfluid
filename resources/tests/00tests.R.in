@@ -4,3 +4,38 @@ library("ROpenFLUID")
 
 
 checkEquals(OpenFLUID.getVersion(),"@openfluid_VERSION@")
+
+
+## Simulators paths ##
+
+
+checkEquals(OpenFLUID.getExtraSimulatorsPaths(), character(0))
+
+OpenFLUID.addExtraSimulatorsPaths("/path/sim/1")
+checkEquals(OpenFLUID.getExtraSimulatorsPaths(), "/path/sim/1")
+
+OpenFLUID.addExtraSimulatorsPaths("/path/sim/2")
+checkEquals(length(OpenFLUID.getExtraSimulatorsPaths()), 2)
+
+OpenFLUID.resetExtraSimulatorsPaths()
+checkEquals(OpenFLUID.getExtraSimulatorsPaths(), character(0))
+
+OpenFLUID.addExtraSimulatorsPaths("/path/sim/1:/path/sim/2")
+checkEquals(length(OpenFLUID.getExtraSimulatorsPaths()), 2)
+
+
+## Observers paths ##
+
+checkEquals(OpenFLUID.getExtraObserversPaths(), character(0))
+
+OpenFLUID.addExtraObserversPaths("/path/obs/1")
+checkEquals(OpenFLUID.getExtraObserversPaths(), "/path/obs/1")
+
+OpenFLUID.addExtraObserversPaths("/path/obs/2")
+checkEquals(length(OpenFLUID.getExtraObserversPaths()), 2)
+
+OpenFLUID.resetExtraObserversPaths()
+checkEquals(OpenFLUID.getExtraObserversPaths(), character(0))
+
+OpenFLUID.addExtraObserversPaths("/path/sim/1:/path/sim/2")
+checkEquals(length(OpenFLUID.getExtraObserversPaths()), 2)

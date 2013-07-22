@@ -146,6 +146,16 @@ void ROpenFLUID_AddExtraSimulatorsPaths(const char* Paths)
 // =====================================================================
 
 
+void ROpenFLUID_ResetExtraSimulatorsPaths()
+{
+  openfluid::base::RuntimeEnvironment::getInstance()->resetExtraSimulatorsPluginsPaths();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
 unsigned int ROpenFLUID_GetSimulatorsPathsCount()
 {
   return openfluid::base::RuntimeEnvironment::getInstance()->getSimulatorsPluginsPaths().size();
@@ -169,6 +179,127 @@ char** ROpenFLUID_GetSimulatorsPaths()
     Paths[i] = (char*)malloc(SimsPaths[i].size()+1);
     std::copy(SimsPaths[i].begin(), SimsPaths[i].end(), Paths[i]);
     Paths[i][SimsPaths[i].size()] = '\0';
+  }
+
+  return Paths;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+unsigned int ROpenFLUID_GetExtraSimulatorsPathsCount()
+{
+  return openfluid::base::RuntimeEnvironment::getInstance()->getExtraSimulatorsPluginsPaths().size();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+char** ROpenFLUID_GetExtraSimulatorsPaths()
+{
+  std::vector<std::string> ExtraSimsPaths = openfluid::base::RuntimeEnvironment::getInstance()->getExtraSimulatorsPluginsPaths();
+
+  const unsigned int Count = ExtraSimsPaths.size();
+
+  char** Paths = (char**)malloc(Count*sizeof(char*));
+
+  for (unsigned int i=0;i<Count;i++)
+  {
+    Paths[i] = (char*)malloc(ExtraSimsPaths[i].size()+1);
+    std::copy(ExtraSimsPaths[i].begin(), ExtraSimsPaths[i].end(), Paths[i]);
+    Paths[i][ExtraSimsPaths[i].size()] = '\0';
+  }
+
+  return Paths;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_AddExtraObserversPaths(const char* Paths)
+{
+  openfluid::base::Init();
+
+  openfluid::base::RuntimeEnvironment::getInstance()->addExtraObserversPluginsPaths(std::string(Paths));
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_ResetExtraObserversPaths()
+{
+  openfluid::base::RuntimeEnvironment::getInstance()->resetExtraObserversPluginsPaths();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+unsigned int ROpenFLUID_GetObserversPathsCount()
+{
+  return openfluid::base::RuntimeEnvironment::getInstance()->getObserversPluginsPaths().size();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+char** ROpenFLUID_GetObserversPaths()
+{
+  std::vector<std::string> ObsPaths = openfluid::base::RuntimeEnvironment::getInstance()->getObserversPluginsPaths();
+
+  const unsigned int Count = ObsPaths.size();
+
+  char** Paths = (char**)malloc(Count*sizeof(char*));
+
+  for (unsigned int i=0;i<Count;i++)
+  {
+    Paths[i] = (char*)malloc(ObsPaths[i].size()+1);
+    std::copy(ObsPaths[i].begin(), ObsPaths[i].end(), Paths[i]);
+    Paths[i][ObsPaths[i].size()] = '\0';
+  }
+
+  return Paths;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+unsigned int ROpenFLUID_GetExtraObserversPathsCount()
+{
+  return openfluid::base::RuntimeEnvironment::getInstance()->getExtraObserversPluginsPaths().size();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+char** ROpenFLUID_GetExtraObserversPaths()
+{
+  std::vector<std::string> ExtraObsPaths = openfluid::base::RuntimeEnvironment::getInstance()->getExtraObserversPluginsPaths();
+
+  const unsigned int Count = ExtraObsPaths.size();
+
+  char** Paths = (char**)malloc(Count*sizeof(char*));
+
+  for (unsigned int i=0;i<Count;i++)
+  {
+    Paths[i] = (char*)malloc(ExtraObsPaths[i].size()+1);
+    std::copy(ExtraObsPaths[i].begin(), ExtraObsPaths[i].end(), Paths[i]);
+    Paths[i][ExtraObsPaths[i].size()] = '\0';
   }
 
   return Paths;
@@ -494,7 +625,7 @@ const char* ROpenFLUID_GetSimulationOutputDir(ROpenFLUID_ExtBlob_t* BlobHandle)
 // =====================================================================
 
 
-int ROpenFLUID_GetDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle)
+int ROpenFLUID_GetDefaultDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
@@ -506,7 +637,7 @@ int ROpenFLUID_GetDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle)
 // =====================================================================
 
 
-void ROpenFLUID_SetDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle, int DeltaT)
+void ROpenFLUID_SetDefaultDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle, int DeltaT)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
@@ -617,6 +748,27 @@ void ROpenFLUID_SetSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* 
 // =====================================================================
 
 
+void ROpenFLUID_RemoveSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* SimID, const char* ParamName)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string SimIDStr(SimID);
+  std::string ParamNameStr(ParamName);
+
+  for (openfluid::fluidx::CoupledModelDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getModelDescriptor().getItems().begin();
+         ItModelInfos != Data->FluidXDesc.getModelDescriptor().getItems().end(); ++ItModelInfos)
+  {
+    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator) &&
+        ((openfluid::fluidx::SimulatorDescriptor*)(*ItModelInfos))->getFileID() == SimIDStr)
+      (*ItModelInfos)->eraseParameter(ParamNameStr);
+  }
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
 void ROpenFLUID_SetGeneratorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, const char* VarName, const char* ParamName, const char* ParamVal)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
@@ -710,6 +862,96 @@ const char* ROpenFLUID_GetModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, con
   }
 
   return ParamValStr.c_str();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_RemoveModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* ParamName)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string ParamNameStr(ParamName);
+
+  Data->FluidXDesc.getModelDescriptor().eraseGlobalParameter(ParamNameStr);
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+const char* ROpenFLUID_GetObserverParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* ObsID, const char* ParamName)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string ParamValStr("");
+  std::string ObsIDStr(ObsID);
+  std::string ParamNameStr(ParamName);
+
+  for (openfluid::fluidx::MonitoringDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getMonitoringDescriptor().getItems().begin();
+         ItModelInfos != Data->FluidXDesc.getMonitoringDescriptor().getItems().end(); ++ItModelInfos)
+  {
+    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedObserver) &&
+        ((openfluid::fluidx::ObserverDescriptor*)(*ItModelInfos))->getID() == ObsIDStr)
+    {
+      openfluid::ware::WareParams_t Params = (*ItModelInfos)->getParameters();
+      openfluid::ware::WareParams_t::iterator ItParam = Params.find(ParamNameStr);
+
+      if (ItParam != Params.end())
+      {
+        ParamValStr = (*ItParam).second;
+        return ParamValStr.c_str();
+      }
+    }
+  }
+
+  return ParamValStr.c_str();
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_SetObserverParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* ObsID, const char* ParamName, const char* ParamVal)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string ObsIDStr(ObsID);
+  std::string ParamNameStr(ParamName);
+  std::string ParamValStr(ParamVal);
+
+  for (openfluid::fluidx::MonitoringDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getMonitoringDescriptor().getItems().begin();
+         ItModelInfos != Data->FluidXDesc.getMonitoringDescriptor().getItems().end(); ++ItModelInfos)
+  {
+    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedObserver) &&
+        ((openfluid::fluidx::ObserverDescriptor*)(*ItModelInfos))->getID() == ObsIDStr)
+      (*ItModelInfos)->setParameter(ParamNameStr,ParamValStr);
+  }
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_RemoveObserverParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* ObsID, const char* ParamName)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string ObsIDStr(ObsID);
+  std::string ParamNameStr(ParamName);
+
+  for (openfluid::fluidx::MonitoringDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getMonitoringDescriptor().getItems().begin();
+         ItModelInfos != Data->FluidXDesc.getMonitoringDescriptor().getItems().end(); ++ItModelInfos)
+  {
+    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedObserver) &&
+        ((openfluid::fluidx::ObserverDescriptor*)(*ItModelInfos))->getID() == ObsIDStr)
+      (*ItModelInfos)->eraseParameter(ParamNameStr);
+  }
 }
 
 
@@ -914,6 +1156,32 @@ const char* ROpenFLUID_GetAttribute(ROpenFLUID_ExtBlob_t* BlobHandle, const char
   }
 
   return "";
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_RemoveAttribute(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, const char* AttrName)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string UnitClassStr(UnitClass);
+  std::string AttrNameStr(AttrName);
+
+  std::list<openfluid::fluidx::AttributesDescriptor>& Attrs = Data->FluidXDesc.getDomainDescriptor().getAttributes();
+
+  for (std::list<openfluid::fluidx::AttributesDescriptor>::iterator ItAttr = Attrs.begin();ItAttr != Attrs.end();++ItAttr)
+  {
+    if ((*ItAttr).getUnitsClass() == UnitClassStr)
+    {
+      openfluid::fluidx::AttributesDescriptor::UnitIDAttribute_t::iterator ItUnitData = (*ItAttr).getAttributes().begin();
+
+      for (ItUnitData;ItUnitData!=(*ItAttr).getAttributes().end();++ItUnitData)
+        (*ItUnitData).second.erase(AttrNameStr);
+    }
+  }
 }
 
 

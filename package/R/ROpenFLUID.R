@@ -56,21 +56,24 @@
 # =====================================================================
 # =====================================================================
 
-#' Adds paths to search for simulators
-#' 
-#' @param paths the semicolon separated paths to add
-#' 
+
+#' Adds paths to search for observers
+#'
+#' @param paths the colon separated paths to add
+#'
 #' @examples \dontrun{
-#' OpenFLUID.addExtraSimulatorsPaths("/first/path/to/add")
-#' OpenFLUID.addExtraSimulatorsPaths("/second/path/to/add:/third/path/to/add")
+#' OPENFLUID.addExtraObserversPaths("/first/path/to/add")
+#' OPENFLUID.addExtraObserversPaths("/second/path/to/add":/third/path/to/add")
 #' }
 #'
-#' @seealso \code{\link{OpenFLUID.getExtraSimulatorsPaths}}
-OpenFLUID.addExtraSimulatorsPaths <- function(paths)
+#' @seealso \code{\link{OPENFLUID.getObserversPaths}}
+#' @seealso \code{\link{OPENFLUID.getExtraObserversPaths}}
+#' @seealso \code{\link{OPENFLUID.resetExtraObserversPaths}}
+OpenFLUID.addExtraObserversPaths <- function(paths)
 {
   stopifnot(is.character(paths))
-  
-  .Call("AddExtraSimulatorsPaths", paths, PACKAGE="ROpenFLUID")  
+
+  .Call("AddExtraObserversPaths", paths, PACKAGE="ROpenFLUID")
   
   return(invisible(NULL))
 }
@@ -78,6 +81,32 @@ OpenFLUID.addExtraSimulatorsPaths <- function(paths)
 
 # =====================================================================
 # =====================================================================
+
+#' Adds paths to search for simulators
+#' 
+#' @param paths the colon separated paths to add
+#' 
+#' @examples \dontrun{
+#' OpenFLUID.addExtraSimulatorsPaths("/first/path/to/add")
+#' OpenFLUID.addExtraSimulatorsPaths("/second/path/to/add:/third/path/to/add")
+#' }
+#'
+#' @seealso \code{\link{OpenFLUID.getSimulatorsPaths}}
+#' @seealso \code{\link{OpenFLUID.getExtraSimulatorsPaths}}
+#' @seealso \code{\link{OPENFLUID.resetExtraSimulatorsPaths}}
+OpenFLUID.addExtraSimulatorsPaths <- function(paths)
+{
+  stopifnot(is.character(paths))
+  
+  .Call("AddExtraSimulatorsPaths", paths, PACKAGE="ROpenFLUID")
+  
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
 
 #' Adds export of simulation variables as CSV files for a given units class
 #' 
@@ -119,6 +148,7 @@ OpenFLUID.addVariablesExportAsCSV <- function(ofblob,unitclass)
 #' 
 #' @seealso \code{\link{OpenFLUID.getAttribute}}
 #' @seealso \code{\link{OpenFLUID.setAttribute}}
+#' @seealso \code{\link{OpenFLUID.removeAttribute}}
 OpenFLUID.createAttribute <- function(ofblob,unitclass,attrname,attrval)
 {
   stopifnot(!is.null(ofblob))  
@@ -135,25 +165,81 @@ OpenFLUID.createAttribute <- function(ofblob,unitclass,attrname,attrval)
 # =====================================================================
 
 
+#' Returns an attribute value for a given spatial unit
+#' 
+#' @param ofblob the simulation definition blob
+#' @param unitclass the unit class
+#' @param unitid the unit ID
+#' @param attrname the name of the attribute
+#' @return the attribute value
+#' 
+#' @examples \dontrun{
+#' val = OpenFLUID.getAttribute(ofsim,"SU",18,"length")
+#' }
+#' 
+#' @seealso \code{\link{OpenFLUID.createAttribute}}
+#' @seealso \code{\link{OpenFLUID.setAttribute}}
+#' @seealso \code{\link{OpenFLUID.removeAttribute}}
+OpenFLUID.getAttribute <- function(ofblob,unitclass,unitid,attrname)
+{
+  stopifnot(!is.null(ofblob))  
+  stopifnot(is.character(unitclass))
+  stopifnot(is.numeric(unitid))
+  stopifnot(is.character(attrname))
+  
+  ret <- .Call("GetAttribute", ofblob, unitclass, as.integer(unitid), attrname, PACKAGE="ROpenFLUID")  
+  
+  stopifnot(!is.null(ret))
+  
+  return(ret)
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
 #' Returns the simulation time step
 #' 
 #' @param ofblob the simulation definition blob
 #' @return the time step value in seconds
 #' 
 #' @examples \dontrun{
-#' deltat = OpenFLUID.getDeltaT(ofsim)
+#' deltat = OpenFLUID.getDefaultDeltaT(ofsim)
 #' }
 #' 
-#' @seealso \code{\link{OpenFLUID.setDeltaT}}
-OpenFLUID.getDeltaT <- function(ofblob)
+#' @seealso \code{\link{OpenFLUID.setDefaultDeltaT}}
+OpenFLUID.getDefaultDeltaT <- function(ofblob)
 {
   stopifnot(!is.null(ofblob))  
   
-  ret <- .Call("GetDeltaT", ofblob, PACKAGE="ROpenFLUID")  
+  ret <- .Call("GetDefaultDeltaT", ofblob, PACKAGE="ROpenFLUID")  
   
   stopifnot(!is.null(ret))
   
   return(ret)
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+
+#' Returns the added paths to search for observers
+#'
+#' @return a vector of paths
+#'
+#' @examples \dontrun{
+#' paths = OpenFLUID.getExtraObserversPaths()
+#' }
+#'
+#' @seealso \code{\link{OpenFLUID.addExtraObserversPaths}}
+#' @seealso \code{\link{OpenFLUID.getObserversPaths}}
+#' @seealso \code{\link{OPENFLUID.resetExtraObserversPaths}}
+OpenFLUID.getExtraObserversPaths <- function()
+{
+  .Call("GetExtraObserversPaths", PACKAGE="ROpenFLUID")
 }
 
 
@@ -170,35 +256,11 @@ OpenFLUID.getDeltaT <- function(ofblob)
 #' }
 #' 
 #' @seealso \code{\link{OpenFLUID.addExtraSimulatorsPaths}}
+#' @seealso \code{\link{OpenFLUID.getSimulatorsPaths}}
+#' @seealso \code{\link{OPENFLUID.resetExtraSimulatorsPaths}}
 OpenFLUID.getExtraSimulatorsPaths <- function()
 {
-  .Call("GetSimulatorsPaths",PACKAGE="ROpenFLUID")  
-}
-
-
-# =====================================================================
-# =====================================================================
-
-
-#' Returns a simulator parameter value
-#' 
-#' @param ofblob the simulation definition blob
-#' @param simid the simulator ID
-#' @param paramname the name of the parameter
-#' @return the parameter value
-#' 
-#' @examples \dontrun{
-#' val = OpenFLUID.getSimulatorParam(ofsim,"my.simulator","coeff")
-#' }
-#' 
-#' @seealso \code{\link{OpenFLUID.setSimulatorParam}}
-OpenFLUID.getSimulatorParam <- function(ofblob,simid,paramname)
-{
-  stopifnot(!is.null(ofblob))  
-  stopifnot(is.character(simid))
-  stopifnot(is.character(paramname))
-  
-  .Call("GetSimulatorParam", ofblob, simid, paramname, PACKAGE="ROpenFLUID")  
+  .Call("GetExtraSimulatorsPaths",PACKAGE="ROpenFLUID")  
 }
 
 
@@ -234,39 +296,6 @@ OpenFLUID.getGeneratorParam <- function(ofblob,unitclass,varname,paramname)
 # =====================================================================
 
 
-#' Returns an attribute value for a given spatial unit
-#' 
-#' @param ofblob the simulation definition blob
-#' @param unitclass the unit class
-#' @param unitid the unit ID
-#' @param attrname the name of the attribute
-#' @return the attribute value
-#' 
-#' @examples \dontrun{
-#' val = OpenFLUID.getAttribute(ofsim,"SU",18,"length")
-#' }
-#' 
-#' @seealso \code{\link{OpenFLUID.createAttribute}}
-#' @seealso \code{\link{OpenFLUID.setAttribute}}
-OpenFLUID.getAttribute <- function(ofblob,unitclass,unitid,attrname)
-{
-  stopifnot(!is.null(ofblob))  
-  stopifnot(is.character(unitclass))
-  stopifnot(is.numeric(unitid))
-  stopifnot(is.character(attrname))
-  
-  ret <- .Call("GetAttribute", ofblob, unitclass, as.integer(unitid), attrname, PACKAGE="ROpenFLUID")  
-  
-  stopifnot(!is.null(ret))
-  
-  return(ret)
-}
-
-
-# =====================================================================
-# =====================================================================
-
-
 #' Returns a model global parameter value
 #' 
 #' @param ofblob the simulation definition blob
@@ -278,12 +307,61 @@ OpenFLUID.getAttribute <- function(ofblob,unitclass,unitid,attrname)
 #' }
 #' 
 #' @seealso \code{\link{OpenFLUID.setModelGlobalParam}}
+#' @seealso \code{\link{OpenFLUID.removeModelGlobalParam}}
 OpenFLUID.getModelGlobalParam <- function(ofblob,paramname)
 {
   stopifnot(!is.null(ofblob))  
   stopifnot(is.character(paramname))
   
   .Call("GetModelGlobalParam", ofblob, paramname, PACKAGE="ROpenFLUID")    
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+#' Returns an observer parameter value
+#' 
+#' @param ofblob the simulation definition blob
+#' @param obsid the observer ID
+#' @param paramname the name of the parameter
+#' @return the parameter value
+#' 
+#' @examples \dontrun{
+#' val = OpenFLUID.getObserverParam(ofsim,"my.observer","value")
+#' }
+#' 
+#' @seealso \code{\link{OpenFLUID.setObserverParam}}
+#' @seealso \code{\link{OpenFLUID.removeObserverParam}}
+OpenFLUID.getObserverParam <- function(ofblob,obsid,paramname)
+{
+  stopifnot(!is.null(ofblob))
+  stopifnot(is.character(obsid))
+  stopifnot(is.character(paramname))
+  
+  .Call("GetObserverParam", ofblob, obsid, paramname, PACKAGE="ROpenFLUID")  
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+#' Returns the paths to search for observers
+#'
+#' @return a vector of paths
+#'
+#' @examples \dontrun{
+#' paths = OpenFLUID.getObserversPaths()
+#' }
+#'
+#' @seealso \code{\link{OpenFLUID.addExtraObserversPaths}}
+#' @seealso \code{\link{OpenFLUID.getExtraObserversPaths}}
+#' @seealso \code{\link{OPENFLUID.resetExtraObserversPaths}}
+OpenFLUID.getObserversPaths <- function()
+{
+  .Call("GetObserversPaths", PACKAGE="ROpenFLUID")
 }
 
 
@@ -308,6 +386,78 @@ OpenFLUID.getPeriodBeginDate <- function(ofblob)
   stopifnot(!is.null(ofblob))  
   
   .Call("GetPeriodBeginDate", ofblob, PACKAGE="ROpenFLUID")
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+#' Returns the simulation period end date
+#' 
+#' @param ofblob the simulation definition blob
+#' @return the end date as an ISO datetime string (\%Y-\%m-\%d \%H:\%M:\%S)
+#' 
+#' @examples \dontrun{
+#' edate = OpenFLUID.getPeriodEndDate(ofsim)
+#' }
+#' 
+#' @seealso \code{\link{OpenFLUID.setPeriodEndDate}}
+#' @seealso \code{\link{OpenFLUID.getPeriodBeginDate}}
+#' @seealso \code{\link{OpenFLUID.setPeriodBeginDate}}
+OpenFLUID.getPeriodEndDate <- function(ofblob)
+{
+  stopifnot(!is.null(ofblob))  
+  
+  .Call("GetPeriodEndDate", ofblob, PACKAGE="ROpenFLUID")
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+#' Returns a simulator parameter value
+#' 
+#' @param ofblob the simulation definition blob
+#' @param simid the simulator ID
+#' @param paramname the name of the parameter
+#' @return the parameter value
+#' 
+#' @examples \dontrun{
+#' val = OpenFLUID.getSimulatorParam(ofsim,"my.simulator","coeff")
+#' }
+#' 
+#' @seealso \code{\link{OpenFLUID.setSimulatorParam}}
+#' @seealso \code{\link{OpenFLUID.removeSimulatorParam}}
+OpenFLUID.getSimulatorParam <- function(ofblob,simid,paramname)
+{
+  stopifnot(!is.null(ofblob))  
+  stopifnot(is.character(simid))
+  stopifnot(is.character(paramname))
+  
+  .Call("GetSimulatorParam", ofblob, simid, paramname, PACKAGE="ROpenFLUID")  
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+#' Returns the paths to search for simulators
+#'
+#' @return a vector of paths
+#'
+#' @examples \dontrun{
+#' paths = OpenFLUID.getSimulatorsPaths()
+#' }
+#'
+#' @seealso \code{\link{OpenFLUID.addExtraSimulatorsPaths}}
+#' @seealso \code{\link{OpenFLUID.getExtraSimulatorsPaths}}
+#' @seealso \code{\link{OPENFLUID.resetExtraSimulatorsPaths}}
+OpenFLUID.getSimulatorsPaths <- function()
+{
+  .Call("GetSimulatorsPaths", PACKAGE="ROpenFLUID")
 }
 
 
@@ -353,30 +503,6 @@ OpenFLUID.getUnitsIDs <- function(ofblob,unitclass)
   stopifnot(!is.null(ofblob))  
   
   .Call("GetUnitsIDs", ofblob, unitclass, PACKAGE="ROpenFLUID")
-}
-
-
-# =====================================================================
-# =====================================================================
-
-
-#' Returns the simulation period end date
-#' 
-#' @param ofblob the simulation definition blob
-#' @return the end date as an ISO datetime string (\%Y-\%m-\%d \%H:\%M:\%S)
-#' 
-#' @examples \dontrun{
-#' edate = OpenFLUID.getPeriodEndDate(ofsim)
-#' }
-#' 
-#' @seealso \code{\link{OpenFLUID.setPeriodEndDate}}
-#' @seealso \code{\link{OpenFLUID.getPeriodBeginDate}}
-#' @seealso \code{\link{OpenFLUID.setPeriodBeginDate}}
-OpenFLUID.getPeriodEndDate <- function(ofblob)
-{
-  stopifnot(!is.null(ofblob))  
-  
-  .Call("GetPeriodEndDate", ofblob, PACKAGE="ROpenFLUID")
 }
 
 
@@ -553,6 +679,155 @@ OpenFLUID.printSimulationInfo <- function(ofblob)
 # =====================================================================
 # =====================================================================
 
+#' Removes an attribute value for a given spatial unit
+#' 
+#' @param ofblob the simulation definition blob
+#' @param unitclass the unit class
+#' @param attrname the name of the attribute
+#' 
+#' @examples \dontrun{
+#' OpenFLUID.removeAttribute(ofsim,"SU","length")
+#' }
+#' 
+#' @seealso \code{\link{OpenFLUID.createAttribute}}
+#' @seealso \code{\link{OpenFLUID.getAttribute}}
+#' @seealso \code{\link{OpenFLUID.setAttribute}}
+OpenFLUID.removeAttribute <- function(ofblob,unitclass,attrname)
+{
+  stopifnot(!is.null(ofblob))  
+  stopifnot(is.character(unitclass))
+  stopifnot(is.character(attrname))    
+  
+  .Call("RemoveAttribute", ofblob, unitclass, attrname, PACKAGE="ROpenFLUID")  
+  
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
+#' Removes a model global parameter value
+#' 
+#' @param ofblob the simulation definition blob
+#' @param paramname the name of the parameter
+#' 
+#' @examples \dontrun{
+#' OpenFLUID.removeModelGlobalParam(ofsim,"gvalue")
+#' }
+#' 
+#' @seealso \code{\link{OpenFLUID.getModelGlobalParam}}
+#' @seealso \code{\link{OpenFLUID.setModelGlobalParam}}
+OpenFLUID.removeModelGlobalParam <- function(ofblob,paramname)
+{
+  stopifnot(!is.null(ofblob))  
+  stopifnot(is.character(paramname))
+  
+  .Call("RemoveModelGlobalParam", ofblob, paramname, PACKAGE="ROpenFLUID")  
+  
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
+#' Removes a observer parameter
+#' 
+#' @param ofblob the simulation definition blob
+#' @param obsid the simulation observer id
+#' @param paramname the name of the parameter
+#' 
+#' @examples \dontrun{
+#' OpenFLUID.removeObserverParam(ofsim,"my.observer","value")
+#' }
+#' 
+#' @seealso \code{\link{OpenFLUID.getObserverParam}}
+#' @seealso \code{\link{OpenFLUID.setObserverParam}}
+OpenFLUID.removeObserverParam <- function(ofblob,obsid,paramname)
+{
+  stopifnot(!is.null(ofblob))  
+  stopifnot(is.character(obsid))
+  stopifnot(is.character(paramname))
+  
+  .Call("RemoveObserverParam", ofblob, obsid, paramname, PACKAGE="ROpenFLUID")  
+  
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
+#' Removes a simulator parameter
+#' 
+#' @param ofblob the simulation definition blob
+#' @param simid the simulation simulator id
+#' @param paramname the name of the parameter
+#' 
+#' @examples \dontrun{
+#' OpenFLUID.removeSimulatorParam(ofsim,"my.simulator","coeff")
+#' }
+#' 
+#' @seealso \code{\link{OpenFLUID.getSimulatorParam}}
+#' @seealso \code{\link{OpenFLUID.setSimulatorParam}}
+OpenFLUID.removeSimulatorParam <- function(ofblob,simid,paramname)
+{
+  stopifnot(!is.null(ofblob))  
+  stopifnot(is.character(simid))
+  stopifnot(is.character(paramname))
+  
+  .Call("RemoveSimulatorParam", ofblob, simid, paramname, PACKAGE="ROpenFLUID")  
+  
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+#' Resets list of added paths to search for observers
+#'
+#' @examples \dontrun{
+#' OPENFLUID.resetExtraObserversPaths()
+#' }
+#'
+#' @seealso \code{\link{OPENFLUID.addExtraObserversPaths}}
+#' @seealso \code{\link{OPENFLUID.getObserversPaths}}
+#' @seealso \code{\link{OPENFLUID.getExtraObserversPaths}}
+OpenFLUID.resetExtraObserversPaths <- function()
+{
+  .Call("ResetExtraObserversPaths", PACKAGE="ROpenFLUID")
+  
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+#' Resets list of added paths to search for simulators
+#'
+#' @examples \dontrun{
+#' OPENFLUID.resetExtraSimulatorsPaths()
+#' }
+#'
+#' @seealso \code{\link{OPENFLUID.addExtraSimulatorsPaths}}
+#' @seealso \code{\link{OPENFLUID.getSimulatorsPaths}}
+#' @seealso \code{\link{OPENFLUID.getExtraSimulatorsPaths}}
+OpenFLUID.resetExtraSimulatorsPaths <- function()
+{
+  .Call("ResetExtraSimulatorsPaths", PACKAGE="ROpenFLUID")
+  
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
 
 #' Runs a project and returns a simulation definition blob
 #' 
@@ -606,6 +881,39 @@ OpenFLUID.runSimulation <- function(ofblob)
 # =====================================================================
 
 
+#' Sets an attribute value for a given spatial unit
+#' 
+#' @param ofblob the simulation definition blob
+#' @param unitclass the unit class
+#' @param unitid the unit ID
+#' @param attrname the name of the attribute
+#' @param attrval the value of the attribute
+#' 
+#' @examples \dontrun{
+#' OpenFLUID.setAttribute(ofsim,"SU",18,"length",12.3)
+#' OpenFLUID.setAttribute(ofsim,"SU",18,"CODE","ABC")
+#' }
+#' 
+#' @seealso \code{\link{OpenFLUID.createAttribute}}
+#' @seealso \code{\link{OpenFLUID.getAttribute}}
+#' @seealso \code{\link{OpenFLUID.removeAttribute}}
+OpenFLUID.setAttribute <- function(ofblob,unitclass,unitid,attrname,attrval)
+{
+  stopifnot(!is.null(ofblob))  
+  stopifnot(is.character(unitclass))
+  stopifnot(is.numeric(unitid))
+  stopifnot(is.character(attrname))    
+  
+  .Call("SetAttribute", ofblob, unitclass, as.integer(unitid), attrname, as.character(attrval), PACKAGE="ROpenFLUID")  
+  
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
 #' Sets the current output directory for simulations
 #' 
 #' @param path the output directory path
@@ -633,47 +941,18 @@ OpenFLUID.setCurrentOutputDir <- function(path)
 #' @param deltat the time step value in seconds
 #' 
 #' @examples \dontrun{
-#' OpenFLUID.setDeltaT(60)
-#' OpenFLUID.setDeltaT(86400) 
+#' OpenFLUID.setDefaultDeltaT(60)
+#' OpenFLUID.setDefaultDeltaT(86400) 
 #' }
 #'
-#' @seealso \code{\link{OpenFLUID.getDeltaT}}
-OpenFLUID.setDeltaT <- function(ofblob,deltat)
+#' @seealso \code{\link{OpenFLUID.getDefaultDeltaT}}
+OpenFLUID.setDefaultDeltaT <- function(ofblob,deltat)
 {
   stopifnot(!is.null(ofblob))  
   stopifnot(is.numeric(deltat))  
   stopifnot(deltat > 0)
   
-  .Call("SetDeltaT", ofblob, as.integer(deltat), PACKAGE="ROpenFLUID")  
-  
-  return(invisible(NULL))
-}
-
-
-# =====================================================================
-# =====================================================================
-
-
-#' Sets a simulator parameter value
-#' 
-#' @param ofblob the simulation definition blob
-#' @param simid the simulation simulator id
-#' @param paramname the name of the parameter
-#' @param paramval the parameter value
-#' 
-#' @examples \dontrun{
-#' OpenFLUID.setSimulatorParam(ofsim,"my.simulator","coeff",3)
-#' }
-#' 
-#' @seealso \code{\link{OpenFLUID.getSimulatorParam}}
-OpenFLUID.setSimulatorParam <- function(ofblob,simid,paramname,paramval)
-{
-  stopifnot(!is.null(ofblob))  
-  stopifnot(is.character(simid))
-  stopifnot(is.character(paramname))
-  
-  
-  .Call("SetSimulatorParam", ofblob, simid, paramname, as.character(paramval), PACKAGE="ROpenFLUID")  
+  .Call("SetDefaultDeltaT", ofblob, as.integer(deltat), PACKAGE="ROpenFLUID")  
   
   return(invisible(NULL))
 }
@@ -713,38 +992,6 @@ OpenFLUID.setGeneratorParam <- function(ofblob,unitclass,varname,paramname,param
 # =====================================================================
 
 
-#' Sets an attribute value for a given spatial unit
-#' 
-#' @param ofblob the simulation definition blob
-#' @param unitclass the unit class
-#' @param unitid the unit ID
-#' @param attrname the name of the attribute
-#' @param attrval the value of the attribute
-#' 
-#' @examples \dontrun{
-#' OpenFLUID.setAttribute(ofsim,"SU",18,"length",12.3)
-#' OpenFLUID.setAttribute(ofsim,"SU",18,"CODE","ABC")
-#' }
-#' 
-#' @seealso \code{\link{OpenFLUID.createAttribute}}
-#' @seealso \code{\link{OpenFLUID.getAttribute}}
-OpenFLUID.setAttribute <- function(ofblob,unitclass,unitid,attrname,attrval)
-{
-  stopifnot(!is.null(ofblob))  
-  stopifnot(is.character(unitclass))
-  stopifnot(is.numeric(unitid))
-  stopifnot(is.character(attrname))    
-  
-  .Call("SetAttribute", ofblob, unitclass, as.integer(unitid), attrname, as.character(attrval), PACKAGE="ROpenFLUID")  
-  
-  return(invisible(NULL))
-}
-
-
-# =====================================================================
-# =====================================================================
-
-
 #' Sets a model global parameter value
 #' 
 #' @param ofblob the simulation definition blob
@@ -756,12 +1003,43 @@ OpenFLUID.setAttribute <- function(ofblob,unitclass,unitid,attrname,attrval)
 #' }
 #' 
 #' @seealso \code{\link{OpenFLUID.getModelGlobalParam}}
+#' @seealso \code{\link{OpenFLUID.removeModelGlobalParam}}
 OpenFLUID.setModelGlobalParam <- function(ofblob,paramname,paramval)
 {
   stopifnot(!is.null(ofblob))  
   stopifnot(is.character(paramname))
   
   .Call("SetModelGlobalParam", ofblob, paramname, as.character(paramval), PACKAGE="ROpenFLUID")  
+  
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+#' Sets an observer parameter value
+#' 
+#' @param ofblob the simulation definition blob
+#' @param obsid the simulation observer id
+#' @param paramname the name of the parameter
+#' @param paramval the parameter value
+#' 
+#' @examples \dontrun{
+#' OpenFLUID.setObserverParam(ofsim,"my.observer","value",3)
+#' }
+#' 
+#' @seealso \code{\link{OpenFLUID.getObserverParam}}
+#' @seealso \code{\link{OpenFLUID.removeObserverParam}}
+OpenFLUID.setObserverParam <- function(ofblob,obsid,paramname,paramval)
+{
+  stopifnot(!is.null(ofblob))  
+  stopifnot(is.character(obsid))
+  stopifnot(is.character(paramname))
+  
+  
+  .Call("SetObserverParam", ofblob, obsid, paramname, as.character(paramval), PACKAGE="ROpenFLUID")  
   
   return(invisible(NULL))
 }
@@ -817,6 +1095,36 @@ OpenFLUID.setPeriodEndDate <- function(ofblob,enddate)
 
   .Call("SetPeriod", ofblob, "", enddate, PACKAGE="ROpenFLUID")
 
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+#' Sets a simulator parameter value
+#' 
+#' @param ofblob the simulation definition blob
+#' @param simid the simulation simulator id
+#' @param paramname the name of the parameter
+#' @param paramval the parameter value
+#' 
+#' @examples \dontrun{
+#' OpenFLUID.setSimulatorParam(ofsim,"my.simulator","coeff",3)
+#' }
+#' 
+#' @seealso \code{\link{OpenFLUID.getSimulatorParam}}
+#' @seealso \code{\link{OpenFLUID.removeSimulatorParam}}
+OpenFLUID.setSimulatorParam <- function(ofblob,simid,paramname,paramval)
+{
+  stopifnot(!is.null(ofblob))  
+  stopifnot(is.character(simid))
+  stopifnot(is.character(paramname))
+  
+  
+  .Call("SetSimulatorParam", ofblob, simid, paramname, as.character(paramval), PACKAGE="ROpenFLUID")  
+  
   return(invisible(NULL))
 }
 
