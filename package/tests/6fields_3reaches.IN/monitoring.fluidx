@@ -1,0 +1,13 @@
+<?xml version="1.0" standalone="yes"?>
+<openfluid>
+  <monitoring>
+    
+    <observer ID="tests.obsA">
+      <param name="pA1" value="10" />
+      <param name="pA2" value="valA2" />
+    </observer>
+    
+    <observer ID="tests.obsB"/>
+
+  </monitoring>
+</openfluid>
