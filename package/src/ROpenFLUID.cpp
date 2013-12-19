@@ -47,7 +47,9 @@
 
 #include <iostream>
 #include <R_ext/Print.h>
-#include <openfluid/base.hpp>
+#include <openfluid/base/Init.hpp>
+#include <openfluid/base/IOListener.hpp>
+#include <openfluid/base/ProjectManager.hpp>
 #include <openfluid/base/ApplicationException.hpp>
 #include <openfluid/machine.hpp>
 #include <openfluid/fluidx/FluidXDescriptor.hpp>
@@ -59,7 +61,11 @@
 
 #include "ROpenFLUID.h"
 
+#include <QCoreApplication>
 
+
+static int qapp_argc = 1;
+static char *qapp_argv[] = { "ROpenFLUID" };
 
 struct ROpenFLUID_Blob_t
 {
@@ -92,10 +98,13 @@ std::string LastErrorMsg = "";
 // =====================================================================
 
 
-
 void ROpenFLUID_Init()
 {
-  openfluid::base::Init();
+  INIT_OPENFLUID_APPLICATION(qapp_argc,qapp_argv);
+
+  // reset locale for "LC_NUMERIC" To "C"
+  // to prevent from Qt changing locale on init
+  std::setlocale(LC_NUMERIC,"C");
 }
 
 
@@ -136,7 +145,7 @@ const char* ROpenFLUID_GetLastError()
 
 void ROpenFLUID_AddExtraSimulatorsPaths(const char* Paths)
 {
-  openfluid::base::Init();
+  // ROpenFLUID_Init();
 
   openfluid::base::RuntimeEnvironment::getInstance()->addExtraSimulatorsPluginsPaths(std::string(Paths));
 }
@@ -218,8 +227,7 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenDataset(const char* Path)
   try
   {
 
-    openfluid::base::Init();
-
+    ROpenFLUID_Init();
 
     openfluid::base::IOListener IOListen;
 
@@ -281,7 +289,7 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenProject(const char* Path)
   try
   {
 
-    openfluid::base::Init();
+    ROpenFLUID_Init();
 
     ROpenFLUID_Blob_t* Data = new ROpenFLUID_Blob_t();
 
@@ -329,7 +337,7 @@ unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
   try
   {
 
-    openfluid::base::Init();
+    // ROpenFLUID_Init();
 
     openfluid::machine::Engine* Engine;
 
@@ -343,13 +351,12 @@ unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
 
     openfluid::machine::SimulatorPluginsManager::getInstance()->unloadAllWares();
 
-
     openfluid::machine::Factory::buildSimulationBlobFromDescriptors(
         Data->FluidXDesc,
         SimBlob);
 
 
-    openfluid::machine::MachineListener MachineListen;
+    openfluid::machine::MachineListener MachineListen;    
     openfluid::machine::ModelInstance Model(SimBlob,&MachineListen);
 
     openfluid::machine::Factory::buildModelInstanceFromDescriptor(Data->FluidXDesc.getModelDescriptor(),

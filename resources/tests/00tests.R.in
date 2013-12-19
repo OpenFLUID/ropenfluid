@@ -3,4 +3,4 @@ library(RUnit)
 library("ROpenFLUID")
 
 
-checkEquals(OpenFLUID.getVersion(),"@openfluid_VERSION@")
+checkEquals(OpenFLUID.getVersion(),"@OpenFLUID_VERSION@")

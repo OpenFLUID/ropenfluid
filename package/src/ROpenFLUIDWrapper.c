@@ -240,12 +240,14 @@ SEXP Rized_OpenFLUID_GetSimulatorsPaths()
   {
     char** Paths = ROpenFLUID_GetSimulatorsPaths();
 
-    for (unsigned int i=0;i<PathsCount;i++)
+    unsigned int i;
+
+    for (i=0;i<PathsCount;i++)
     {
       SET_STRING_ELT(Ret, i, mkChar(Paths[i]));
     }
 
-    for (unsigned int i=0;i<PathsCount;i++)
+    for (i=0;i<PathsCount;i++)
        free (Paths[i]);
 
     free(Paths);
@@ -463,12 +465,14 @@ SEXP Rized_OpenFLUID_GetUnitsClasses(SEXP Blob)
   {
     char** Classes = ROpenFLUID_GetUnitsClasses(R_ExternalPtrAddr(Blob));
 
-    for (unsigned int i=0;i<ClassesCount;i++)
+    unsigned int i;
+
+    for (i=0;i<ClassesCount;i++)
     {
       SET_STRING_ELT(Ret, i, mkChar(Classes[i]));
     }
 
-    for (unsigned int i=0;i<ClassesCount;i++)
+    for (i=0;i<ClassesCount;i++)
        free (Classes[i]);
 
     free(Classes);
@@ -496,7 +500,9 @@ SEXP Rized_OpenFLUID_GetUnitsIDs(SEXP Blob, SEXP UnitClass)
   {
     int* IDs = ROpenFLUID_GetUnitsIDs(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)));
 
-    for (unsigned int i=0;i<IDsCount;i++)
+    unsigned int i;
+
+    for (i=0;i<IDsCount;i++)
       INTEGER(Ret)[i] = IDs[i];
 
     free(IDs);
