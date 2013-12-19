@@ -2,8 +2,7 @@ library(RUnit)
 
 library("ROpenFLUID")
 
-
-checkEquals(OpenFLUID.getVersion(),"@openfluid_VERSION@")
+checkEquals(OpenFLUID.getVersion(),"@OpenFLUID_VERSION@")
 
 
 ## Simulators paths ##
@@ -39,3 +38,4 @@ checkEquals(OpenFLUID.getExtraObserversPaths(), character(0))
 
 OpenFLUID.addExtraObserversPaths("/path/sim/1:/path/sim/2")
 checkEquals(length(OpenFLUID.getExtraObserversPaths()), 2)
+

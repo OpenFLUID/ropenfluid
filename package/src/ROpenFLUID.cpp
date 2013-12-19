@@ -1,6 +1,7 @@
 /*
+
   This file is part of OpenFLUID software
-  Copyright (c) 2007-2010 INRA-Montpellier SupAgro
+  Copyright(c) 2007, INRA - Montpellier SupAgro
 
 
  == GNU General Public License Usage ==
@@ -16,25 +17,7 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with OpenFLUID.  If not, see <http://www.gnu.org/licenses/>.
-
-  In addition, as a special exception, INRA gives You the additional right
-  to dynamically link the code of OpenFLUID with code not covered
-  under the GNU General Public License ("Non-GPL Code") and to distribute
-  linked combinations including the two, subject to the limitations in this
-  paragraph. Non-GPL Code permitted under this exception must only link to
-  the code of OpenFLUID dynamically through the OpenFLUID libraries
-  interfaces, and only for building OpenFLUID plugins. The files of
-  Non-GPL Code may be link to the OpenFLUID libraries without causing the
-  resulting work to be covered by the GNU General Public License. You must
-  obey the GNU General Public License in all respects for all of the
-  OpenFLUID code and other code used in conjunction with OpenFLUID
-  except the Non-GPL Code covered by this exception. If you modify
-  this OpenFLUID, you may extend this exception to your version of the file,
-  but you are not obligated to do so. If you do not wish to provide this
-  exception without modification, you must delete this exception statement
-  from your version and license this OpenFLUID solely under the GPL without
-  exception.
+  along with OpenFLUID. If not, see <http://www.gnu.org/licenses/>.
 
 
  == Other Usage ==
@@ -43,11 +26,14 @@
   license, and requires a written agreement between You and INRA.
   Licensees for Other Usage of OpenFLUID may use this file in accordance
   with the terms contained in the written agreement between You and INRA.
+
 */
 
 #include <iostream>
 #include <R_ext/Print.h>
-#include <openfluid/base.hpp>
+#include <openfluid/base/Init.hpp>
+#include <openfluid/base/IOListener.hpp>
+#include <openfluid/base/ProjectManager.hpp>
 #include <openfluid/base/ApplicationException.hpp>
 #include <openfluid/machine.hpp>
 #include <openfluid/fluidx/FluidXDescriptor.hpp>
@@ -59,7 +45,11 @@
 
 #include "ROpenFLUID.h"
 
+#include <QCoreApplication>
 
+
+static int qapp_argc = 1;
+static char *qapp_argv[] = { "ROpenFLUID" };
 
 struct ROpenFLUID_Blob_t
 {
@@ -92,10 +82,13 @@ std::string LastErrorMsg = "";
 // =====================================================================
 
 
-
 void ROpenFLUID_Init()
 {
-  openfluid::base::Init();
+  INIT_OPENFLUID_APPLICATION(qapp_argc,qapp_argv);
+
+  // reset locale for "LC_NUMERIC" To "C"
+  // to prevent from Qt changing locale on init
+  std::setlocale(LC_NUMERIC,"C");
 }
 
 
@@ -136,7 +129,7 @@ const char* ROpenFLUID_GetLastError()
 
 void ROpenFLUID_AddExtraSimulatorsPaths(const char* Paths)
 {
-  openfluid::base::Init();
+  // ROpenFLUID_Init();
 
   openfluid::base::RuntimeEnvironment::getInstance()->addExtraSimulatorsPluginsPaths(std::string(Paths));
 }
@@ -224,8 +217,6 @@ char** ROpenFLUID_GetExtraSimulatorsPaths()
 
 void ROpenFLUID_AddExtraObserversPaths(const char* Paths)
 {
-  openfluid::base::Init();
-
   openfluid::base::RuntimeEnvironment::getInstance()->addExtraObserversPluginsPaths(std::string(Paths));
 }
 
@@ -349,8 +340,7 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenDataset(const char* Path)
   try
   {
 
-    openfluid::base::Init();
-
+    ROpenFLUID_Init();
 
     openfluid::base::IOListener IOListen;
 
@@ -412,7 +402,7 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenProject(const char* Path)
   try
   {
 
-    openfluid::base::Init();
+    ROpenFLUID_Init();
 
     ROpenFLUID_Blob_t* Data = new ROpenFLUID_Blob_t();
 
@@ -460,7 +450,7 @@ unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
   try
   {
 
-    openfluid::base::Init();
+    // ROpenFLUID_Init();
 
     openfluid::machine::Engine* Engine;
 
@@ -474,13 +464,12 @@ unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
 
     openfluid::machine::SimulatorPluginsManager::getInstance()->unloadAllWares();
 
-
     openfluid::machine::Factory::buildSimulationBlobFromDescriptors(
         Data->FluidXDesc,
         SimBlob);
 
 
-    openfluid::machine::MachineListener MachineListen;
+    openfluid::machine::MachineListener MachineListen;    
     openfluid::machine::ModelInstance Model(SimBlob,&MachineListen);
 
     openfluid::machine::Factory::buildModelInstanceFromDescriptor(Data->FluidXDesc.getModelDescriptor(),

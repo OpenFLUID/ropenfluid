@@ -2,11 +2,11 @@ library(RUnit)
 
 library("ROpenFLUID")
 
-ofsim = OpenFLUID.openDataset("@openfluid_PREFIX@/share/doc/openfluid/examples/projects/Primitives/IN")
+ofsim = OpenFLUID.openDataset("@OpenFLUID_PREFIX@/share/doc/openfluid/examples/projects/Primitives/IN")
 
 OpenFLUID.setCurrentOutputDir(paste(getwd(),'/Primitives.OUT', sep = ""))
 
-OpenFLUID.addExtraSimulatorsPaths("@openfluid_PREFIX@/lib/openfluid/simulators")
+OpenFLUID.addExtraSimulatorsPaths("@OpenFLUID_PREFIX@/lib/openfluid/simulators")
 
 OpenFLUID.addVariablesExportAsCSV(ofsim,"unitsB")
 OpenFLUID.addVariablesExportAsCSV(ofsim,"unitsA")

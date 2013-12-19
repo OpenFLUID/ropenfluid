@@ -3,10 +3,10 @@
 
 \docType{package}
 
-\title{@openfluid_R_TITLE@}
+\title{@OpenFLUID_R_TITLE@}
 
 \description{
-@openfluid_R_DESC@
+@OpenFLUID_R_DESC@
 }
 
 \details{
