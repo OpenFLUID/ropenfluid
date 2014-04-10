@@ -564,7 +564,7 @@ void ROpenFLUID_PrintSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle)
 
     if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator))
     {
-      Rprintf("%s simulator\n",((openfluid::fluidx::SimulatorDescriptor*)(*ItModelInfos))->getFileID().c_str());
+      Rprintf("%s simulator\n",((openfluid::fluidx::SimulatorDescriptor*)(*ItModelInfos))->getID().c_str());
     }
 
     if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::Generator))
@@ -694,7 +694,7 @@ const char* ROpenFLUID_GetSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const
          ItModelInfos != Data->FluidXDesc.getModelDescriptor().getItems().end(); ++ItModelInfos)
   {
     if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator) &&
-        ((openfluid::fluidx::SimulatorDescriptor*)(*ItModelInfos))->getFileID() == SimIDStr)
+        ((openfluid::fluidx::SimulatorDescriptor*)(*ItModelInfos))->getID() == SimIDStr)
     {
       openfluid::ware::WareParams_t Params = (*ItModelInfos)->getParameters();
       openfluid::ware::WareParams_t::iterator ItParam = Params.find(ParamNameStr);
@@ -727,7 +727,7 @@ void ROpenFLUID_SetSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* 
          ItModelInfos != Data->FluidXDesc.getModelDescriptor().getItems().end(); ++ItModelInfos)
   {
     if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator) &&
-        ((openfluid::fluidx::SimulatorDescriptor*)(*ItModelInfos))->getFileID() == SimIDStr)
+        ((openfluid::fluidx::SimulatorDescriptor*)(*ItModelInfos))->getID() == SimIDStr)
       (*ItModelInfos)->setParameter(ParamNameStr,ParamValStr);
   }
 }
@@ -748,7 +748,7 @@ void ROpenFLUID_RemoveSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const cha
          ItModelInfos != Data->FluidXDesc.getModelDescriptor().getItems().end(); ++ItModelInfos)
   {
     if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator) &&
-        ((openfluid::fluidx::SimulatorDescriptor*)(*ItModelInfos))->getFileID() == SimIDStr)
+        ((openfluid::fluidx::SimulatorDescriptor*)(*ItModelInfos))->getID() == SimIDStr)
       (*ItModelInfos)->eraseParameter(ParamNameStr);
   }
 }
