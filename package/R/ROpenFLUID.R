@@ -31,9 +31,7 @@
 
 
 
-
-
-.First.lib <- function(lib, pkg)
+.onLoad <- function(lib, pkg)
 {  
   library.dynam("ROpenFLUID", pkg, lib)
 }
