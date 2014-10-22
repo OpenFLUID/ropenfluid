@@ -10,7 +10,7 @@ SET(OpenFLUID_R_TITLE "Package for using OpenFLUID within the GNU R environment"
 SET(OpenFLUID_R_DESC "This package allows to load, parameterize, run and analyze OpenFLUID simulations within the GNU R environment")
 
 # Version
-SET(OpenFLUID_R_VERSION_PATCH "4")
+SET(OpenFLUID_R_VERSION_PATCH "20141022")
 
 # Default date
 SET(OpenFLUID_R_DATE "1970-01-01")
