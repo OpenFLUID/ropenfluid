@@ -131,7 +131,7 @@ void ROpenFLUID_AddExtraSimulatorsPaths(const char* Paths)
 {
   // ROpenFLUID_Init();
 
-  openfluid::base::RuntimeEnvironment::getInstance()->addExtraSimulatorsPluginsPaths(std::string(Paths));
+  openfluid::base::RuntimeEnvironment::instance()->addExtraSimulatorsPluginsPaths(std::string(Paths));
 }
 
 
@@ -141,7 +141,7 @@ void ROpenFLUID_AddExtraSimulatorsPaths(const char* Paths)
 
 void ROpenFLUID_ResetExtraSimulatorsPaths()
 {
-  openfluid::base::RuntimeEnvironment::getInstance()->resetExtraSimulatorsPluginsPaths();
+  openfluid::base::RuntimeEnvironment::instance()->resetExtraSimulatorsPluginsPaths();
 }
 
 
@@ -151,7 +151,7 @@ void ROpenFLUID_ResetExtraSimulatorsPaths()
 
 unsigned int ROpenFLUID_GetSimulatorsPathsCount()
 {
-  return openfluid::base::RuntimeEnvironment::getInstance()->getSimulatorsPluginsPaths().size();
+  return openfluid::base::RuntimeEnvironment::instance()->getSimulatorsPluginsPaths().size();
 }
 
 
@@ -161,7 +161,7 @@ unsigned int ROpenFLUID_GetSimulatorsPathsCount()
 
 char** ROpenFLUID_GetSimulatorsPaths()
 {
-  std::vector<std::string> SimsPaths = openfluid::base::RuntimeEnvironment::getInstance()->getSimulatorsPluginsPaths();
+  std::vector<std::string> SimsPaths = openfluid::base::RuntimeEnvironment::instance()->getSimulatorsPluginsPaths();
 
   const unsigned int Count = SimsPaths.size();
 
@@ -184,7 +184,7 @@ char** ROpenFLUID_GetSimulatorsPaths()
 
 unsigned int ROpenFLUID_GetExtraSimulatorsPathsCount()
 {
-  return openfluid::base::RuntimeEnvironment::getInstance()->getExtraSimulatorsPluginsPaths().size();
+  return openfluid::base::RuntimeEnvironment::instance()->getExtraSimulatorsPluginsPaths().size();
 }
 
 
@@ -194,7 +194,7 @@ unsigned int ROpenFLUID_GetExtraSimulatorsPathsCount()
 
 char** ROpenFLUID_GetExtraSimulatorsPaths()
 {
-  std::vector<std::string> ExtraSimsPaths = openfluid::base::RuntimeEnvironment::getInstance()->getExtraSimulatorsPluginsPaths();
+  std::vector<std::string> ExtraSimsPaths = openfluid::base::RuntimeEnvironment::instance()->getExtraSimulatorsPluginsPaths();
 
   const unsigned int Count = ExtraSimsPaths.size();
 
@@ -217,7 +217,7 @@ char** ROpenFLUID_GetExtraSimulatorsPaths()
 
 void ROpenFLUID_AddExtraObserversPaths(const char* Paths)
 {
-  openfluid::base::RuntimeEnvironment::getInstance()->addExtraObserversPluginsPaths(std::string(Paths));
+  openfluid::base::RuntimeEnvironment::instance()->addExtraObserversPluginsPaths(std::string(Paths));
 }
 
 
@@ -227,7 +227,7 @@ void ROpenFLUID_AddExtraObserversPaths(const char* Paths)
 
 void ROpenFLUID_ResetExtraObserversPaths()
 {
-  openfluid::base::RuntimeEnvironment::getInstance()->resetExtraObserversPluginsPaths();
+  openfluid::base::RuntimeEnvironment::instance()->resetExtraObserversPluginsPaths();
 }
 
 
@@ -237,7 +237,7 @@ void ROpenFLUID_ResetExtraObserversPaths()
 
 unsigned int ROpenFLUID_GetObserversPathsCount()
 {
-  return openfluid::base::RuntimeEnvironment::getInstance()->getObserversPluginsPaths().size();
+  return openfluid::base::RuntimeEnvironment::instance()->getObserversPluginsPaths().size();
 }
 
 
@@ -247,7 +247,7 @@ unsigned int ROpenFLUID_GetObserversPathsCount()
 
 char** ROpenFLUID_GetObserversPaths()
 {
-  std::vector<std::string> ObsPaths = openfluid::base::RuntimeEnvironment::getInstance()->getObserversPluginsPaths();
+  std::vector<std::string> ObsPaths = openfluid::base::RuntimeEnvironment::instance()->getObserversPluginsPaths();
 
   const unsigned int Count = ObsPaths.size();
 
@@ -270,7 +270,7 @@ char** ROpenFLUID_GetObserversPaths()
 
 unsigned int ROpenFLUID_GetExtraObserversPathsCount()
 {
-  return openfluid::base::RuntimeEnvironment::getInstance()->getExtraObserversPluginsPaths().size();
+  return openfluid::base::RuntimeEnvironment::instance()->getExtraObserversPluginsPaths().size();
 }
 
 
@@ -280,7 +280,7 @@ unsigned int ROpenFLUID_GetExtraObserversPathsCount()
 
 char** ROpenFLUID_GetExtraObserversPaths()
 {
-  std::vector<std::string> ExtraObsPaths = openfluid::base::RuntimeEnvironment::getInstance()->getExtraObserversPluginsPaths();
+  std::vector<std::string> ExtraObsPaths = openfluid::base::RuntimeEnvironment::instance()->getExtraObserversPluginsPaths();
 
   const unsigned int Count = ExtraObsPaths.size();
 
@@ -344,15 +344,15 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenDataset(const char* Path)
 
     openfluid::base::IOListener IOListen;
 
-    openfluid::base::RuntimeEnvironment::getInstance()->setInputDir(std::string(Path));
-    Data->FluidXDesc.loadFromDirectory(openfluid::base::RuntimeEnvironment::getInstance()->getInputDir());
+    openfluid::base::RuntimeEnvironment::instance()->setInputDir(std::string(Path));
+    Data->FluidXDesc.loadFromDirectory(openfluid::base::RuntimeEnvironment::instance()->getInputDir());
 
     Data->IsSimulationRun = false;
 
     if (!Data->IsProject)
     {
       Data->IsDataset = true;
-      Data->SourcePath = openfluid::base::RuntimeEnvironment::getInstance()->getInputDir();
+      Data->SourcePath = openfluid::base::RuntimeEnvironment::instance()->getInputDir();
     }
 
 
@@ -389,7 +389,7 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenDataset(const char* Path)
 
 void ROpenFLUID_SetCurrentOutputDir(const char* Path)
 {
-  openfluid::base::RuntimeEnvironment::getInstance()->setOutputDir(std::string(Path));
+  openfluid::base::RuntimeEnvironment::instance()->setOutputDir(std::string(Path));
 }
 
 
@@ -406,18 +406,19 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenProject(const char* Path)
 
     ROpenFLUID_Blob_t* Data = new ROpenFLUID_Blob_t();
 
-    if (openfluid::base::ProjectManager::getInstance()->open(std::string(Path)))
+    if (openfluid::base::ProjectManager::instance()->open(std::string(Path)))
     {
-      openfluid::base::RuntimeEnvironment::getInstance()->linkToProject();
-      openfluid::base::ProjectManager::getInstance()->updateOutputDir();
+      openfluid::base::RuntimeEnvironment::instance()->linkToProject();
+      openfluid::base::ProjectManager::instance()->updateOutputDir();
     }
     else
-      throw openfluid::base::ApplicationException("ROpenFLUID",std::string(Path) + " is not a correct project path");
+      throw openfluid::base::ApplicationException(openfluid::base::ApplicationException::computeContext("ROpenFLUID"),
+                                                  std::string(Path) + " is not a correct project path");
 
     Data->IsProject = true;
-    Data->SourcePath = openfluid::base::ProjectManager::getInstance()->getPath();
+    Data->SourcePath = openfluid::base::ProjectManager::instance()->getPath();
 
-    return ROpenFLUID_OpenDataset(openfluid::base::RuntimeEnvironment::getInstance()->getInputDir().c_str());
+    return ROpenFLUID_OpenDataset(openfluid::base::RuntimeEnvironment::instance()->getInputDir().c_str());
   }
   catch (openfluid::base::Exception& E)
   {
@@ -462,7 +463,7 @@ unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
     openfluid::base::IOListener IOListen;
     openfluid::machine::SimulationBlob SimBlob;
 
-    openfluid::machine::SimulatorPluginsManager::getInstance()->unloadAllWares();
+    openfluid::machine::SimulatorPluginsManager::instance()->unloadAllWares();
 
     openfluid::machine::Factory::buildSimulationBlobFromDescriptors(
         Data->FluidXDesc,
@@ -472,16 +473,16 @@ unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
     openfluid::machine::MachineListener MachineListen;    
     openfluid::machine::ModelInstance Model(SimBlob,&MachineListen);
 
-    openfluid::machine::Factory::buildModelInstanceFromDescriptor(Data->FluidXDesc.getModelDescriptor(),
+    openfluid::machine::Factory::buildModelInstanceFromDescriptor(Data->FluidXDesc.modelDescriptor(),
         Model);
 
     openfluid::machine::MonitoringInstance Monitoring(SimBlob);
 
-    openfluid::machine::Factory::buildMonitoringInstanceFromDescriptor(Data->FluidXDesc.getMonitoringDescriptor(),
+    openfluid::machine::Factory::buildMonitoringInstanceFromDescriptor(Data->FluidXDesc.monitoringDescriptor(),
                                                                        Monitoring);
 
 
-    Data->OutputDir = openfluid::base::RuntimeEnvironment::getInstance()->getOutputDir();
+    Data->OutputDir = openfluid::base::RuntimeEnvironment::instance()->getOutputDir();
 
     Engine = new openfluid::machine::Engine(SimBlob, Model, Monitoring, &MachineListen);
 
@@ -533,43 +534,41 @@ void ROpenFLUID_PrintSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle)
 
   // Spatial domain
 
-  std::map<openfluid::core::UnitClass_t,unsigned int> UnitsInfos;
+  std::map<openfluid::core::UnitsClass_t,unsigned int> UnitsInfos;
 
-  std::list<openfluid::fluidx::UnitDescriptor>::iterator bItUnits = Data->FluidXDesc.getDomainDescriptor().getUnits().begin();
-  std::list<openfluid::fluidx::UnitDescriptor>::iterator eItUnits = Data->FluidXDesc.getDomainDescriptor().getUnits().end();
-
-  for (std::list<openfluid::fluidx::UnitDescriptor>::iterator ItUnits = bItUnits;ItUnits != eItUnits;++ItUnits)
+  for (auto& ItUnits : Data->FluidXDesc.spatialDomainDescriptor().spatialUnits())
   {
-    openfluid::core::UnitClass_t ClassName = (*ItUnits).getUnitClass();
+    openfluid::core::UnitsClass_t ClassName = ItUnits.getUnitsClass();
 
-    if (UnitsInfos.find(ClassName) == UnitsInfos.end()) UnitsInfos[ClassName] = 0;
+    if (UnitsInfos.find(ClassName) == UnitsInfos.end())
+      UnitsInfos[ClassName] = 0;
+
     UnitsInfos[ClassName]++;
   }
 
-  Rprintf("Spatial domain is made of %i spatial units\n",Data->FluidXDesc.getDomainDescriptor().getUnits().size());
+  Rprintf("Spatial domain is made of %i spatial units\n",
+          Data->FluidXDesc.spatialDomainDescriptor().spatialUnits().size());
 
-  for (std::map<openfluid::core::UnitClass_t,unsigned int>::iterator ItUnitsInfos = UnitsInfos.begin();
-       ItUnitsInfos != UnitsInfos.end(); ++ItUnitsInfos)
-    Rprintf(" - %i units of class %s\n",(*ItUnitsInfos).second,(*ItUnitsInfos).first.c_str());
+  for (auto& ItUnitsInfos : UnitsInfos)
+    Rprintf(" - %i units of class %s\n",ItUnitsInfos.second,ItUnitsInfos.first.c_str());
 
 
   // Model
 
-  Rprintf("Model is made of %i simulation items\n",Data->FluidXDesc.getModelDescriptor().getItems().size());
+  Rprintf("Model is made of %i simulation items\n",Data->FluidXDesc.modelDescriptor().items().size());
 
-  for (openfluid::fluidx::CoupledModelDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getModelDescriptor().getItems().begin();
-         ItModelInfos != Data->FluidXDesc.getModelDescriptor().getItems().end(); ++ItModelInfos)
+  for (auto& ItModelInfos : Data->FluidXDesc.modelDescriptor().items())
   {
     Rprintf(" - ");
 
-    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator))
+    if (ItModelInfos->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator))
     {
-      Rprintf("%s simulator\n",((openfluid::fluidx::SimulatorDescriptor*)(*ItModelInfos))->getID().c_str());
+      Rprintf("%s simulator\n",((openfluid::fluidx::SimulatorDescriptor*)(ItModelInfos))->getID().c_str());
     }
 
-    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::Generator))
+    if (ItModelInfos->isType(openfluid::fluidx::ModelItemDescriptor::Generator))
     {
-      openfluid::fluidx::GeneratorDescriptor* pGenDesc = ((openfluid::fluidx::GeneratorDescriptor*)(*ItModelInfos));
+      openfluid::fluidx::GeneratorDescriptor* pGenDesc = ((openfluid::fluidx::GeneratorDescriptor*)ItModelInfos);
 
       if (pGenDesc->getGeneratorMethod() == openfluid::fluidx::GeneratorDescriptor::Fixed)
         Rprintf("fixed");
@@ -583,17 +582,19 @@ void ROpenFLUID_PrintSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle)
       if (pGenDesc->getGeneratorMethod() == openfluid::fluidx::GeneratorDescriptor::Inject)
         Rprintf("inject");
 
-      Rprintf(" generator for variable %s on units %s\n",pGenDesc->getVariableName().c_str(),pGenDesc->getUnitClass().c_str());
+      Rprintf(" generator for variable %s on units %s\n",pGenDesc->getVariableName().c_str(),pGenDesc->getUnitsClass().c_str());
     }
   }
 
   // Time period
 
-  Rprintf("Simulation period from %s to %s\n",Data->FluidXDesc.getRunDescriptor().getBeginDate().getAsISOString().c_str(),Data->FluidXDesc.getRunDescriptor().getEndDate().getAsISOString().c_str());
+  Rprintf("Simulation period from %s to %s\n",
+          Data->FluidXDesc.runDescriptor().getBeginDate().getAsISOString().c_str(),
+          Data->FluidXDesc.runDescriptor().getEndDate().getAsISOString().c_str());
 
   // Time step
 
-  Rprintf("Simulation time step : %i\n",Data->FluidXDesc.getRunDescriptor().getDeltaT());
+  Rprintf("Simulation time step : %i\n",Data->FluidXDesc.runDescriptor().getDeltaT());
 
 }
 
@@ -618,7 +619,7 @@ int ROpenFLUID_GetDefaultDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-  return Data->FluidXDesc.getRunDescriptor().getDeltaT();
+  return Data->FluidXDesc.runDescriptor().getDeltaT();
 }
 
 
@@ -630,7 +631,7 @@ void ROpenFLUID_SetDefaultDeltaT(ROpenFLUID_ExtBlob_t* BlobHandle, int DeltaT)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-  Data->FluidXDesc.getRunDescriptor().setDeltaT(DeltaT);
+  Data->FluidXDesc.runDescriptor().setDeltaT(DeltaT);
 }
 
 
@@ -642,7 +643,7 @@ const char* ROpenFLUID_GetPeriodBeginDate(ROpenFLUID_ExtBlob_t* BlobHandle)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-  return Data->FluidXDesc.getRunDescriptor().getBeginDate().getAsString("%Y-%m-%d %H:%M:%S").c_str();
+  return Data->FluidXDesc.runDescriptor().getBeginDate().getAsString("%Y-%m-%d %H:%M:%S").c_str();
 }
 
 
@@ -654,7 +655,7 @@ const char* ROpenFLUID_GetPeriodEndDate(ROpenFLUID_ExtBlob_t* BlobHandle)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-  return Data->FluidXDesc.getRunDescriptor().getEndDate().getAsString("%Y-%m-%d %H:%M:%S").c_str();
+  return Data->FluidXDesc.runDescriptor().getEndDate().getAsString("%Y-%m-%d %H:%M:%S").c_str();
 }
 
 
@@ -671,10 +672,10 @@ void ROpenFLUID_SetPeriod(ROpenFLUID_ExtBlob_t* BlobHandle, const char* BeginDat
   openfluid::core::DateTime DateToSet;
 
   if (!StrBeginDate.empty() && DateToSet.setFromISOString(StrBeginDate))
-    Data->FluidXDesc.getRunDescriptor().setBeginDate(DateToSet);
+    Data->FluidXDesc.runDescriptor().setBeginDate(DateToSet);
 
   if (!StrEndDate.empty() && DateToSet.setFromISOString(StrEndDate))
-      Data->FluidXDesc.getRunDescriptor().setEndDate(DateToSet);
+      Data->FluidXDesc.runDescriptor().setEndDate(DateToSet);
 }
 
 
@@ -690,13 +691,12 @@ const char* ROpenFLUID_GetSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const
   std::string SimIDStr(SimID);
   std::string ParamNameStr(ParamName);
 
-  for (openfluid::fluidx::CoupledModelDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getModelDescriptor().getItems().begin();
-         ItModelInfos != Data->FluidXDesc.getModelDescriptor().getItems().end(); ++ItModelInfos)
+  for (auto& ItModelInfos : Data->FluidXDesc.modelDescriptor().items())
   {
-    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator) &&
-        ((openfluid::fluidx::SimulatorDescriptor*)(*ItModelInfos))->getID() == SimIDStr)
+    if (ItModelInfos->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator) &&
+        ((openfluid::fluidx::SimulatorDescriptor*)ItModelInfos)->getID() == SimIDStr)
     {
-      openfluid::ware::WareParams_t Params = (*ItModelInfos)->getParameters();
+      openfluid::ware::WareParams_t Params = ItModelInfos->getParameters();
       openfluid::ware::WareParams_t::iterator ItParam = Params.find(ParamNameStr);
 
       if (ItParam != Params.end())
@@ -723,12 +723,11 @@ void ROpenFLUID_SetSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* 
   std::string ParamNameStr(ParamName);
   std::string ParamValStr(ParamVal);
 
-  for (openfluid::fluidx::CoupledModelDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getModelDescriptor().getItems().begin();
-         ItModelInfos != Data->FluidXDesc.getModelDescriptor().getItems().end(); ++ItModelInfos)
+  for (auto& ItModelInfos : Data->FluidXDesc.modelDescriptor().items())
   {
-    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator) &&
-        ((openfluid::fluidx::SimulatorDescriptor*)(*ItModelInfos))->getID() == SimIDStr)
-      (*ItModelInfos)->setParameter(ParamNameStr,ParamValStr);
+    if (ItModelInfos->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator) &&
+        ((openfluid::fluidx::SimulatorDescriptor*)ItModelInfos)->getID() == SimIDStr)
+      ItModelInfos->setParameter(ParamNameStr,ParamValStr);
   }
 }
 
@@ -744,12 +743,11 @@ void ROpenFLUID_RemoveSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const cha
   std::string SimIDStr(SimID);
   std::string ParamNameStr(ParamName);
 
-  for (openfluid::fluidx::CoupledModelDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getModelDescriptor().getItems().begin();
-         ItModelInfos != Data->FluidXDesc.getModelDescriptor().getItems().end(); ++ItModelInfos)
+  for (auto& ItModelInfos : Data->FluidXDesc.modelDescriptor().items())
   {
-    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator) &&
-        ((openfluid::fluidx::SimulatorDescriptor*)(*ItModelInfos))->getID() == SimIDStr)
-      (*ItModelInfos)->eraseParameter(ParamNameStr);
+    if (ItModelInfos->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator) &&
+        ((openfluid::fluidx::SimulatorDescriptor*)ItModelInfos)->getID() == SimIDStr)
+      ItModelInfos->eraseParameter(ParamNameStr);
   }
 }
 
@@ -767,14 +765,13 @@ void ROpenFLUID_SetGeneratorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* 
   std::string ParamNameStr(ParamName);
   std::string ParamValStr(ParamVal);
 
-  for (openfluid::fluidx::CoupledModelDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getModelDescriptor().getItems().begin();
-         ItModelInfos != Data->FluidXDesc.getModelDescriptor().getItems().end(); ++ItModelInfos)
+  for (auto& ItModelInfos : Data->FluidXDesc.modelDescriptor().items())
   {
-    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::Generator) &&
-        ((openfluid::fluidx::GeneratorDescriptor*)(*ItModelInfos))->getUnitClass() == UnitClassStr &&
-        ((openfluid::fluidx::GeneratorDescriptor*)(*ItModelInfos))->getVariableName() == VarNameStr)
+    if (ItModelInfos->isType(openfluid::fluidx::ModelItemDescriptor::Generator) &&
+        ((openfluid::fluidx::GeneratorDescriptor*)ItModelInfos)->getUnitsClass() == UnitClassStr &&
+        ((openfluid::fluidx::GeneratorDescriptor*)ItModelInfos)->getVariableName() == VarNameStr)
     {
-      (*ItModelInfos)->setParameter(ParamNameStr,ParamValStr);
+      ItModelInfos->setParameter(ParamNameStr,ParamValStr);
     }
   }
 }
@@ -793,14 +790,13 @@ const char* ROpenFLUID_GetGeneratorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const
   std::string ParamNameStr(ParamName);
   std::string ParamValStr("");
 
-  for (openfluid::fluidx::CoupledModelDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getModelDescriptor().getItems().begin();
-         ItModelInfos != Data->FluidXDesc.getModelDescriptor().getItems().end(); ++ItModelInfos)
+  for (auto& ItModelInfos : Data->FluidXDesc.modelDescriptor().items())
   {
-    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::Generator) &&
-        ((openfluid::fluidx::GeneratorDescriptor*)(*ItModelInfos))->getUnitClass() == UnitClassStr &&
-        ((openfluid::fluidx::GeneratorDescriptor*)(*ItModelInfos))->getVariableName() == VarNameStr)
+    if (ItModelInfos->isType(openfluid::fluidx::ModelItemDescriptor::Generator) &&
+        ((openfluid::fluidx::GeneratorDescriptor*)ItModelInfos)->getUnitsClass() == UnitClassStr &&
+        ((openfluid::fluidx::GeneratorDescriptor*)ItModelInfos)->getVariableName() == VarNameStr)
     {
-      openfluid::ware::WareParams_t Params = (*ItModelInfos)->getParameters();
+      openfluid::ware::WareParams_t Params = ItModelInfos->getParameters();
       openfluid::ware::WareParams_t::iterator ItParam = Params.find(ParamNameStr);
 
       if (ItParam != Params.end())
@@ -826,7 +822,7 @@ void ROpenFLUID_SetModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char
   std::string ParamNameStr(ParamName);
   std::string ParamValStr(ParamVal);
 
-  Data->FluidXDesc.getModelDescriptor().setGlobalParameter(ParamNameStr,ParamValStr);
+  Data->FluidXDesc.modelDescriptor().setGlobalParameter(ParamNameStr,ParamValStr);
 }
 
 
@@ -841,7 +837,7 @@ const char* ROpenFLUID_GetModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, con
   std::string ParamNameStr(ParamName);
   std::string ParamValStr("");
 
-  openfluid::ware::WareParams_t Params = Data->FluidXDesc.getModelDescriptor().getGlobalParameters();
+  openfluid::ware::WareParams_t Params = Data->FluidXDesc.modelDescriptor().getGlobalParameters();
   openfluid::ware::WareParams_t::iterator ItParam = Params.find(ParamNameStr);
 
   if (ItParam != Params.end())
@@ -864,7 +860,7 @@ void ROpenFLUID_RemoveModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, const c
 
   std::string ParamNameStr(ParamName);
 
-  Data->FluidXDesc.getModelDescriptor().eraseGlobalParameter(ParamNameStr);
+  Data->FluidXDesc.modelDescriptor().eraseGlobalParameter(ParamNameStr);
 }
 
 
@@ -880,13 +876,12 @@ const char* ROpenFLUID_GetObserverParam(ROpenFLUID_ExtBlob_t* BlobHandle, const 
   std::string ObsIDStr(ObsID);
   std::string ParamNameStr(ParamName);
 
-  for (openfluid::fluidx::MonitoringDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getMonitoringDescriptor().getItems().begin();
-         ItModelInfos != Data->FluidXDesc.getMonitoringDescriptor().getItems().end(); ++ItModelInfos)
+  for (auto& ItObsInfos : Data->FluidXDesc.monitoringDescriptor().items())
   {
-    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedObserver) &&
-        ((openfluid::fluidx::ObserverDescriptor*)(*ItModelInfos))->getID() == ObsIDStr)
+    if (ItObsInfos->isType(openfluid::fluidx::ModelItemDescriptor::PluggedObserver) &&
+        ((openfluid::fluidx::ObserverDescriptor*)ItObsInfos)->getID() == ObsIDStr)
     {
-      openfluid::ware::WareParams_t Params = (*ItModelInfos)->getParameters();
+      openfluid::ware::WareParams_t Params = ItObsInfos->getParameters();
       openfluid::ware::WareParams_t::iterator ItParam = Params.find(ParamNameStr);
 
       if (ItParam != Params.end())
@@ -913,12 +908,11 @@ void ROpenFLUID_SetObserverParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* O
   std::string ParamNameStr(ParamName);
   std::string ParamValStr(ParamVal);
 
-  for (openfluid::fluidx::MonitoringDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getMonitoringDescriptor().getItems().begin();
-         ItModelInfos != Data->FluidXDesc.getMonitoringDescriptor().getItems().end(); ++ItModelInfos)
+  for (auto& ItObsInfos : Data->FluidXDesc.monitoringDescriptor().items())
   {
-    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedObserver) &&
-        ((openfluid::fluidx::ObserverDescriptor*)(*ItModelInfos))->getID() == ObsIDStr)
-      (*ItModelInfos)->setParameter(ParamNameStr,ParamValStr);
+    if (ItObsInfos->isType(openfluid::fluidx::ModelItemDescriptor::PluggedObserver) &&
+        ((openfluid::fluidx::ObserverDescriptor*)ItObsInfos)->getID() == ObsIDStr)
+      ItObsInfos->setParameter(ParamNameStr,ParamValStr);
   }
 }
 
@@ -934,12 +928,11 @@ void ROpenFLUID_RemoveObserverParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char
   std::string ObsIDStr(ObsID);
   std::string ParamNameStr(ParamName);
 
-  for (openfluid::fluidx::MonitoringDescriptor::SetDescription_t::iterator ItModelInfos = Data->FluidXDesc.getMonitoringDescriptor().getItems().begin();
-         ItModelInfos != Data->FluidXDesc.getMonitoringDescriptor().getItems().end(); ++ItModelInfos)
+  for (auto& ItObsInfos : Data->FluidXDesc.monitoringDescriptor().items())
   {
-    if ((*ItModelInfos)->isType(openfluid::fluidx::ModelItemDescriptor::PluggedObserver) &&
-        ((openfluid::fluidx::ObserverDescriptor*)(*ItModelInfos))->getID() == ObsIDStr)
-      (*ItModelInfos)->eraseParameter(ParamNameStr);
+    if (ItObsInfos->isType(openfluid::fluidx::ModelItemDescriptor::PluggedObserver) &&
+        ((openfluid::fluidx::ObserverDescriptor*)ItObsInfos)->getID() == ObsIDStr)
+      ItObsInfos->eraseParameter(ParamNameStr);
   }
 }
 
@@ -948,18 +941,17 @@ void ROpenFLUID_RemoveObserverParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char
 // =====================================================================
 
 
-std::map<openfluid::core::UnitClass_t,unsigned int> GetUnitsCountByClasses(ROpenFLUID_ExtBlob_t* BlobHandle)
+std::map<openfluid::core::UnitsClass_t,unsigned int> GetUnitsCountByClasses(ROpenFLUID_ExtBlob_t* BlobHandle)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-  std::map<openfluid::core::UnitClass_t,unsigned int> RetMap;
+  std::map<openfluid::core::UnitsClass_t,unsigned int> RetMap;
 
-  std::list<openfluid::fluidx::UnitDescriptor>& Units = Data->FluidXDesc.getDomainDescriptor().getUnits();
-
-  for (std::list<openfluid::fluidx::UnitDescriptor>::iterator ItUnits = Units.begin();ItUnits != Units.end();++ItUnits)
+  for (auto ItUnits : Data->FluidXDesc.spatialDomainDescriptor().spatialUnits())
   {
-    if (RetMap.find((*ItUnits).getUnitClass()) == RetMap.end()) RetMap[(*ItUnits).getUnitClass()] = 0;
-    RetMap[(*ItUnits).getUnitClass()]++;
+    if (RetMap.find(ItUnits.getUnitsClass()) == RetMap.end())
+      RetMap[ItUnits.getUnitsClass()] = 0;
+    RetMap[ItUnits.getUnitsClass()]++;
   }
 
   return RetMap;
@@ -973,20 +965,20 @@ std::map<openfluid::core::UnitClass_t,unsigned int> GetUnitsCountByClasses(ROpen
 
 char** ROpenFLUID_GetUnitsClasses(ROpenFLUID_ExtBlob_t* BlobHandle)
 {
-  std::map<openfluid::core::UnitClass_t,unsigned int> UnitsCountByClasses;
+  std::map<openfluid::core::UnitsClass_t,unsigned int> UnitsCountByClasses;
   UnitsCountByClasses = GetUnitsCountByClasses(BlobHandle);
 
-  std::map<openfluid::core::UnitClass_t,unsigned int>::iterator ItUCC;
+  std::map<openfluid::core::UnitsClass_t,unsigned int>::iterator ItUCC;
   const unsigned int Count = UnitsCountByClasses.size();
 
   char** Classes = (char**)malloc(Count*sizeof(char*));
 
   unsigned int i=0;
-  for (ItUCC=UnitsCountByClasses.begin();ItUCC!=UnitsCountByClasses.end();++ItUCC)
+  for (auto& ItUCC : UnitsCountByClasses)
   {
-    Classes[i] = (char*)malloc((*ItUCC).first.size()+1);
-    std::copy((*ItUCC).first.begin(), (*ItUCC).first.end(), Classes[i]);
-    Classes[i][(*ItUCC).first.size()] = '\0';
+    Classes[i] = (char*)malloc(ItUCC.first.size()+1);
+    std::copy(ItUCC.first.begin(), ItUCC.first.end(), Classes[i]);
+    Classes[i][ItUCC.first.size()] = '\0';
     i++;
   }
 
@@ -1001,7 +993,7 @@ char** ROpenFLUID_GetUnitsClasses(ROpenFLUID_ExtBlob_t* BlobHandle)
 
 unsigned int ROpenFLUID_GetUnitsClassesCount(ROpenFLUID_ExtBlob_t* BlobHandle)
 {
-  std::map<openfluid::core::UnitClass_t,unsigned int> UnitsCountByClasses;
+  std::map<openfluid::core::UnitsClass_t,unsigned int> UnitsCountByClasses;
   UnitsCountByClasses = GetUnitsCountByClasses(BlobHandle);
 
   return UnitsCountByClasses.size();
@@ -1012,9 +1004,9 @@ unsigned int ROpenFLUID_GetUnitsClassesCount(ROpenFLUID_ExtBlob_t* BlobHandle)
 // =====================================================================
 
 
-int* ROpenFLUID_GetUnitsIDs(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass)
+int* ROpenFLUID_GetUnitsIDs(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitsClass)
 {
-  int Count = ROpenFLUID_GetUnitsIDsCount(BlobHandle,UnitClass);
+  int Count = ROpenFLUID_GetUnitsIDsCount(BlobHandle,UnitsClass);
 
   int* IDs = NULL;
 
@@ -1024,14 +1016,12 @@ int* ROpenFLUID_GetUnitsIDs(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitCl
 
     ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-    std::list<openfluid::fluidx::UnitDescriptor>& Units = Data->FluidXDesc.getDomainDescriptor().getUnits();
-
     unsigned int i=0;
-    for (std::list<openfluid::fluidx::UnitDescriptor>::iterator ItUnits = Units.begin();ItUnits != Units.end();++ItUnits)
+    for (auto& ItUnits : Data->FluidXDesc.spatialDomainDescriptor().spatialUnits())
     {
-      if ((*ItUnits).getUnitClass() == std::string(UnitClass))
+      if (ItUnits.getUnitsClass() == std::string(UnitsClass))
       {
-        IDs[i] = (*ItUnits).getUnitID();
+        IDs[i] = ItUnits.getID();
         i++;
       }
     }
@@ -1045,15 +1035,15 @@ int* ROpenFLUID_GetUnitsIDs(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitCl
 // =====================================================================
 
 
-unsigned int ROpenFLUID_GetUnitsIDsCount(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass)
+unsigned int ROpenFLUID_GetUnitsIDsCount(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitsClass)
 {
-  std::map<openfluid::core::UnitClass_t,unsigned int> UnitsCountByClasses;
+  std::map<openfluid::core::UnitsClass_t,unsigned int> UnitsCountByClasses;
   UnitsCountByClasses = GetUnitsCountByClasses(BlobHandle);
 
   unsigned int Count = 0;
 
-  if (UnitsCountByClasses.find(std::string(UnitClass)) != UnitsCountByClasses.end())
-    Count = UnitsCountByClasses[std::string(UnitClass)];
+  if (UnitsCountByClasses.find(std::string(UnitsClass)) != UnitsCountByClasses.end())
+    Count = UnitsCountByClasses[std::string(UnitsClass)];
 
   return Count;
 }
@@ -1063,27 +1053,24 @@ unsigned int ROpenFLUID_GetUnitsIDsCount(ROpenFLUID_ExtBlob_t* BlobHandle, const
 // =====================================================================
 
 
-void ROpenFLUID_CreateAttribute(ROpenFLUID_ExtBlob_t* BlobHandle,const char* UnitClass, const char* AttrName, const char* AttrValue)
+void ROpenFLUID_CreateAttribute(ROpenFLUID_ExtBlob_t* BlobHandle,
+                                const char* UnitsClass, const char* AttrName, const char* AttrValue)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-  std::string UnitClassStr(UnitClass);
+  std::string UnitClassStr(UnitsClass);
   std::string AttrNameStr(AttrName);
   std::string AttrValStr(AttrValue);
 
-  std::list<openfluid::fluidx::AttributesDescriptor>& Attrs = Data->FluidXDesc.getDomainDescriptor().getAttributes();
 
-  for (std::list<openfluid::fluidx::AttributesDescriptor>::iterator ItAttr = Attrs.begin();ItAttr != Attrs.end();++ItAttr)
+  for (auto& ItAttr : Data->FluidXDesc.spatialDomainDescriptor().attributes())
   {
-    if ((*ItAttr).getUnitsClass() == UnitClassStr)
+    if (ItAttr.getUnitsClass() == UnitClassStr)
     {
-      openfluid::fluidx::AttributesDescriptor::UnitIDAttribute_t::iterator ItUnitData = (*ItAttr).getAttributes().begin();
-
-      for (ItUnitData;ItUnitData!=(*ItAttr).getAttributes().end();++ItUnitData)
-        (*ItUnitData).second[AttrNameStr] = AttrValStr;
+      for (auto & ItUnitData : ItAttr.attributes())
+        ItUnitData.second[AttrNameStr] = AttrValStr;
     }
   }
-
 }
 
 
@@ -1091,22 +1078,21 @@ void ROpenFLUID_CreateAttribute(ROpenFLUID_ExtBlob_t* BlobHandle,const char* Uni
 // =====================================================================
 
 
-void ROpenFLUID_SetAttribute(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* AttrName, const char* AttrValue)
+void ROpenFLUID_SetAttribute(ROpenFLUID_ExtBlob_t* BlobHandle,
+                             const char* UnitsClass, int UnitID, const char* AttrName, const char* AttrValue)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-  std::string UnitClassStr(UnitClass);
+  std::string UnitClassStr(UnitsClass);
   std::string AttrNameStr(AttrName);
   std::string AttrValStr(AttrValue);
 
-  std::list<openfluid::fluidx::AttributesDescriptor>& Attrs = Data->FluidXDesc.getDomainDescriptor().getAttributes();
-
-  for (std::list<openfluid::fluidx::AttributesDescriptor>::iterator ItAttr = Attrs.begin();ItAttr != Attrs.end();++ItAttr)
+  for (auto& ItAttr : Data->FluidXDesc.spatialDomainDescriptor().attributes())
   {
-    if ((*ItAttr).getUnitsClass() == UnitClassStr)
+    if (ItAttr.getUnitsClass() == UnitClassStr)
     {
-      openfluid::fluidx::AttributesDescriptor::UnitIDAttribute_t::iterator ItUnitData = (*ItAttr).getAttributes().find(UnitID);
-      if (ItUnitData != (*ItAttr).getAttributes().end())
+      openfluid::fluidx::AttributesDescriptor::UnitIDAttribute_t::iterator ItUnitData = ItAttr.attributes().find(UnitID);
+      if (ItUnitData != ItAttr.attributes().end())
       {
         if ((*ItUnitData).second.find(AttrNameStr) != (*ItUnitData).second.end())
           (*ItUnitData).second[AttrNameStr] = AttrValStr;
@@ -1121,22 +1107,21 @@ void ROpenFLUID_SetAttribute(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitC
 // =====================================================================
 
 
-const char* ROpenFLUID_GetAttribute(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* AttrName)
+const char* ROpenFLUID_GetAttribute(ROpenFLUID_ExtBlob_t* BlobHandle,
+                                    const char* UnitsClass, int UnitID, const char* AttrName)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-  std::string UnitClassStr(UnitClass);
+  std::string UnitClassStr(UnitsClass);
   std::string AttrNameStr(AttrName);
   std::string AttrValStr("");
 
-  std::list<openfluid::fluidx::AttributesDescriptor>& Attrs = Data->FluidXDesc.getDomainDescriptor().getAttributes();
-
-  for (std::list<openfluid::fluidx::AttributesDescriptor>::iterator ItAttr = Attrs.begin();ItAttr != Attrs.end();++ItAttr)
+  for (auto& ItAttr : Data->FluidXDesc.spatialDomainDescriptor().attributes())
   {
-    if ((*ItAttr).getUnitsClass() == UnitClassStr)
+    if (ItAttr.getUnitsClass() == UnitClassStr)
     {
-      openfluid::fluidx::AttributesDescriptor::UnitIDAttribute_t::const_iterator ItUnitData = (*ItAttr).getAttributes().find(UnitID);
-      if (ItUnitData != (*ItAttr).getAttributes().end())
+      openfluid::fluidx::AttributesDescriptor::UnitIDAttribute_t::const_iterator ItUnitData = ItAttr.attributes().find(UnitID);
+      if (ItUnitData != ItAttr.attributes().end())
       {
         if ((*ItUnitData).second.find(AttrNameStr) != (*ItUnitData).second.end())
           return ((*ItUnitData).second.at(AttrNameStr).c_str());
@@ -1152,23 +1137,19 @@ const char* ROpenFLUID_GetAttribute(ROpenFLUID_ExtBlob_t* BlobHandle, const char
 // =====================================================================
 
 
-void ROpenFLUID_RemoveAttribute(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, const char* AttrName)
+void ROpenFLUID_RemoveAttribute(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitsClass, const char* AttrName)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-  std::string UnitClassStr(UnitClass);
+  std::string UnitClassStr(UnitsClass);
   std::string AttrNameStr(AttrName);
 
-  std::list<openfluid::fluidx::AttributesDescriptor>& Attrs = Data->FluidXDesc.getDomainDescriptor().getAttributes();
-
-  for (std::list<openfluid::fluidx::AttributesDescriptor>::iterator ItAttr = Attrs.begin();ItAttr != Attrs.end();++ItAttr)
+  for (auto& ItAttr : Data->FluidXDesc.spatialDomainDescriptor().attributes())
   {
-    if ((*ItAttr).getUnitsClass() == UnitClassStr)
+    if (ItAttr.getUnitsClass() == UnitClassStr)
     {
-      openfluid::fluidx::AttributesDescriptor::UnitIDAttribute_t::iterator ItUnitData = (*ItAttr).getAttributes().begin();
-
-      for (ItUnitData;ItUnitData!=(*ItAttr).getAttributes().end();++ItUnitData)
-        (*ItUnitData).second.erase(AttrNameStr);
+      for (auto& ItUnitData : ItAttr.attributes())
+        ItUnitData.second.erase(AttrNameStr);
     }
   }
 }
@@ -1183,27 +1164,24 @@ void ROpenFLUID_AddVariablesExportAsCSV(ROpenFLUID_ExtBlob_t* BlobHandle, const 
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
   std::string UnitClassStr(UnitClass);
-  openfluid::fluidx::AdvancedMonitoringDescriptor AdvMonDesc(Data->FluidXDesc.getMonitoringDescriptor());
+  openfluid::fluidx::AdvancedMonitoringDescriptor AdvMonDesc(Data->FluidXDesc.monitoringDescriptor());
 
   // 1. add CSV observer if not present
 
-  try
-  {
-    AdvMonDesc.getDescriptor("export.vars.files.csv");
-  }
-  catch (openfluid::base::Exception& E)
-  {
-    AdvMonDesc.addToObserverList("export.vars.files.csv");
-  }
+  if (AdvMonDesc.findFirstItem("export.vars.files.csv") < 0)
+    AdvMonDesc.appendItem(new openfluid::fluidx::ObserverDescriptor("export.vars.files.csv"));
+
+
+  openfluid::fluidx::ObserverDescriptor& ObsDesc = AdvMonDesc.itemAt(AdvMonDesc.findFirstItem("export.vars.files.csv"));
 
   // 2. add ropenfluid format
-  AdvMonDesc.getDescriptor("export.vars.files.csv").setParameter("format.ropenfluid.header",openfluid::core::StringValue("colnames-as-data"));
-  AdvMonDesc.getDescriptor("export.vars.files.csv").setParameter("format.ropenfluid.date",openfluid::core::StringValue("%Y%m%d-%H%M%S"));
-  AdvMonDesc.getDescriptor("export.vars.files.csv").setParameter("format.ropenfluid.colsep",openfluid::core::StringValue(" "));
+  ObsDesc.setParameter("format.ropenfluid.header",openfluid::core::StringValue("colnames-as-data"));
+  ObsDesc.setParameter("format.ropenfluid.date",openfluid::core::StringValue("%Y%m%d-%H%M%S"));
+  ObsDesc.setParameter("format.ropenfluid.colsep",openfluid::core::StringValue(" "));
 
   // 3. add ropenfluidUnitClass output set
-  AdvMonDesc.getDescriptor("export.vars.files.csv").setParameter("set.ropenfluid"+UnitClassStr+".unitclass",openfluid::core::StringValue(UnitClassStr));
-  AdvMonDesc.getDescriptor("export.vars.files.csv").setParameter("set.ropenfluid"+UnitClassStr+".unitsIDs",openfluid::core::StringValue("*"));
-  AdvMonDesc.getDescriptor("export.vars.files.csv").setParameter("set.ropenfluid"+UnitClassStr+".vars",openfluid::core::StringValue("*"));
-  AdvMonDesc.getDescriptor("export.vars.files.csv").setParameter("set.ropenfluid"+UnitClassStr+".format",openfluid::core::StringValue("ropenfluid"));
+  ObsDesc.setParameter("set.ropenfluid"+UnitClassStr+".unitclass",openfluid::core::StringValue(UnitClassStr));
+  ObsDesc.setParameter("set.ropenfluid"+UnitClassStr+".unitsIDs",openfluid::core::StringValue("*"));
+  ObsDesc.setParameter("set.ropenfluid"+UnitClassStr+".vars",openfluid::core::StringValue("*"));
+  ObsDesc.setParameter("set.ropenfluid"+UnitClassStr+".format",openfluid::core::StringValue("ropenfluid"));
 }

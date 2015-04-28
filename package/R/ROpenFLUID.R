@@ -564,7 +564,7 @@ OpenFLUID.loadResultFile <- function(filepath)
 {
   stopifnot(is.character(filepath))
   
-  data = read.csv(file=filepath,head=TRUE,sep=" ",stringsAsFactors=F)
+  data = read.csv(file=filepath,header=TRUE,sep=" ",stringsAsFactors=F)
   data$datetime = as.POSIXct(data$datetime,format="%Y%m%d-%H%M%S",tz="UTC")
   
   return(data)
