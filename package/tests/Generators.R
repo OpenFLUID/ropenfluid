@@ -1,4 +1,4 @@
-library(RUnit)
+library("RUnit")
 
 library("ROpenFLUID")
 

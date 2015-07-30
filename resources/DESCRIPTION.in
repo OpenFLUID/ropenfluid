@@ -8,5 +8,6 @@ Maintainer: Jean-Christophe Fabre <fabrejc@supagro.inra.fr>
 Description: @OpenFLUID_R_DESC@
 URL: http://www.openfluid-project.org
 License: GPL-3 + file LICENSE
-Depends: R (>= 2.6.2), RUnit
+Depends: R (>= 2.6.2)
+Suggests: RUnit
 LazyLoad: yes

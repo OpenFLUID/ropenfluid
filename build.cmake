@@ -1,5 +1,5 @@
 
-# CMake script for building R OpenFLUID package
+# CMake script for building R OpenFLUID package (source) 
 # usage : cmake -P build.cmake 
 
 

@@ -1,0 +1,10 @@
+
+mkdir _build
+cd _build
+
+cmake ../src -G "MSYS Makefiles" \
+  -DR_LIBRARIES="-L${R_HOME}/bin${R_ARCH} -lR -lm" -DR_INCLUDES="${R_HOME}/include" \
+  -DCMAKE_BUILD_TYPE=Release -DBUILD_WIN32_BINARY=1
+
+mingw32-make install -j 4
+
