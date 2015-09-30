@@ -1,5 +1,11 @@
 #!/bin/sh
 
+####################################################################
+# This file should be copied to win32-env.sh file 
+# and adapted to your needs
+# Once adapted, execute the following command in the MSYS console
+#    source win32-env.sh 
+####################################################################
 
 
 ### set OPENFLUID_INSTALL_PREFIX variable to OpenFLUID path
