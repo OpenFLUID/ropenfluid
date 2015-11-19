@@ -6,6 +6,7 @@
 
 INCLUDE("config.in.cmake")
 
+INCLUDE("cmake/display-infos.cmake")
 INCLUDE("cmake/preprocess.cmake")
 
 

@@ -13,7 +13,7 @@ SET(OpenFLUID_R_TITLE "Package for using OpenFLUID within the GNU R environment"
 SET(OpenFLUID_R_DESC "This package allows to load, parameterize, run and analyze OpenFLUID simulations within the GNU R environment")
 
 # Version
-SET(OpenFLUID_R_VERSION_PATCH "20150930")
+SET(OpenFLUID_R_VERSION_PATCH "20151119")
 
 
 # ===========================================================================================
@@ -40,15 +40,15 @@ IF(WIN32)
 ENDIF()
 
 
-EXECUTE_PROCESS(COMMAND "${OpenFLUID_CMDCLI}" "--version" OUTPUT_VARIABLE OpenFLUID_VERSION
-                                                                        RESULT_VARIABLE OpenFLUID_VERSION_RESULT)
+EXECUTE_PROCESS(COMMAND "${OpenFLUID_CMDCLI}" "--version" 
+                OUTPUT_VARIABLE OpenFLUID_VERSION
+                RESULT_VARIABLE OpenFLUID_VERSION_RESULT
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 IF(OpenFLUID_VERSION_RESULT)
   MESSAGE(FATAL_ERROR "Error getting current openfluid version")
 ENDIF()
 
-
-STRING(REGEX REPLACE "(\r?\n)+$" "" OpenFLUID_VERSION "${OpenFLUID_VERSION}")
 
 STRING(REGEX REPLACE
        "~[a-z,A-Z,0-9]*" ""
@@ -61,5 +61,6 @@ ENDIF()
 
 # use R to get the current date
 EXECUTE_PROCESS(COMMAND "R" "--vanilla" "--slave" "-e" "cat(format(Sys.time(),'%Y-%m-%d'))"
-                OUTPUT_VARIABLE OpenFLUID_R_DATE)
-STRING(STRIP "${OpenFLUID_R_DATE}" OpenFLUID_R_DATE)
+                OUTPUT_VARIABLE OpenFLUID_R_DATE
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+
