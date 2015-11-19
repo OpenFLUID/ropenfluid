@@ -30,10 +30,14 @@
 */
 
 #include <iostream>
+
 #include <R_ext/Print.h>
+
+#include <QCoreApplication>
+
 #include <openfluid/base/Init.hpp>
 #include <openfluid/base/IOListener.hpp>
-#include <openfluid/base/ProjectManager.hpp>
+#include <openfluid/base/RunContextManager.hpp>
 #include <openfluid/base/ApplicationException.hpp>
 #include <openfluid/machine.hpp>
 #include <openfluid/fluidx/FluidXDescriptor.hpp>
@@ -45,14 +49,18 @@
 
 #include "ROpenFLUID.h"
 
-#include <QCoreApplication>
+
+// =====================================================================
+// =====================================================================
 
 
 static int qapp_argc = 1;
-static char *qapp_argv[] = { "ROpenFLUID" };
+static char qapp_arg0[] = "ROpenFLUID";
+static char* qapp_argv[] = { qapp_arg0  , NULL };
 
 struct ROpenFLUID_Blob_t
 {
+  openfluid::base::IOListener FluidXListener;
 
   openfluid::fluidx::FluidXDescriptor FluidXDesc;
 
@@ -65,9 +73,10 @@ struct ROpenFLUID_Blob_t
   bool IsSimulationRun;
 
   ROpenFLUID_Blob_t():
+    FluidXDesc(&FluidXListener),
     IsProject(false),IsDataset(false),
     SourcePath(""),OutputDir(""),
-    IsSimulationRun(false), FluidXDesc(NULL)
+    IsSimulationRun(false)
   {
 
   }
@@ -109,7 +118,7 @@ void ROpenFLUID_DeleteBlob(ROpenFLUID_ExtBlob_t* BlobHandle)
 
 const char* ROpenFLUID_GetVersion()
 {
-  return openfluid::config::FULL_VERSION.c_str();
+  return openfluid::config::VERSION_FULL.c_str();
 }
 
 
@@ -131,7 +140,7 @@ void ROpenFLUID_AddExtraSimulatorsPaths(const char* Paths)
 {
   // ROpenFLUID_Init();
 
-  openfluid::base::RuntimeEnvironment::instance()->addExtraSimulatorsPluginsPaths(std::string(Paths));
+  openfluid::base::Environment::addExtraSimulatorsDirs(std::string(Paths));
 }
 
 
@@ -141,7 +150,7 @@ void ROpenFLUID_AddExtraSimulatorsPaths(const char* Paths)
 
 void ROpenFLUID_ResetExtraSimulatorsPaths()
 {
-  openfluid::base::RuntimeEnvironment::instance()->resetExtraSimulatorsPluginsPaths();
+  openfluid::base::Environment::resetExtraSimulatorsDirs();
 }
 
 
@@ -151,7 +160,7 @@ void ROpenFLUID_ResetExtraSimulatorsPaths()
 
 unsigned int ROpenFLUID_GetSimulatorsPathsCount()
 {
-  return openfluid::base::RuntimeEnvironment::instance()->getSimulatorsPluginsPaths().size();
+  return openfluid::base::Environment::getSimulatorsDirs().size();
 }
 
 
@@ -161,7 +170,7 @@ unsigned int ROpenFLUID_GetSimulatorsPathsCount()
 
 char** ROpenFLUID_GetSimulatorsPaths()
 {
-  std::vector<std::string> SimsPaths = openfluid::base::RuntimeEnvironment::instance()->getSimulatorsPluginsPaths();
+  std::vector<std::string> SimsPaths = openfluid::base::Environment::getSimulatorsDirs();
 
   const unsigned int Count = SimsPaths.size();
 
@@ -184,7 +193,7 @@ char** ROpenFLUID_GetSimulatorsPaths()
 
 unsigned int ROpenFLUID_GetExtraSimulatorsPathsCount()
 {
-  return openfluid::base::RuntimeEnvironment::instance()->getExtraSimulatorsPluginsPaths().size();
+  return openfluid::base::Environment::getExtraSimulatorsDirs().size();
 }
 
 
@@ -194,7 +203,7 @@ unsigned int ROpenFLUID_GetExtraSimulatorsPathsCount()
 
 char** ROpenFLUID_GetExtraSimulatorsPaths()
 {
-  std::vector<std::string> ExtraSimsPaths = openfluid::base::RuntimeEnvironment::instance()->getExtraSimulatorsPluginsPaths();
+  std::vector<std::string> ExtraSimsPaths = openfluid::base::Environment::getExtraSimulatorsDirs();
 
   const unsigned int Count = ExtraSimsPaths.size();
 
@@ -217,7 +226,7 @@ char** ROpenFLUID_GetExtraSimulatorsPaths()
 
 void ROpenFLUID_AddExtraObserversPaths(const char* Paths)
 {
-  openfluid::base::RuntimeEnvironment::instance()->addExtraObserversPluginsPaths(std::string(Paths));
+  openfluid::base::Environment::addExtraObserversDirs(std::string(Paths));
 }
 
 
@@ -227,7 +236,7 @@ void ROpenFLUID_AddExtraObserversPaths(const char* Paths)
 
 void ROpenFLUID_ResetExtraObserversPaths()
 {
-  openfluid::base::RuntimeEnvironment::instance()->resetExtraObserversPluginsPaths();
+  openfluid::base::Environment::resetExtraObserversDirs();
 }
 
 
@@ -237,7 +246,7 @@ void ROpenFLUID_ResetExtraObserversPaths()
 
 unsigned int ROpenFLUID_GetObserversPathsCount()
 {
-  return openfluid::base::RuntimeEnvironment::instance()->getObserversPluginsPaths().size();
+  return openfluid::base::Environment::getObserversDirs().size();
 }
 
 
@@ -247,7 +256,7 @@ unsigned int ROpenFLUID_GetObserversPathsCount()
 
 char** ROpenFLUID_GetObserversPaths()
 {
-  std::vector<std::string> ObsPaths = openfluid::base::RuntimeEnvironment::instance()->getObserversPluginsPaths();
+  std::vector<std::string> ObsPaths = openfluid::base::Environment::getObserversDirs();
 
   const unsigned int Count = ObsPaths.size();
 
@@ -270,7 +279,7 @@ char** ROpenFLUID_GetObserversPaths()
 
 unsigned int ROpenFLUID_GetExtraObserversPathsCount()
 {
-  return openfluid::base::RuntimeEnvironment::instance()->getExtraObserversPluginsPaths().size();
+  return openfluid::base::Environment::getExtraObserversDirs().size();
 }
 
 
@@ -280,7 +289,7 @@ unsigned int ROpenFLUID_GetExtraObserversPathsCount()
 
 char** ROpenFLUID_GetExtraObserversPaths()
 {
-  std::vector<std::string> ExtraObsPaths = openfluid::base::RuntimeEnvironment::instance()->getExtraObserversPluginsPaths();
+  std::vector<std::string> ExtraObsPaths = openfluid::base::Environment::getExtraObserversDirs();
 
   const unsigned int Count = ExtraObsPaths.size();
 
@@ -344,15 +353,15 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenDataset(const char* Path)
 
     openfluid::base::IOListener IOListen;
 
-    openfluid::base::RuntimeEnvironment::instance()->setInputDir(std::string(Path));
-    Data->FluidXDesc.loadFromDirectory(openfluid::base::RuntimeEnvironment::instance()->getInputDir());
+    openfluid::base::RunContextManager::instance()->setInputDir(std::string(Path));
+    Data->FluidXDesc.loadFromDirectory(openfluid::base::RunContextManager::instance()->getInputDir());
 
     Data->IsSimulationRun = false;
 
     if (!Data->IsProject)
     {
       Data->IsDataset = true;
-      Data->SourcePath = openfluid::base::RuntimeEnvironment::instance()->getInputDir();
+      Data->SourcePath = openfluid::base::RunContextManager::instance()->getInputDir();
     }
 
 
@@ -389,7 +398,7 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenDataset(const char* Path)
 
 void ROpenFLUID_SetCurrentOutputDir(const char* Path)
 {
-  openfluid::base::RuntimeEnvironment::instance()->setOutputDir(std::string(Path));
+  openfluid::base::RunContextManager::instance()->setOutputDir(std::string(Path));
 }
 
 
@@ -406,19 +415,14 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenProject(const char* Path)
 
     ROpenFLUID_Blob_t* Data = new ROpenFLUID_Blob_t();
 
-    if (openfluid::base::ProjectManager::instance()->open(std::string(Path)))
-    {
-      openfluid::base::RuntimeEnvironment::instance()->linkToProject();
-      openfluid::base::ProjectManager::instance()->updateOutputDir();
-    }
-    else
+    if (!openfluid::base::RunContextManager::instance()->openProject(std::string(Path)))
       throw openfluid::base::ApplicationException(openfluid::base::ApplicationException::computeContext("ROpenFLUID"),
                                                   std::string(Path) + " is not a correct project path");
 
     Data->IsProject = true;
-    Data->SourcePath = openfluid::base::ProjectManager::instance()->getPath();
+    Data->SourcePath = openfluid::base::RunContextManager::instance()->getProjectPath();
 
-    return ROpenFLUID_OpenDataset(openfluid::base::RuntimeEnvironment::instance()->getInputDir().c_str());
+    return ROpenFLUID_OpenDataset(openfluid::base::RunContextManager::instance()->getInputDir().c_str());
   }
   catch (openfluid::base::Exception& E)
   {
@@ -482,7 +486,7 @@ unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
                                                                        Monitoring);
 
 
-    Data->OutputDir = openfluid::base::RuntimeEnvironment::instance()->getOutputDir();
+    Data->OutputDir = openfluid::base::RunContextManager::instance()->getOutputDir();
 
     Engine = new openfluid::machine::Engine(SimBlob, Model, Monitoring, &MachineListen);
 
@@ -561,12 +565,12 @@ void ROpenFLUID_PrintSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle)
   {
     Rprintf(" - ");
 
-    if (ItModelInfos->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator))
+    if (ItModelInfos->isType(openfluid::ware::WareType::SIMULATOR))
     {
       Rprintf("%s simulator\n",((openfluid::fluidx::SimulatorDescriptor*)(ItModelInfos))->getID().c_str());
     }
 
-    if (ItModelInfos->isType(openfluid::fluidx::ModelItemDescriptor::Generator))
+    if (ItModelInfos->isType(openfluid::ware::WareType::GENERATOR))
     {
       openfluid::fluidx::GeneratorDescriptor* pGenDesc = ((openfluid::fluidx::GeneratorDescriptor*)ItModelInfos);
 
@@ -693,7 +697,7 @@ const char* ROpenFLUID_GetSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const
 
   for (auto& ItModelInfos : Data->FluidXDesc.modelDescriptor().items())
   {
-    if (ItModelInfos->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator) &&
+    if (ItModelInfos->isType(openfluid::ware::WareType::SIMULATOR) &&
         ((openfluid::fluidx::SimulatorDescriptor*)ItModelInfos)->getID() == SimIDStr)
     {
       openfluid::ware::WareParams_t Params = ItModelInfos->getParameters();
@@ -725,7 +729,7 @@ void ROpenFLUID_SetSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* 
 
   for (auto& ItModelInfos : Data->FluidXDesc.modelDescriptor().items())
   {
-    if (ItModelInfos->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator) &&
+    if (ItModelInfos->isType(openfluid::ware::WareType::SIMULATOR) &&
         ((openfluid::fluidx::SimulatorDescriptor*)ItModelInfos)->getID() == SimIDStr)
       ItModelInfos->setParameter(ParamNameStr,ParamValStr);
   }
@@ -745,7 +749,7 @@ void ROpenFLUID_RemoveSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const cha
 
   for (auto& ItModelInfos : Data->FluidXDesc.modelDescriptor().items())
   {
-    if (ItModelInfos->isType(openfluid::fluidx::ModelItemDescriptor::PluggedSimulator) &&
+    if (ItModelInfos->isType(openfluid::ware::WareType::SIMULATOR) &&
         ((openfluid::fluidx::SimulatorDescriptor*)ItModelInfos)->getID() == SimIDStr)
       ItModelInfos->eraseParameter(ParamNameStr);
   }
@@ -767,7 +771,7 @@ void ROpenFLUID_SetGeneratorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* 
 
   for (auto& ItModelInfos : Data->FluidXDesc.modelDescriptor().items())
   {
-    if (ItModelInfos->isType(openfluid::fluidx::ModelItemDescriptor::Generator) &&
+    if (ItModelInfos->isType(openfluid::ware::WareType::GENERATOR) &&
         ((openfluid::fluidx::GeneratorDescriptor*)ItModelInfos)->getUnitsClass() == UnitClassStr &&
         ((openfluid::fluidx::GeneratorDescriptor*)ItModelInfos)->getVariableName() == VarNameStr)
     {
@@ -792,7 +796,7 @@ const char* ROpenFLUID_GetGeneratorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const
 
   for (auto& ItModelInfos : Data->FluidXDesc.modelDescriptor().items())
   {
-    if (ItModelInfos->isType(openfluid::fluidx::ModelItemDescriptor::Generator) &&
+    if (ItModelInfos->isType(openfluid::ware::WareType::GENERATOR) &&
         ((openfluid::fluidx::GeneratorDescriptor*)ItModelInfos)->getUnitsClass() == UnitClassStr &&
         ((openfluid::fluidx::GeneratorDescriptor*)ItModelInfos)->getVariableName() == VarNameStr)
     {
@@ -878,7 +882,7 @@ const char* ROpenFLUID_GetObserverParam(ROpenFLUID_ExtBlob_t* BlobHandle, const 
 
   for (auto& ItObsInfos : Data->FluidXDesc.monitoringDescriptor().items())
   {
-    if (ItObsInfos->isType(openfluid::fluidx::ModelItemDescriptor::PluggedObserver) &&
+    if (ItObsInfos->isType(openfluid::ware::WareType::OBSERVER) &&
         ((openfluid::fluidx::ObserverDescriptor*)ItObsInfos)->getID() == ObsIDStr)
     {
       openfluid::ware::WareParams_t Params = ItObsInfos->getParameters();
@@ -910,7 +914,7 @@ void ROpenFLUID_SetObserverParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char* O
 
   for (auto& ItObsInfos : Data->FluidXDesc.monitoringDescriptor().items())
   {
-    if (ItObsInfos->isType(openfluid::fluidx::ModelItemDescriptor::PluggedObserver) &&
+    if (ItObsInfos->isType(openfluid::ware::WareType::OBSERVER) &&
         ((openfluid::fluidx::ObserverDescriptor*)ItObsInfos)->getID() == ObsIDStr)
       ItObsInfos->setParameter(ParamNameStr,ParamValStr);
   }
@@ -930,7 +934,7 @@ void ROpenFLUID_RemoveObserverParam(ROpenFLUID_ExtBlob_t* BlobHandle, const char
 
   for (auto& ItObsInfos : Data->FluidXDesc.monitoringDescriptor().items())
   {
-    if (ItObsInfos->isType(openfluid::fluidx::ModelItemDescriptor::PluggedObserver) &&
+    if (ItObsInfos->isType(openfluid::ware::WareType::OBSERVER) &&
         ((openfluid::fluidx::ObserverDescriptor*)ItObsInfos)->getID() == ObsIDStr)
       ItObsInfos->eraseParameter(ParamNameStr);
   }
