@@ -84,7 +84,16 @@ struct ROpenFLUID_Blob_t
 };
 
 
-std::string LastErrorMsg = "";
+static std::string LastErrorMsg = "";
+
+
+// =====================================================================
+// =====================================================================
+
+
+#define STRING_TO_ALLOCATED_CARRAY(str,carray) \
+    char* carray = (char*)malloc((str.length()+1)*sizeof(char)); \
+    strcpy(carray,str.c_str());
 
 
 // =====================================================================
@@ -118,7 +127,8 @@ void ROpenFLUID_DeleteBlob(ROpenFLUID_ExtBlob_t* BlobHandle)
 
 const char* ROpenFLUID_GetVersion()
 {
-  return openfluid::config::VERSION_FULL.c_str();
+  STRING_TO_ALLOCATED_CARRAY(openfluid::config::VERSION_FULL,CStr);
+  return CStr;
 }
 
 
@@ -611,7 +621,9 @@ const char* ROpenFLUID_GetSimulationOutputDir(ROpenFLUID_ExtBlob_t* BlobHandle)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-  return Data->OutputDir.c_str();
+  std::string Str = Data->OutputDir;
+  STRING_TO_ALLOCATED_CARRAY(Str,CStr);
+  return CStr;
 }
 
 
@@ -647,7 +659,11 @@ const char* ROpenFLUID_GetPeriodBeginDate(ROpenFLUID_ExtBlob_t* BlobHandle)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-  return Data->FluidXDesc.runDescriptor().getBeginDate().getAsString("%Y-%m-%d %H:%M:%S").c_str();
+  std::string DateStr = Data->FluidXDesc.runDescriptor().getBeginDate().getAsString("%Y-%m-%d %H:%M:%S");
+
+  STRING_TO_ALLOCATED_CARRAY(DateStr,CStr);
+
+  return CStr;
 }
 
 
@@ -659,7 +675,11 @@ const char* ROpenFLUID_GetPeriodEndDate(ROpenFLUID_ExtBlob_t* BlobHandle)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
-  return Data->FluidXDesc.runDescriptor().getEndDate().getAsString("%Y-%m-%d %H:%M:%S").c_str();
+  std::string DateStr = Data->FluidXDesc.runDescriptor().getEndDate().getAsString("%Y-%m-%d %H:%M:%S");
+
+  STRING_TO_ALLOCATED_CARRAY(DateStr,CStr);
+
+  return CStr;
 }
 
 
@@ -706,12 +726,14 @@ const char* ROpenFLUID_GetSimulatorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const
       if (ItParam != Params.end())
       {
         ParamValStr = (*ItParam).second;
-        return ParamValStr.c_str();
+        STRING_TO_ALLOCATED_CARRAY(ParamValStr,CStr);
+        return CStr;
       }
     }
   }
 
-  return ParamValStr.c_str();
+  STRING_TO_ALLOCATED_CARRAY(ParamValStr,CStr);
+  return CStr;
 }
 
 
@@ -806,12 +828,16 @@ const char* ROpenFLUID_GetGeneratorParam(ROpenFLUID_ExtBlob_t* BlobHandle, const
       if (ItParam != Params.end())
       {
         ParamValStr = (*ItParam).second;
-        return ParamValStr.c_str();
+        STRING_TO_ALLOCATED_CARRAY(ParamValStr,CStr);
+        return CStr;
       }
 
     }
   }
-  return ParamValStr.c_str();
+
+  STRING_TO_ALLOCATED_CARRAY(ParamValStr,CStr);
+  return CStr;
+
 }
 
 
@@ -847,10 +873,12 @@ const char* ROpenFLUID_GetModelGlobalParam(ROpenFLUID_ExtBlob_t* BlobHandle, con
   if (ItParam != Params.end())
   {
     ParamValStr = (*ItParam).second;
-    return ParamValStr.c_str();
+    STRING_TO_ALLOCATED_CARRAY(ParamValStr,CStr);
+    return CStr;
   }
 
-  return ParamValStr.c_str();
+  STRING_TO_ALLOCATED_CARRAY(ParamValStr,CStr);
+  return CStr;
 }
 
 
@@ -891,12 +919,14 @@ const char* ROpenFLUID_GetObserverParam(ROpenFLUID_ExtBlob_t* BlobHandle, const 
       if (ItParam != Params.end())
       {
         ParamValStr = (*ItParam).second;
-        return ParamValStr.c_str();
+        STRING_TO_ALLOCATED_CARRAY(ParamValStr,CStr);
+        return CStr;
       }
     }
   }
 
-  return ParamValStr.c_str();
+  STRING_TO_ALLOCATED_CARRAY(ParamValStr,CStr);
+  return CStr;
 }
 
 
@@ -1128,12 +1158,17 @@ const char* ROpenFLUID_GetAttribute(ROpenFLUID_ExtBlob_t* BlobHandle,
       if (ItUnitData != ItAttr.attributes().end())
       {
         if ((*ItUnitData).second.find(AttrNameStr) != (*ItUnitData).second.end())
-          return ((*ItUnitData).second.at(AttrNameStr).c_str());
+        {
+          AttrValStr = (*ItUnitData).second.at(AttrNameStr);
+          STRING_TO_ALLOCATED_CARRAY(AttrValStr,CStr);
+          return CStr;
+        }
       }
     }
   }
 
-  return "";
+  STRING_TO_ALLOCATED_CARRAY(AttrValStr,CStr);
+  return CStr;
 }
 
 
@@ -1189,3 +1224,5 @@ void ROpenFLUID_AddVariablesExportAsCSV(ROpenFLUID_ExtBlob_t* BlobHandle, const 
   ObsDesc.setParameter("set.ropenfluid"+UnitClassStr+".vars",openfluid::core::StringValue("*"));
   ObsDesc.setParameter("set.ropenfluid"+UnitClassStr+".format",openfluid::core::StringValue("ropenfluid"));
 }
+
+
