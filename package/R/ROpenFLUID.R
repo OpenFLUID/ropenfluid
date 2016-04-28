@@ -46,13 +46,13 @@
 #' @param paths the colon separated paths to add
 #'
 #' @examples \dontrun{
-#' OPENFLUID.addExtraObserversPaths("/first/path/to/add")
-#' OPENFLUID.addExtraObserversPaths("/second/path/to/add":/third/path/to/add")
+#' OpenFLUID.addExtraObserversPaths("/first/path/to/add")
+#' OpenFLUID.addExtraObserversPaths("/second/path/to/add":/third/path/to/add")
 #' }
 #'
-#' @seealso \code{\link{OPENFLUID.getObserversPaths}}
-#' @seealso \code{\link{OPENFLUID.getExtraObserversPaths}}
-#' @seealso \code{\link{OPENFLUID.resetExtraObserversPaths}}
+#' @seealso \code{\link{OpenFLUID.getObserversPaths}}
+#' @seealso \code{\link{OpenFLUID.getExtraObserversPaths}}
+#' @seealso \code{\link{OpenFLUID.resetExtraObserversPaths}}
 OpenFLUID.addExtraObserversPaths <- function(paths)
 {
   stopifnot(is.character(paths))
@@ -77,7 +77,7 @@ OpenFLUID.addExtraObserversPaths <- function(paths)
 #'
 #' @seealso \code{\link{OpenFLUID.getSimulatorsPaths}}
 #' @seealso \code{\link{OpenFLUID.getExtraSimulatorsPaths}}
-#' @seealso \code{\link{OPENFLUID.resetExtraSimulatorsPaths}}
+#' @seealso \code{\link{OpenFLUID.resetExtraSimulatorsPaths}}
 OpenFLUID.addExtraSimulatorsPaths <- function(paths)
 {
   stopifnot(is.character(paths))
@@ -220,7 +220,7 @@ OpenFLUID.getDefaultDeltaT <- function(ofblob)
 #'
 #' @seealso \code{\link{OpenFLUID.addExtraObserversPaths}}
 #' @seealso \code{\link{OpenFLUID.getObserversPaths}}
-#' @seealso \code{\link{OPENFLUID.resetExtraObserversPaths}}
+#' @seealso \code{\link{OpenFLUID.resetExtraObserversPaths}}
 OpenFLUID.getExtraObserversPaths <- function()
 {
   .Call("GetExtraObserversPaths", PACKAGE="ROpenFLUID")
@@ -241,7 +241,7 @@ OpenFLUID.getExtraObserversPaths <- function()
 #' 
 #' @seealso \code{\link{OpenFLUID.addExtraSimulatorsPaths}}
 #' @seealso \code{\link{OpenFLUID.getSimulatorsPaths}}
-#' @seealso \code{\link{OPENFLUID.resetExtraSimulatorsPaths}}
+#' @seealso \code{\link{OpenFLUID.resetExtraSimulatorsPaths}}
 OpenFLUID.getExtraSimulatorsPaths <- function()
 {
   .Call("GetExtraSimulatorsPaths",PACKAGE="ROpenFLUID")  
@@ -342,7 +342,7 @@ OpenFLUID.getObserverParam <- function(ofblob,obsid,paramname)
 #'
 #' @seealso \code{\link{OpenFLUID.addExtraObserversPaths}}
 #' @seealso \code{\link{OpenFLUID.getExtraObserversPaths}}
-#' @seealso \code{\link{OPENFLUID.resetExtraObserversPaths}}
+#' @seealso \code{\link{OpenFLUID.resetExtraObserversPaths}}
 OpenFLUID.getObserversPaths <- function()
 {
   .Call("GetObserversPaths", PACKAGE="ROpenFLUID")
@@ -438,7 +438,7 @@ OpenFLUID.getSimulatorParam <- function(ofblob,simid,paramname)
 #'
 #' @seealso \code{\link{OpenFLUID.addExtraSimulatorsPaths}}
 #' @seealso \code{\link{OpenFLUID.getExtraSimulatorsPaths}}
-#' @seealso \code{\link{OPENFLUID.resetExtraSimulatorsPaths}}
+#' @seealso \code{\link{OpenFLUID.resetExtraSimulatorsPaths}}
 OpenFLUID.getSimulatorsPaths <- function()
 {
   .Call("GetSimulatorsPaths", PACKAGE="ROpenFLUID")
@@ -774,12 +774,12 @@ OpenFLUID.removeSimulatorParam <- function(ofblob,simid,paramname)
 #' Resets list of added paths to search for observers
 #'
 #' @examples \dontrun{
-#' OPENFLUID.resetExtraObserversPaths()
+#' OpenFLUID.resetExtraObserversPaths()
 #' }
 #'
-#' @seealso \code{\link{OPENFLUID.addExtraObserversPaths}}
-#' @seealso \code{\link{OPENFLUID.getObserversPaths}}
-#' @seealso \code{\link{OPENFLUID.getExtraObserversPaths}}
+#' @seealso \code{\link{OpenFLUID.addExtraObserversPaths}}
+#' @seealso \code{\link{OpenFLUID.getObserversPaths}}
+#' @seealso \code{\link{OpenFLUID.getExtraObserversPaths}}
 OpenFLUID.resetExtraObserversPaths <- function()
 {
   .Call("ResetExtraObserversPaths", PACKAGE="ROpenFLUID")
@@ -795,12 +795,12 @@ OpenFLUID.resetExtraObserversPaths <- function()
 #' Resets list of added paths to search for simulators
 #'
 #' @examples \dontrun{
-#' OPENFLUID.resetExtraSimulatorsPaths()
+#' OpenFLUID.resetExtraSimulatorsPaths()
 #' }
 #'
-#' @seealso \code{\link{OPENFLUID.addExtraSimulatorsPaths}}
-#' @seealso \code{\link{OPENFLUID.getSimulatorsPaths}}
-#' @seealso \code{\link{OPENFLUID.getExtraSimulatorsPaths}}
+#' @seealso \code{\link{OpenFLUID.addExtraSimulatorsPaths}}
+#' @seealso \code{\link{OpenFLUID.getSimulatorsPaths}}
+#' @seealso \code{\link{OpenFLUID.getExtraSimulatorsPaths}}
 OpenFLUID.resetExtraSimulatorsPaths <- function()
 {
   .Call("ResetExtraSimulatorsPaths", PACKAGE="ROpenFLUID")

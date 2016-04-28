@@ -1,2 +1,2 @@
 library(roxygen2)
-roxygenize('ROpenFLUID',roclets = c("rd"))
+roxygenize(roclets = c("rd"), clean = TRUE)
