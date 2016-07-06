@@ -87,7 +87,7 @@ const char* ROpenFLUID_GetSimulationOutputDir(ROpenFLUID_ExtBlob_t* BlobHandle);
 
 ROpenFLUID_ExtBlob_t ROpenFLUID_OpenProject(const char* Path);
 
-unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle);
+unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle, int IsVerbose);
 
 void ROpenFLUID_PrintSimulationInfo(ROpenFLUID_ExtBlob_t* BlobHandle);
 

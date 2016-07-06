@@ -16,8 +16,11 @@ CONFIGURE_FILE(${RESOURCESDIR}/DESCRIPTION.in ${PACKAGEBUILDDIR}/DESCRIPTION @ON
 CONFIGURE_FILE(${RESOURCESDIR}/man/ROpenFLUID-package.Rd.in ${PACKAGEBUILDDIR}/man/ROpenFLUID-package.Rd @ONLY)
 CONFIGURE_FILE(${RESOURCESDIR}/tests/00tests.R.in ${PACKAGEBUILDDIR}/tests/00tests.R @ONLY)
 CONFIGURE_FILE(${RESOURCESDIR}/tests/PrimitivesExample.R.in ${PACKAGEBUILDDIR}/tests/PrimitivesExample.R @ONLY)
+CONFIGURE_FILE(${RESOURCESDIR}/tests/PrimitivesExampleVerbose.R.in ${PACKAGEBUILDDIR}/tests/PrimitivesExampleVerbose.R @ONLY)
+
 
 
 EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" 
                 "-E" "chdir" "${PACKAGEBUILDDIR}"
                 "R" "CMD" "BATCH" "--vanilla" "${RESOURCESDIR}/roxygen2.R")
+

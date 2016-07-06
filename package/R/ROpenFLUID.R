@@ -46,8 +46,8 @@
 #' @param paths the colon separated paths to add
 #'
 #' @examples \dontrun{
-#' OpenFLUID.addExtraObserversPaths("/first/path/to/add")
-#' OpenFLUID.addExtraObserversPaths("/second/path/to/add":/third/path/to/add")
+#' OpenFLUID.addExtraObserversPaths("/first/path")
+#' OpenFLUID.addExtraObserversPaths("/second/path:/third/path")
 #' }
 #'
 #' @seealso \code{\link{OpenFLUID.getObserversPaths}}
@@ -71,8 +71,8 @@ OpenFLUID.addExtraObserversPaths <- function(paths)
 #' @param paths the colon separated paths to add
 #' 
 #' @examples \dontrun{
-#' OpenFLUID.addExtraSimulatorsPaths("/first/path/to/add")
-#' OpenFLUID.addExtraSimulatorsPaths("/second/path/to/add:/third/path/to/add")
+#' OpenFLUID.addExtraSimulatorsPaths("/first/path")
+#' OpenFLUID.addExtraSimulatorsPaths("/second/path:/third/path")
 #' }
 #'
 #' @seealso \code{\link{OpenFLUID.getSimulatorsPaths}}
@@ -816,21 +816,23 @@ OpenFLUID.resetExtraSimulatorsPaths <- function()
 #' Runs a project and returns a simulation definition blob
 #' 
 #' @param path the full path of the dataset to open
+#' @param verbose enable/disable verbose mode
 #' @return a simulation definition blob
 #' 
 #' @examples \dontrun{
 #' ofsim = OpenFLUID.runProject("/path/to/dataset")
+#' ofsim = OpenFLUID.runProject("/path/to/dataset",verbose=TRUE)
 #' }
 #' 
 #' @seealso \code{\link{OpenFLUID.runSimulation}}
 #' @seealso \code{\link{OpenFLUID.openProject}}
-OpenFLUID.runProject <- function(path)
+OpenFLUID.runProject <- function(path,verbose=FALSE)
 {
   stopifnot(is.character(path))
   
   ofdata = OpenFLUID.openProject(path)
   
-  OpenFLUID.runSimulation(ofdata)  
+  OpenFLUID.runSimulation(ofdata,verbose)  
   
   return(ofdata)
 }
@@ -843,19 +845,21 @@ OpenFLUID.runProject <- function(path)
 #' Runs a simulation from a simulation definition blob
 #' 
 #' @param ofblob the simulation definition blob
+#' @param verbose enable/disable verbose mode
 #' 
 #' @examples \dontrun{
 #' OpenFLUID.runSimulation(ofsim)
+#' OpenFLUID.runSimulation(ofsim,verbose=TRUE)
 #' }
 #' 
 #' @seealso \code{\link{OpenFLUID.runProject}}
 #' @seealso \code{\link{OpenFLUID.openProject}}
 #' @seealso \code{\link{OpenFLUID.openDataset}}
-OpenFLUID.runSimulation <- function(ofblob)
+OpenFLUID.runSimulation <- function(ofblob,verbose=FALSE)
 {
   stopifnot(!is.null(ofblob))
   
-  .Call("RunSimulation", ofblob, PACKAGE="ROpenFLUID")
+  .Call("RunSimulation", ofblob, as.integer(verbose), PACKAGE="ROpenFLUID")
   
   return(invisible(NULL))  
 }
@@ -888,7 +892,7 @@ OpenFLUID.setAttribute <- function(ofblob,unitclass,unitid,attrname,attrval)
   stopifnot(is.numeric(unitid))
   stopifnot(is.character(attrname))    
   
-  .Call("SetAttribute", ofblob, unitclass, as.integer(unitid), attrname, as.character(attrval), PACKAGE="ROpenFLUID")  
+  .Call("SetAttribute", ofblob, unitclass, as.integer(unitid), attrname, as.character(attrval), PACKAGE="ROpenFLUID")
   
   return(invisible(NULL))
 }

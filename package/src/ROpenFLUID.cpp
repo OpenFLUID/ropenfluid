@@ -48,6 +48,7 @@
 #include <openfluid/ware/PluggableWare.hpp>
 
 #include "ROpenFLUID.h"
+#include "VerboseMachineListener.hpp"
 
 
 // =====================================================================
@@ -459,7 +460,7 @@ ROpenFLUID_ExtBlob_t ROpenFLUID_OpenProject(const char* Path)
 // =====================================================================
 
 
-unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
+unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle, int IsVerbose)
 {
 
   try
@@ -479,26 +480,59 @@ unsigned short int ROpenFLUID_RunSimulation(ROpenFLUID_ExtBlob_t* BlobHandle)
 
     openfluid::machine::SimulatorPluginsManager::instance()->unloadAllWares();
 
-    openfluid::machine::Factory::buildSimulationBlobFromDescriptors(
-        Data->FluidXDesc,
-        SimBlob);
+
+    // ===== spatial domain and run config
+
+    if (IsVerbose)
+      Rprintf("%s","Building spatial domain...");
+
+    openfluid::machine::Factory::buildSimulationBlobFromDescriptors(Data->FluidXDesc,SimBlob);
+
+    if (IsVerbose)
+      VerboseMachineListener::displayStatus(openfluid::base::Listener::LISTEN_OK);
 
 
-    openfluid::machine::MachineListener MachineListen;    
-    openfluid::machine::ModelInstance Model(SimBlob,&MachineListen);
+    // ===== model instance
 
-    openfluid::machine::Factory::buildModelInstanceFromDescriptor(Data->FluidXDesc.modelDescriptor(),
-        Model);
+    if (IsVerbose)
+      Rprintf("%s","Building model instance...");
+
+    std::unique_ptr<openfluid::machine::MachineListener> Listener;
+
+    if (IsVerbose)
+      Listener.reset(new VerboseMachineListener());
+    else
+      Listener.reset(new openfluid::machine::MachineListener());
+
+
+    openfluid::machine::ModelInstance Model(SimBlob,Listener.get());
+
+    openfluid::machine::Factory::buildModelInstanceFromDescriptor(Data->FluidXDesc.modelDescriptor(),Model);
+
+    if (IsVerbose)
+      VerboseMachineListener::displayStatus(openfluid::base::Listener::LISTEN_OK);
+
+
+    // ===== monitoring instance
+
+    if (IsVerbose)
+      Rprintf("%s","Building monitoring instance...");
 
     openfluid::machine::MonitoringInstance Monitoring(SimBlob);
 
     openfluid::machine::Factory::buildMonitoringInstanceFromDescriptor(Data->FluidXDesc.monitoringDescriptor(),
                                                                        Monitoring);
 
+    if (IsVerbose)
+      VerboseMachineListener::displayStatus(openfluid::base::Listener::LISTEN_OK);
+
+
+    // ===== simulation
 
     Data->OutputDir = openfluid::base::RunContextManager::instance()->getOutputDir();
 
-    Engine = new openfluid::machine::Engine(SimBlob, Model, Monitoring, &MachineListen);
+
+    Engine = new openfluid::machine::Engine(SimBlob, Model, Monitoring, Listener.get());
 
     Engine->initialize();
 
