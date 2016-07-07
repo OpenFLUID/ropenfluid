@@ -16,18 +16,24 @@ This package uses the following R packages:
 The ROpenFLUID package requires for building process:
 - The OpenFLUID framework
 - The R development framework
+- The CMake build tools family
 - The GCC compiler suite 4.8 or higher (for C++11 compatibility) 
 
-On Windows platforms, you have to use the MinGW compiler provided by Qt from an MSYS terminal.
+On Windows platforms, the MinGW compiler provided by Qt have to be used from an MSYS terminal.
 
 
 ## Checking ROpenFLUID package
 
-This will run the R checking process
-
+This will run the R checking process for the package:
 ```
 cmake -P check.cmake
 ```
+
+The CRAN mode can be enabled to apply the CRAN submission requirements for package submissions:
+```
+cmake -DAS_CRAN_MODE=ON -P check.cmake
+```
+
 
 
 ## Building ROpenFLUID package

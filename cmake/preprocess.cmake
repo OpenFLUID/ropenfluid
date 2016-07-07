@@ -24,3 +24,4 @@ EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}"
                 "-E" "chdir" "${PACKAGEBUILDDIR}"
                 "R" "CMD" "BATCH" "--vanilla" "${RESOURCESDIR}/roxygen2.R")
 
+FILE(REMOVE "${PACKAGEBUILDDIR}/roxygen2.Rout")
