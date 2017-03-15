@@ -87,7 +87,7 @@ static SEXP Rized_OpenFLUID_SetPeriod(SEXP Blob, SEXP Begin, SEXP End);
 static SEXP Rized_OpenFLUID_GetPeriodBeginDate(SEXP Blob);
 static SEXP Rized_OpenFLUID_GetPeriodEndDate(SEXP Blob);
 
-static SEXP Rized_OpenFLUID_AddVariablesExportAsCSV(SEXP Blob, SEXP UnitClass);
+static SEXP Rized_OpenFLUID_AddVariablesExportAsCSV(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP VarName, SEXP Prec);
 
 
 
@@ -135,7 +135,7 @@ R_CallMethodDef callEntries[] = {
   { "SetPeriod", (DL_FUNC) &Rized_OpenFLUID_SetPeriod, 3},
   { "GetPeriodBeginDate", (DL_FUNC) &Rized_OpenFLUID_GetPeriodBeginDate, 1},
   { "GetPeriodEndDate", (DL_FUNC) &Rized_OpenFLUID_GetPeriodEndDate, 1},
-  { "AddVariablesExportAsCSV", (DL_FUNC) &Rized_OpenFLUID_AddVariablesExportAsCSV, 2},
+  { "AddVariablesExportAsCSV", (DL_FUNC) &Rized_OpenFLUID_AddVariablesExportAsCSV, 5},
   { NULL, NULL, 0}
 };
 
@@ -858,8 +858,8 @@ SEXP Rized_OpenFLUID_GetPeriodEndDate(SEXP Blob)
 // =====================================================================
 
 
-SEXP Rized_OpenFLUID_AddVariablesExportAsCSV(SEXP Blob, SEXP UnitClass)
+SEXP Rized_OpenFLUID_AddVariablesExportAsCSV(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP VarName, SEXP Prec)
 {
-  ROpenFLUID_AddVariablesExportAsCSV(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)));
+  ROpenFLUID_AddVariablesExportAsCSV(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)),INTEGER(UnitID)[0],CHAR(STRING_ELT(VarName, 0)),INTEGER(Prec)[0]);
 }
 

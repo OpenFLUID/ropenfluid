@@ -17,6 +17,7 @@ CONFIGURE_FILE(${RESOURCESDIR}/man/ROpenFLUID-package.Rd.in ${PACKAGEBUILDDIR}/m
 CONFIGURE_FILE(${RESOURCESDIR}/tests/00tests.R.in ${PACKAGEBUILDDIR}/tests/00tests.R @ONLY)
 CONFIGURE_FILE(${RESOURCESDIR}/tests/PrimitivesExample.R.in ${PACKAGEBUILDDIR}/tests/PrimitivesExample.R @ONLY)
 CONFIGURE_FILE(${RESOURCESDIR}/tests/PrimitivesExampleVerbose.R.in ${PACKAGEBUILDDIR}/tests/PrimitivesExampleVerbose.R @ONLY)
+CONFIGURE_FILE(${RESOURCESDIR}/tests/PrimitivesExampleSelectedOutputs.R.in ${PACKAGEBUILDDIR}/tests/PrimitivesExampleSelectedOutputs.R @ONLY)
 
 
 

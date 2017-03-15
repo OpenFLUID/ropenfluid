@@ -96,19 +96,27 @@ OpenFLUID.addExtraSimulatorsPaths <- function(paths)
 #' 
 #' @param ofblob the simulation definition blob
 #' @param unitclass the units class to add for simulation variables export
+#' @param unitid the unit ID (optional)
+#' @param varname the name of the variable(s) (optional)
+#' @param precision the number of digits of the variables (optional)
 #' 
 #' @examples \dontrun{
-#' OpenFLUID.addVariablesExportAsCSV("TU")
-#' OpenFLUID.addVariablesExportAsCSV("RS")
+#' OpenFLUID.addVariablesExportAsCSV(ofsim,"TU")
+#' OpenFLUID.addVariablesExportAsCSV(ofsim,"TU",1,"var1",precision=14)
+#' OpenFLUID.addVariablesExportAsCSV(ofsim,"TU",2,"var1;var2")
+#' OpenFLUID.addVariablesExportAsCSV(ofsim,"TU",1,"*")
 #' }
 #'
 #' @seealso \code{\link{OpenFLUID.loadResult}}
-OpenFLUID.addVariablesExportAsCSV <- function(ofblob,unitclass)
+OpenFLUID.addVariablesExportAsCSV <- function(ofblob,unitclass,unitid=-1,varname="",precision=-1)
 {
   stopifnot(!is.null(ofblob))
   stopifnot(is.character(unitclass))
+  stopifnot(is.numeric(unitid))
+  stopifnot(is.character(varname))
+  stopifnot(is.numeric(precision))
   
-  .Call("AddVariablesExportAsCSV", ofblob, unitclass, PACKAGE="ROpenFLUID")  
+  .Call("AddVariablesExportAsCSV", ofblob, unitclass, as.integer(unitid), varname, as.integer(precision), PACKAGE="ROpenFLUID")  
   
   return(invisible(NULL))
 }
