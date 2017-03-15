@@ -4,7 +4,7 @@ library("ROpenFLUID")
 
 ofsim = OpenFLUID.openDataset("@OpenFLUID_PREFIX@/share/doc/openfluid/examples/projects/Primitives/IN")
 
-OpenFLUID.setCurrentOutputDir(paste(getwd(), '/Primitives.OUT', sep = ""))
+OpenFLUID.setCurrentOutputDir(paste(getwd(), '/PrimitivesVerbose.OUT', sep = ""))
 
 OpenFLUID.addExtraSimulatorsPaths("@OpenFLUID_PREFIX@/lib/openfluid/simulators")
 
