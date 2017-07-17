@@ -12,7 +12,7 @@ INCLUDE("cmake/preprocess.cmake")
 FILE(GLOB RDFILES "${PACKAGEBUILDDIR}/man/*.Rd")                
 FILE(MAKE_DIRECTORY "${BUILDDIR}/htmldoc")
 
-FILE(COPY "${RESOURCESDIR}/htmldoc/R_logo.jpg" DESTINATION "${BUILDDIR}/htmldoc")
+FILE(COPY "${RESOURCESDIR}/htmldoc/R_logo.png" DESTINATION "${BUILDDIR}/htmldoc")
 FILE(COPY "${RESOURCESDIR}/htmldoc/OpenFLUID_logo.jpg" DESTINATION "${BUILDDIR}/htmldoc")
 
 FOREACH(RDF ${RDFILES})
