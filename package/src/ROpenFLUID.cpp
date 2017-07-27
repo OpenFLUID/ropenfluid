@@ -35,11 +35,16 @@
 
 #include <QCoreApplication>
 
+#include <openfluid/config.hpp>
 #include <openfluid/base/Init.hpp>
 #include <openfluid/base/IOListener.hpp>
 #include <openfluid/base/RunContextManager.hpp>
 #include <openfluid/base/ApplicationException.hpp>
-#include <openfluid/machine.hpp>
+#include <openfluid/machine/Factory.hpp>
+#include <openfluid/machine/Engine.hpp>
+#include <openfluid/machine/SimulationBlob.hpp>
+#include <openfluid/machine/SimulatorPluginsManager.hpp>
+#include <openfluid/machine/ModelInstance.hpp>
 #include <openfluid/fluidx/FluidXDescriptor.hpp>
 #include <openfluid/fluidx/AdvancedMonitoringDescriptor.hpp>
 #include <openfluid/fluidx/SimulatorDescriptor.hpp>
