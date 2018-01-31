@@ -1237,11 +1237,13 @@ void ROpenFLUID_RemoveAttribute(ROpenFLUID_ExtBlob_t* BlobHandle, const char* Un
 // =====================================================================
 
 
-void ROpenFLUID_AddVariablesExportAsCSV(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* VarName, int Prec)
+void ROpenFLUID_AddVariablesExportAsCSV(
+  ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, const char* UnitID, const char* VarName, int Prec)
 {
   ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
 
   std::string UnitClassStr(UnitClass);
+  std::string UnitIDStr(UnitID);
   std::string VarNameStr(VarName);
   openfluid::fluidx::AdvancedMonitoringDescriptor AdvMonDesc(Data->FluidXDesc.monitoringDescriptor());
 
@@ -1250,14 +1252,13 @@ void ROpenFLUID_AddVariablesExportAsCSV(ROpenFLUID_ExtBlob_t* BlobHandle, const 
   if (AdvMonDesc.findFirstItem("export.vars.files.csv") < 0)
     AdvMonDesc.appendItem(new openfluid::fluidx::ObserverDescriptor("export.vars.files.csv"));
 
-
   openfluid::fluidx::ObserverDescriptor& ObsDesc = AdvMonDesc.itemAt(AdvMonDesc.findFirstItem("export.vars.files.csv"));
 
   // 2. add ropenfluid format
   ObsDesc.setParameter("format.ropenfluid.header",openfluid::core::StringValue("colnames-as-data"));
   ObsDesc.setParameter("format.ropenfluid.date",openfluid::core::StringValue("%Y%m%d-%H%M%S"));
   ObsDesc.setParameter("format.ropenfluid.colsep",openfluid::core::StringValue(" "));
-  if (Prec != -1)
+  if (Prec > 0)
   {
     std::ostringstream ssPrec;
     ssPrec << Prec;
@@ -1267,22 +1268,7 @@ void ROpenFLUID_AddVariablesExportAsCSV(ROpenFLUID_ExtBlob_t* BlobHandle, const 
 
   // 3. add ropenfluidUnitClass output set
   ObsDesc.setParameter("set.ropenfluid"+UnitClassStr+".unitclass",openfluid::core::StringValue(UnitClassStr));
-  if (UnitID != -1) {
-    std::ostringstream ssUnitID;
-    ssUnitID << UnitID;
-    std::string UnitIDStr(ssUnitID.str());
-    ObsDesc.setParameter("set.ropenfluid"+UnitClassStr+".unitsIDs",openfluid::core::StringValue(UnitIDStr));
-  }
-  else {
-    ObsDesc.setParameter("set.ropenfluid"+UnitClassStr+".unitsIDs",openfluid::core::StringValue("*"));
-  }
-  if (!VarNameStr.empty()) {
-    ObsDesc.setParameter("set.ropenfluid"+UnitClassStr+".vars",openfluid::core::StringValue(VarNameStr));
-  }
-  else {
-    ObsDesc.setParameter("set.ropenfluid"+UnitClassStr+".vars",openfluid::core::StringValue("*"));
-  }
+  ObsDesc.setParameter("set.ropenfluid"+UnitClassStr+".unitsIDs",openfluid::core::StringValue(UnitIDStr));
+  ObsDesc.setParameter("set.ropenfluid"+UnitClassStr+".vars",openfluid::core::StringValue(VarNameStr));
   ObsDesc.setParameter("set.ropenfluid"+UnitClassStr+".format",openfluid::core::StringValue("ropenfluid"));
 }
-
-

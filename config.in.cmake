@@ -13,7 +13,7 @@ SET(OpenFLUID_R_TITLE "R Interface to OpenFLUID Platform Framework for Modelling
 SET(OpenFLUID_R_DESC "Provides a collection of functions to load, parameterize, run and analyze OpenFLUID simulations within the GNU R environment.")
 
 # Version
-SET(OpenFLUID_R_VERSION_PATCH "20170727")
+SET(OpenFLUID_R_VERSION_PATCH "20180131")
 
 
 # ===========================================================================================
@@ -24,7 +24,7 @@ SET(OpenFLUID_R_VERSION_PATCH "20170727")
 FIND_PATH(OpenFLUID_PREFIX
   NAMES bin/openfluid bin/openfluid.exe
   HINTS
-    $ENV{OPENFLUID_INSTALL_PREFIX}    
+    $ENV{OPENFLUID_INSTALL_PREFIX}
     /usr
     /usr/local
     /sw # Fink
@@ -40,7 +40,7 @@ IF(WIN32)
 ENDIF()
 
 
-EXECUTE_PROCESS(COMMAND "${OpenFLUID_CMDCLI}" "--version" 
+EXECUTE_PROCESS(COMMAND "${OpenFLUID_CMDCLI}" "--version"
                 OUTPUT_VARIABLE OpenFLUID_VERSION
                 RESULT_VARIABLE OpenFLUID_VERSION_RESULT
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
@@ -63,4 +63,3 @@ ENDIF()
 EXECUTE_PROCESS(COMMAND "R" "--vanilla" "--slave" "-e" "cat(format(Sys.time(),'%Y-%m-%d'))"
                 OUTPUT_VARIABLE OpenFLUID_R_DATE
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
-

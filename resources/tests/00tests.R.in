@@ -19,9 +19,15 @@ checkEquals(length(OpenFLUID.getExtraSimulatorsPaths()), 2)
 OpenFLUID.resetExtraSimulatorsPaths()
 checkEquals(OpenFLUID.getExtraSimulatorsPaths(), character(0))
 
-OpenFLUID.addExtraSimulatorsPaths("/path/sim/1:/path/sim/2")
+OpenFLUID.addExtraSimulatorsPaths(paste("/path/sim/1","/path/sim/2",sep=.Platform$path.sep))
 checkEquals(length(OpenFLUID.getExtraSimulatorsPaths()), 2)
 
+OpenFLUID.addExtraSimulatorsPaths(c("/path/sim/3","/path/sim/4"))
+checkEquals(length(OpenFLUID.getExtraSimulatorsPaths()), 4)
+
+# remove duplicated path
+OpenFLUID.addExtraSimulatorsPaths(c("/path/sim/5","/path/sim/5"))
+checkEquals(length(OpenFLUID.getExtraSimulatorsPaths()), 5)
 
 ## Observers paths ##
 
@@ -36,6 +42,12 @@ checkEquals(length(OpenFLUID.getExtraObserversPaths()), 2)
 OpenFLUID.resetExtraObserversPaths()
 checkEquals(OpenFLUID.getExtraObserversPaths(), character(0))
 
-OpenFLUID.addExtraObserversPaths("/path/sim/1:/path/sim/2")
+OpenFLUID.addExtraObserversPaths(paste("/path/obs/1","/path/obs/2",sep=.Platform$path.sep))
 checkEquals(length(OpenFLUID.getExtraObserversPaths()), 2)
 
+OpenFLUID.addExtraObserversPaths(c("/path/obs/3","/path/obs/4"))
+checkEquals(length(OpenFLUID.getExtraObserversPaths()), 4)
+
+# remove duplicated path
+OpenFLUID.addExtraObserversPaths(c("/path/obs/5","/path/obs/5"))
+checkEquals(length(OpenFLUID.getExtraObserversPaths()), 5)

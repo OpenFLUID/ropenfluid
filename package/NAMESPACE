@@ -1,2 +1,4 @@
+# Import global functions
+importFrom("utils", "read.csv")
 # Export all names
 exportPattern(".")

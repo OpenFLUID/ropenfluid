@@ -860,6 +860,5 @@ SEXP Rized_OpenFLUID_GetPeriodEndDate(SEXP Blob)
 
 SEXP Rized_OpenFLUID_AddVariablesExportAsCSV(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP VarName, SEXP Prec)
 {
-  ROpenFLUID_AddVariablesExportAsCSV(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)),INTEGER(UnitID)[0],CHAR(STRING_ELT(VarName, 0)),INTEGER(Prec)[0]);
+  ROpenFLUID_AddVariablesExportAsCSV(R_ExternalPtrAddr(Blob),CHAR(STRING_ELT(UnitClass, 0)),CHAR(STRING_ELT(UnitID, 0)),CHAR(STRING_ELT(VarName, 0)),INTEGER(Prec)[0]);
 }
-
