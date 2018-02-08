@@ -34,6 +34,37 @@ checkEqualsNumeric(as.numeric(OpenFLUID.getAttribute(ofdata,"RS",2,"length")),17
 checkEqualsNumeric(OpenFLUID.getAttribute(ofdata,"RS",18,"length"),"")
 checkEqualsNumeric(OpenFLUID.getAttribute(ofdata,"RS",1,"fakedata"),"")
 
+# check get attributes in batch mode
+dfVal = OpenFLUID.getAttributes(ofdata,"SU",c(1,5),c("area","slope"))
+checkEqualsNumeric(dfVal["SU#1","area"],OpenFLUID.getAttribute(ofdata,"SU",1,"area"))
+checkEqualsNumeric(dfVal["SU#5","area"],OpenFLUID.getAttribute(ofdata,"SU",5,"area"))
+checkEqualsNumeric(dfVal["SU#1","slope"],OpenFLUID.getAttribute(ofdata,"SU",1,"slope"))
+checkEqualsNumeric(dfVal["SU#5","slope"],OpenFLUID.getAttribute(ofdata,"SU",5,"slope"))
+
+dfValWithID = OpenFLUID.getAttributes(ofdata,"SU",c(1,5),c("area","slope"),unitidsAsRownames = FALSE)
+checkEqualsNumeric(dfVal[1,"area"],OpenFLUID.getAttribute(ofdata,"SU",1,"area"))
+checkEqualsNumeric(dfVal[2,"area"],OpenFLUID.getAttribute(ofdata,"SU",5,"area"))
+checkEqualsNumeric(dfVal[1,"slope"],OpenFLUID.getAttribute(ofdata,"SU",1,"slope"))
+checkEqualsNumeric(dfVal[2,"slope"],OpenFLUID.getAttribute(ofdata,"SU",5,"slope"))
+
+checkEquals(rownames(dfVal),dfValWithID$unitid)
+
+# check set attributes in batch mode
+dfValPlusOne = dfVal
+dfValPlusOne$area  = as.character(as.numeric(dfValPlusOne$area)+c(1,1)) # add 1 to column "area"
+dfValPlusOne$slope = as.character(as.numeric(dfValPlusOne$slope)+c(1,1)) # add 1 to column "slope"
+OpenFLUID.setAttributes(ofdata,"SU",dfValPlusOne)
+
+checkEquals(as.numeric(dfVal[1,"area"]),as.numeric(OpenFLUID.getAttribute(ofdata,"SU",1,"area"))-1)
+checkEquals(as.numeric(dfVal[2,"area"]),as.numeric(OpenFLUID.getAttribute(ofdata,"SU",5,"area"))-1)
+checkEquals(as.numeric(dfVal[1,"slope"]),as.numeric(OpenFLUID.getAttribute(ofdata,"SU",1,"slope"))-1)
+checkEquals(as.numeric(dfVal[2,"slope"]),as.numeric(OpenFLUID.getAttribute(ofdata,"SU",5,"slope"))-1)
+
+# reset attributes to their initial value using data.frame with the column "unitid"
+OpenFLUID.setAttributes(ofdata,"SU",dfValWithID)
+
+
+
 uclasses = OpenFLUID.getUnitsClasses(ofdata)
 print(uclasses)
 checkEqualsNumeric(length(uclasses),2)
@@ -110,7 +141,3 @@ checkEqualsNumeric(OpenFLUID.getAttribute(ofdata,"SU",1,"coeff"),"")
 checkEqualsNumeric(OpenFLUID.getAttribute(ofdata,"SU",3,"coeff"),"")
 checkEquals(OpenFLUID.getAttribute(ofdata,"RS",1,"coeffv"),"")
 checkEquals(OpenFLUID.getAttribute(ofdata,"RS",2,"coeffv"),"")
-
-
-
-

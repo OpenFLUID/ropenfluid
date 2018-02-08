@@ -59,11 +59,10 @@ OpenFLUID.addExtraObserversPaths <- function(paths)
 {
   stopifnot(is.character(paths) | is.vector(paths,mode="character"))
 
-  if (is.vector(paths,mode="character")) {
+  if (is.vector(paths,mode="character"))
     .Call("AddExtraObserversPaths", paste(unique(paths),collapse=.Platform$path.sep), PACKAGE="ROpenFLUID")
-  } else {
+  else
     .Call("AddExtraObserversPaths", paths, PACKAGE="ROpenFLUID")
-  }
 
   return(invisible(NULL))
 }
@@ -90,11 +89,10 @@ OpenFLUID.addExtraSimulatorsPaths <- function(paths)
 {
   stopifnot(is.character(paths) | is.vector(paths,mode="character"))
 
-  if (is.vector(paths,mode="character")) {
+  if (is.vector(paths,mode="character"))
     .Call("AddExtraSimulatorsPaths", paste(unique(paths),collapse=.Platform$path.sep), PACKAGE="ROpenFLUID")
-  } else {
+  else
     .Call("AddExtraSimulatorsPaths", paths, PACKAGE="ROpenFLUID")
-  }
 
   return(invisible(NULL))
 }
@@ -130,20 +128,18 @@ OpenFLUID.addVariablesExportAsCSV <- function(ofblob,unitclass,unitid=NULL,varna
   stopifnot(is.character(varname) | is.vector(varname,mode="character"))
   stopifnot(is.numeric(precision))
 
-  if (is.vector(varname,mode="character")) {
+  if (is.vector(varname,mode="character"))
     varnames = paste(unique(varname),collapse=";")
-  } else {
+  else
     varnames = varname
-  }
 
-  if (is.null(unitid)){
+  if (is.null(unitid))
     unitids = "*"
-  } else {
-    if (is.vector(unitid,mode="numeric")) {
+  else {
+    if (is.vector(unitid,mode="numeric"))
       unitids = paste(as.character(unique(unitid)),collapse=";")
-    } else {
+    else
       unitids = as.character(unitid)
-    }
   }
 
   .Call("AddVariablesExportAsCSV", ofblob, unitclass, unitids, varnames, as.integer(precision), PACKAGE="ROpenFLUID")
@@ -210,6 +206,52 @@ OpenFLUID.getAttribute <- function(ofblob,unitclass,unitid,attrname)
   stopifnot(is.character(attrname))
 
   ret <- .Call("GetAttribute", ofblob, unitclass, as.integer(unitid), attrname, PACKAGE="ROpenFLUID")
+
+  stopifnot(!is.null(ret))
+
+  return(ret)
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+#' Returns attributes values for given spatial units and attributes names
+#'
+#' @param ofblob the simulation definition blob
+#' @param unitclass the unit class
+#' @param unitids the vector of unit IDs
+#' @param attrnames the vector of names of the attributes
+#' @param unitidsAsRownames if TRUE rename row as unitids if FALSE add a column of unitids
+#' @return a data.frame (unitids x attrnames) of the attribute values
+#'
+#' @examples \dontrun{
+#' valdf = OpenFLUID.getAttributes(ofsim,"SU",c(18,23),c("length","width"))
+#' }
+#'
+#' @seealso \code{\link{OpenFLUID.setAttributes}}
+OpenFLUID.getAttributes <- function(ofblob,unitclass,unitids,attrnames,unitidsAsRownames=TRUE)
+{
+  stopifnot(!is.null(ofblob))
+  stopifnot(is.character(unitclass))
+  stopifnot(is.vector(unitids,mode="numeric"))
+  stopifnot(is.vector(attrnames,mode="character"))
+
+  ret <- as.data.frame(stringsAsFactors=FALSE,x=
+    sapply( attrnames, function(attrname)
+      sapply( unitids, function(unitid)
+        .Call("GetAttribute", ofblob, unitclass, as.integer(unitid), attrname, PACKAGE="ROpenFLUID")
+      )
+    )
+  )
+
+  unitidNames = paste(unitclass,unitids,sep="#")
+
+  if (unitidsAsRownames)
+    rownames(ret) = unitidNames
+  else
+    ret <- cbind(data.frame("unitid"=unitidNames,stringsAsFactors=FALSE),ret)
 
   stopifnot(!is.null(ret))
 
@@ -931,6 +973,42 @@ OpenFLUID.setAttribute <- function(ofblob,unitclass,unitid,attrname,attrval)
   stopifnot(is.character(attrname))
 
   .Call("SetAttribute", ofblob, unitclass, as.integer(unitid), attrname, as.character(attrval), PACKAGE="ROpenFLUID")
+
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+#' Sets attributes values for given spatial units and attributes names
+#'
+#' @param ofblob the simulation definition blob
+#' @param unitclass the unit class
+#' @param attrvals the data.frame of values (unit id x attribute name)
+#'
+#' @examples \dontrun{
+#' OpenFLUID.setAttributes(ofsim,"SU",data.frame("length"=c(1,2),"width"=c(3.2,7.8),"unitid"=c("SU#18","SU#23")))
+#' }
+#'
+#' @seealso \code{\link{OpenFLUID.getAttributes}}
+OpenFLUID.setAttributes <- function(ofblob,unitclass,attrvals)
+{
+  stopifnot(!is.null(ofblob))
+  stopifnot(is.character(unitclass))
+  stopifnot(is.data.frame(attrvals))
+
+  if ("unitid" %in% rownames(attrvals))
+    unitids = as.integer(gsub(paste(unitclass,"#",sep=""),"",attrvals$unitid))
+  else
+    unitids = as.integer(gsub(paste(unitclass,"#",sep=""),"",rownames(attrvals)))
+
+  attrnames = colnames(attrvals)
+
+  for ( i in seq(length(unitids)) )
+    for ( j in seq(length(attrnames)) )
+      .Call("SetAttribute", ofblob, unitclass, unitids[i], attrnames[j], as.character(attrvals[i,j]), PACKAGE="ROpenFLUID")
 
   return(invisible(NULL))
 }
