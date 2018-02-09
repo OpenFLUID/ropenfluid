@@ -1,11 +1,12 @@
 <?xml version="1.0" standalone="yes"?>
 <openfluid>
   <model>
-  
+
     <gparams>
       <param name="gparam1" value="1.1;2.1" />
+      <param name="gparam2" value="global" />
     </gparams>
-    
+
     <generator varname="tests.fixed" unitclass="SU" method="fixed">
       <param name="fixedvalue" value="12.7" />
     </generator>
@@ -14,17 +15,17 @@
       <param name="min" value="20.53" />
       <param name="max" value="50" />
     </generator>
-    
+
     <simulator ID="tests.funcA">
       <param name="pA1" value="0.000005" />
     </simulator>
-    
+
     <simulator ID="tests.funcB"/>
-          
+
     <simulator ID="tests.funcC">
         <param name="pC1" value="100" />
         <param name="pC2" value="0.045" />
-        <param name="pC3" value="500" />                
+        <param name="pC3" value="500" />
     </simulator>
 
   </model>

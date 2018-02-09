@@ -238,13 +238,30 @@ OpenFLUID.getAttributes <- function(ofblob,unitclass,unitids,attrnames,unitidsAs
   stopifnot(is.vector(unitids,mode="numeric"))
   stopifnot(is.vector(attrnames,mode="character"))
 
-  ret <- as.data.frame(stringsAsFactors=FALSE,x=
-    sapply( attrnames, function(attrname)
-      sapply( unitids, function(unitid)
-        .Call("GetAttribute", ofblob, unitclass, as.integer(unitid), attrname, PACKAGE="ROpenFLUID")
+  if (length(unitids) == 1) {
+    if (length(attrnames) == 1) {
+      ret <- data.frame(stringsAsFactors=FALSE,x=
+        .Call("GetAttribute", ofblob, unitclass, as.integer(unitids[1]), attrnames[1], PACKAGE="ROpenFLUID")
+      )
+      colnames(ret) = attrnames
+    } else {
+      ret <- as.data.frame(stringsAsFactors=FALSE,x=
+        t(
+          sapply( attrnames, function(attrname)
+            .Call("GetAttribute", ofblob, unitclass, as.integer(unitids[1]), attrname, PACKAGE="ROpenFLUID")
+          )
+        )
+      )
+    }
+  } else {
+    ret <- as.data.frame(stringsAsFactors=FALSE,x=
+      sapply( attrnames, function(attrname)
+        sapply( unitids, function(unitid)
+          .Call("GetAttribute", ofblob, unitclass, as.integer(unitid), attrname, PACKAGE="ROpenFLUID")
+        )
       )
     )
-  )
+  }
 
   unitidNames = paste(unitclass,unitids,sep="#")
 
@@ -360,6 +377,52 @@ OpenFLUID.getGeneratorParam <- function(ofblob,unitclass,varname,paramname)
 # =====================================================================
 
 
+#' Returns generator parameter values
+#'
+#' @param ofblob the simulation definition blob
+#' @param unitclass the unit class to which the generator is applied
+#' @param varname the variable name to which the generator is applied
+#' @param paramnames the names of the parameters
+#' @return the parameter values
+#'
+#' @examples \dontrun{
+#' val = OpenFLUID.getGeneratorParams(ofsim,"SU","var.flux",c("min","max"))
+#' }
+#'
+#' @seealso \code{\link{OpenFLUID.getModelGlobalParams}}
+#' @seealso \code{\link{OpenFLUID.getObserverParams}}
+#' @seealso \code{\link{OpenFLUID.getSimulatorParams}}
+OpenFLUID.getGeneratorParams <- function(ofblob,unitclass,varname,paramnames)
+{
+  stopifnot(!is.null(ofblob))
+  stopifnot(is.character(unitclass))
+  stopifnot(is.character(varname))
+  stopifnot(is.vector(paramnames,mode="character"))
+
+  if (length(paramnames) == 1) {
+    ret <- data.frame(stringsAsFactors=FALSE,x=
+      .Call("GetGeneratorParam", ofblob, unitclass, varname, paramnames[1], PACKAGE="ROpenFLUID")
+    )
+    colnames(ret) = paramnames
+  } else {
+    ret <- as.data.frame(stringsAsFactors=FALSE,x=
+      t(
+        sapply( paramnames, function(paramname)
+          .Call("GetGeneratorParam", ofblob, unitclass, varname, paramname, PACKAGE="ROpenFLUID")
+        )
+      )
+    )
+  }
+  rownames(ret) = c(varname)
+
+  return(ret)
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
 #' Returns a model global parameter value
 #'
 #' @param ofblob the simulation definition blob
@@ -378,6 +441,49 @@ OpenFLUID.getModelGlobalParam <- function(ofblob,paramname)
   stopifnot(is.character(paramname))
 
   .Call("GetModelGlobalParam", ofblob, paramname, PACKAGE="ROpenFLUID")
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+#' Returns model global parameters values
+#'
+#' @param ofblob the simulation definition blob
+#' @param paramnames names of the parameters
+#' @return the parameter values
+#'
+#' @examples \dontrun{
+#' vals = OpenFLUID.getModelGlobalParams(ofsim,c("gvalueA","gvalueB"))
+#' }
+#'
+#' @seealso \code{\link{OpenFLUID.getGeneratorParams}}
+#' @seealso \code{\link{OpenFLUID.getObserverParams}}
+#' @seealso \code{\link{OpenFLUID.getSimulatorParams}}
+OpenFLUID.getModelGlobalParams <- function(ofblob,paramnames)
+{
+  stopifnot(!is.null(ofblob))
+  stopifnot(is.vector(paramnames,mode="character"))
+
+  if (length(paramnames) == 1) {
+
+    ret <- data.frame(stringsAsFactors=FALSE,x=
+      .Call("GetModelGlobalParam", ofblob, paramnames[1], PACKAGE="ROpenFLUID")
+    )
+    colnames(ret) = paramnames
+  } else {
+    ret <- as.data.frame(stringsAsFactors=FALSE,x=
+      t(
+        sapply( paramnames, function(paramname)
+          .Call("GetModelGlobalParam", ofblob, paramname, PACKAGE="ROpenFLUID")
+        )
+      )
+    )
+  }
+  rownames(ret) = c("global")
+
+  return(ret)
 }
 
 
@@ -405,6 +511,50 @@ OpenFLUID.getObserverParam <- function(ofblob,obsid,paramname)
   stopifnot(is.character(paramname))
 
   .Call("GetObserverParam", ofblob, obsid, paramname, PACKAGE="ROpenFLUID")
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+#' Returns observer parameter values
+#'
+#' @param ofblob the simulation definition blob
+#' @param obsid the observer ID
+#' @param paramnames names of the parameters
+#' @return the parameter values
+#'
+#' @examples \dontrun{
+#' vals = OpenFLUID.getObserverParams(ofsim,"my.observer",c("valueA","valueB"))
+#' }
+#'
+#' @seealso \code{\link{OpenFLUID.getModelGlobalParams}}
+#' @seealso \code{\link{OpenFLUID.getGeneratorParams}}
+#' @seealso \code{\link{OpenFLUID.getSimulatorParams}}
+OpenFLUID.getObserverParams <- function(ofblob,obsid,paramnames)
+{
+  stopifnot(!is.null(ofblob))
+  stopifnot(is.character(obsid))
+  stopifnot(is.vector(paramnames,mode="character"))
+
+  if (length(paramnames) == 1) {
+    ret <- data.frame(stringsAsFactors=FALSE,x=
+      .Call("GetObserverParam", ofblob, obsid, paramnames[1], PACKAGE="ROpenFLUID")
+    )
+    colnames(ret) = paramnames
+  } else {
+    ret <- as.data.frame(stringsAsFactors=FALSE,x=
+      t(
+        sapply( paramnames, function(paramname)
+          .Call("GetObserverParam", ofblob, obsid, paramnames[1], PACKAGE="ROpenFLUID")
+        )
+      )
+    )
+  }
+  rownames(ret) = c(obsid)
+
+  return(ret)
 }
 
 
@@ -501,6 +651,49 @@ OpenFLUID.getSimulatorParam <- function(ofblob,simid,paramname)
   stopifnot(is.character(paramname))
 
   .Call("GetSimulatorParam", ofblob, simid, paramname, PACKAGE="ROpenFLUID")
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+#' Returns simulator parameter values
+#'
+#' @param ofblob the simulation definition blob
+#' @param simid the simulator ID
+#' @param paramnames names of the parameters
+#' @return the parameter values
+#'
+#' @examples \dontrun{
+#' vals = OpenFLUID.getSimulatorParams(ofsim,"my.simulator",c("coeff","coeff"))
+#' }
+#'
+#' @seealso \code{\link{OpenFLUID.getObserverParams}}
+#' @seealso \code{\link{OpenFLUID.getSimulatorParams}}
+OpenFLUID.getSimulatorParams <- function(ofblob,simid,paramnames)
+{
+  stopifnot(!is.null(ofblob))
+  stopifnot(is.character(simid))
+  stopifnot(is.vector(paramnames,mode="character"))
+
+  if (length(paramnames) == 1) {
+    ret <- data.frame(stringsAsFactors=FALSE,x=
+      .Call("GetSimulatorParam", ofblob, simid, paramnames[1], PACKAGE="ROpenFLUID")
+    )
+    colnames(ret) = paramnames
+  } else {
+    ret <- as.data.frame(stringsAsFactors=FALSE,x=
+      t(
+        sapply( paramnames, function(paramname)
+          .Call("GetSimulatorParam", ofblob, simid, paramname, PACKAGE="ROpenFLUID")
+        )
+      )
+    )
+  }
+  rownames(ret) = c(simid)
+
+  return(ret)
 }
 
 
@@ -1096,6 +1289,38 @@ OpenFLUID.setGeneratorParam <- function(ofblob,unitclass,varname,paramname,param
 # =====================================================================
 
 
+#' Sets generator parameter values
+#'
+#' @param ofblob the simulation definition blob
+#' @param unitclass the unit class to which the generator is applied
+#' @param varname the variable name to which the generator is applied
+#' @param paramvals the value of the parameters in a data.frame which column names are parameters names
+#'
+#' @examples \dontrun{
+#' OpenFLUID.setGeneratorParams(ofsim,"SU","var.flux",data.frame("min"=0.0,"max"=1.0))
+#' }
+#'
+#' @seealso \code{\link{OpenFLUID.setModelGlobalParams}}
+#' @seealso \code{\link{OpenFLUID.setObserverParams}}
+#' @seealso \code{\link{OpenFLUID.setSimulatorParams}}
+OpenFLUID.setGeneratorParams <- function(ofblob,unitclass,varname,paramvals)
+{
+  stopifnot(!is.null(ofblob))
+  stopifnot(is.character(unitclass))
+  stopifnot(is.character(varname))
+  stopifnot(is.data.frame(paramvals))
+
+  for (paramname in colnames(paramvals))
+    .Call("SetGeneratorParam", ofblob, unitclass, varname, paramname, as.character(paramvals[paramname][1]), PACKAGE="ROpenFLUID")
+
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
 #' Sets a model global parameter value
 #'
 #' @param ofblob the simulation definition blob
@@ -1114,6 +1339,34 @@ OpenFLUID.setModelGlobalParam <- function(ofblob,paramname,paramval)
   stopifnot(is.character(paramname))
 
   .Call("SetModelGlobalParam", ofblob, paramname, as.character(paramval), PACKAGE="ROpenFLUID")
+
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+#' Sets model global parameter values
+#'
+#' @param ofblob the simulation definition blob
+#' @param paramvals the values of the parameters in a data.frame which column names are parameters names
+#'
+#' @examples \dontrun{
+#' OpenFLUID.setModelGlobalParams(ofsim,data.frame("gvalue1"=37.2,"gvalue2"=14.6))
+#' }
+#'
+#' @seealso \code{\link{OpenFLUID.setModelGlobalParams}}
+#' @seealso \code{\link{OpenFLUID.setSimulatorParams}}
+#' @seealso \code{\link{OpenFLUID.setObserverParams}}
+OpenFLUID.setModelGlobalParams <- function(ofblob,paramvals)
+{
+  stopifnot(!is.null(ofblob))
+  stopifnot(is.data.frame(paramvals))
+
+  for (paramname in colnames(paramvals))
+    .Call("SetModelGlobalParam", ofblob, paramname, as.character(paramvals[paramname][1]), PACKAGE="ROpenFLUID")
 
   return(invisible(NULL))
 }
@@ -1144,6 +1397,36 @@ OpenFLUID.setObserverParam <- function(ofblob,obsid,paramname,paramval)
 
 
   .Call("SetObserverParam", ofblob, obsid, paramname, as.character(paramval), PACKAGE="ROpenFLUID")
+
+  return(invisible(NULL))
+}
+
+
+# =====================================================================
+# =====================================================================
+
+
+#' Sets observer parameter values
+#'
+#' @param ofblob the simulation definition blob
+#' @param obsid the simulation observer id
+#' @param paramvals the values of the parameters in a data.frame which column names are parameters names
+#'
+#' @examples \dontrun{
+#' OpenFLUID.setObserverParams(ofsim,"my.observer",data.frame("valueA"=3,"valueB"=6.7))
+#' }
+#'
+#' @seealso \code{\link{OpenFLUID.setModelGlobalParams}}
+#' @seealso \code{\link{OpenFLUID.setGeneratorParams}}
+#' @seealso \code{\link{OpenFLUID.setSimulatorParams}}
+OpenFLUID.setObserverParams <- function(ofblob,obsid,paramvals)
+{
+  stopifnot(!is.null(ofblob))
+  stopifnot(is.character(obsid))
+  stopifnot(is.data.frame(paramvals))
+
+  for (paramname in colnames(paramvals))
+    .Call("SetObserverParam", ofblob, obsid, paramname, as.character(paramvals[paramname][1]), PACKAGE="ROpenFLUID")
 
   return(invisible(NULL))
 }
@@ -1228,6 +1511,35 @@ OpenFLUID.setSimulatorParam <- function(ofblob,simid,paramname,paramval)
 
 
   .Call("SetSimulatorParam", ofblob, simid, paramname, as.character(paramval), PACKAGE="ROpenFLUID")
+
+  return(invisible(NULL))
+}
+
+# =====================================================================
+# =====================================================================
+
+
+#' Sets a simulator parameter values
+#'
+#' @param ofblob the simulation definition blob
+#' @param simid the simulation simulator id
+#' @param paramvals the values of the parameters in a data.frame which column names are parameters names
+#'
+#' @examples \dontrun{
+#' OpenFLUID.setSimulatorParams(ofsim,"my.simulator",data.frame("coeffA"=3,"coeffB"=3.3))
+#' }
+#'
+#' @seealso \code{\link{OpenFLUID.setModelGlobalParams}}
+#' @seealso \code{\link{OpenFLUID.setGeneratorParams}}
+#' @seealso \code{\link{OpenFLUID.setObserverParams}}
+OpenFLUID.setSimulatorParams <- function(ofblob,simid,paramvals)
+{
+  stopifnot(!is.null(ofblob))
+  stopifnot(is.character(simid))
+  stopifnot(is.data.frame(paramvals))
+
+  for (paramname in colnames(paramvals))
+    .Call("SetSimulatorParam", ofblob, simid, paramname, as.character(paramvals[paramname][1]), PACKAGE="ROpenFLUID")
 
   return(invisible(NULL))
 }

@@ -17,15 +17,39 @@ checkEqualsNumeric(as.numeric(OpenFLUID.getSimulatorParam(ofdata,"tests.funcA","
 checkEqualsNumeric(as.numeric(OpenFLUID.getSimulatorParam(ofdata,"tests.funcC","pC2")),0.045)
 checkEquals(OpenFLUID.getSimulatorParam(ofdata,"tests.funcC","fakeparam"),"")
 checkEquals(OpenFLUID.getSimulatorParam(ofdata,"tests.fakefunc","fakeparam"),"")
+
+dfSimParams = OpenFLUID.getSimulatorParams(ofdata,"tests.funcC",c("pC2","pC3"))
+checkEqualsNumeric(as.numeric(dfSimParams["tests.funcC","pC2"]),0.045)
+dfSimParamsOneCol = OpenFLUID.getSimulatorParams(ofdata,"tests.funcC",c("pC2"))
+checkEqualsNumeric(as.numeric(dfSimParamsOneCol["tests.funcC","pC2"]),0.045)
+
 checkEqualsNumeric(as.numeric(OpenFLUID.getGeneratorParam(ofdata,"SU","tests.fixed","fixedvalue")),12.7)
 checkEqualsNumeric(as.numeric(OpenFLUID.getGeneratorParam(ofdata,"RS","tests.random","min")),20.53)
 checkEqualsNumeric(as.numeric(OpenFLUID.getGeneratorParam(ofdata,"RS","tests.random","max")),50)
+
+dfGenParams = OpenFLUID.getGeneratorParams(ofdata,"RS","tests.random",c("min","max"))
+checkEqualsNumeric(as.numeric(dfGenParams["tests.random","min"]),20.53)
+dfGenParamsOneCol = OpenFLUID.getGeneratorParams(ofdata,"RS","tests.random",c("min"))
+checkEqualsNumeric(as.numeric(dfGenParamsOneCol["tests.random","min"]),20.53)
+
 checkEquals(OpenFLUID.getModelGlobalParam(ofdata,"gparam1"),"1.1;2.1")
 checkEquals(OpenFLUID.getModelGlobalParam(ofdata,"gfakeparam"),"")
+
+dfGlobParams = OpenFLUID.getModelGlobalParams(ofdata,c("gparam1","gparam2"))
+checkEquals(dfGlobParams["global","gparam1"],"1.1;2.1")
+dfGlobParamsOneCol = OpenFLUID.getModelGlobalParams(ofdata,c("gparam1"))
+checkEquals(dfGlobParamsOneCol["global","gparam1"],"1.1;2.1")
+
 checkEqualsNumeric(as.numeric(OpenFLUID.getObserverParam(ofdata,"tests.obsA","pA1")),10)
 checkEquals(OpenFLUID.getObserverParam(ofdata,"tests.obsA","pA2"),"valA2")
 checkEquals(OpenFLUID.getObserverParam(ofdata,"tests.obsA","fakeparam"),"")
 checkEquals(OpenFLUID.getObserverParam(ofdata,"tests.fakeobs","fakeparam"),"")
+
+dfObsParams = OpenFLUID.getObserverParams(ofdata,"tests.obsA",c("pA2","pA1"))
+checkEquals(dfObsParams["tests.obsA","pA2"],"valA2")
+dfObsParamsOneCol = OpenFLUID.getObserverParams(ofdata,"tests.obsA",c("pA2"))
+checkEquals(dfObsParamsOneCol["tests.obsA","pA2"],"valA2")
+
 
 checkEqualsNumeric(as.numeric(OpenFLUID.getAttribute(ofdata,"SU",1,"area")),1216.29)
 checkEqualsNumeric(as.numeric(OpenFLUID.getAttribute(ofdata,"SU",5,"area")),3024.27)
@@ -49,6 +73,15 @@ checkEqualsNumeric(dfVal[2,"slope"],OpenFLUID.getAttribute(ofdata,"SU",5,"slope"
 
 checkEquals(rownames(dfVal),dfValWithID$unitid)
 
+# check get attributes in batch mode for one row
+dfValOneRow = OpenFLUID.getAttributes(ofdata,"SU",c(2),c("area","slope"))
+checkEqualsNumeric(dfValOneRow["SU#2","area"],OpenFLUID.getAttribute(ofdata,"SU",2,"area"))
+checkEqualsNumeric(dfValOneRow["SU#2","slope"],OpenFLUID.getAttribute(ofdata,"SU",2,"slope"))
+
+# check get attributes in batch mode for one row
+dfValOneRowOneCol = OpenFLUID.getAttributes(ofdata,"SU",c(2),c("area"))
+checkEqualsNumeric(dfValOneRow["SU#2","area"],OpenFLUID.getAttribute(ofdata,"SU",2,"area"))
+
 # check set attributes in batch mode
 dfValPlusOne = dfVal
 dfValPlusOne$area  = as.character(as.numeric(dfValPlusOne$area)+c(1,1)) # add 1 to column "area"
@@ -62,6 +95,9 @@ checkEquals(as.numeric(dfVal[2,"slope"]),as.numeric(OpenFLUID.getAttribute(ofdat
 
 # reset attributes to their initial value using data.frame with the column "unitid"
 OpenFLUID.setAttributes(ofdata,"SU",dfValWithID)
+# check setAttributes on specific cases one row, one row/one column
+OpenFLUID.setAttributes(ofdata,"SU",dfValOneRow)
+OpenFLUID.setAttributes(ofdata,"SU",dfValOneRowOneCol)
 
 
 
@@ -116,6 +152,21 @@ checkEquals(OpenFLUID.getAttribute(ofdata,"RS",1,"coeffv"),"0.0;10.0")
 checkEquals(OpenFLUID.getAttribute(ofdata,"RS",2,"coeffv"),"100.1;110.1")
 checkEquals(OpenFLUID.getAttribute(ofdata,"RS",3,"coeffv"),"0.0;10.0")
 
+# batch parameters modifications
+
+OpenFLUID.setSimulatorParams(ofdata,"tests.funcB",data.frame("pB1"="codetiti","pB2"=0.1,stringsAsFactors=FALSE))
+OpenFLUID.setGeneratorParams(ofdata,"RS","tests.random",data.frame("min"=-100,"max"=0,stringsAsFactors=FALSE))
+OpenFLUID.setModelGlobalParams(ofdata,data.frame("gparam1"=3.0,"gparam2"=28.0,stringsAsFactors=FALSE))
+OpenFLUID.setObserverParams(ofdata,"tests.obsB",data.frame("format"="format2","precision"=12,stringsAsFactors=FALSE))
+
+checkEquals(OpenFLUID.getSimulatorParam(ofdata,"tests.funcB","pB1"),"codetiti")
+checkEqualsNumeric(as.numeric(OpenFLUID.getSimulatorParam(ofdata,"tests.funcB","pB2")),0.1)
+checkEqualsNumeric(as.numeric(OpenFLUID.getGeneratorParam(ofdata,"RS","tests.random","min")),-100)
+checkEqualsNumeric(as.numeric(OpenFLUID.getGeneratorParam(ofdata,"RS","tests.random","max")),0)
+checkEqualsNumeric(as.numeric(OpenFLUID.getModelGlobalParam(ofdata,"gparam1")),3.0)
+checkEqualsNumeric(as.numeric(OpenFLUID.getModelGlobalParam(ofdata,"gparam2")),28)
+checkEquals(OpenFLUID.getObserverParam(ofdata,"tests.obsB","format"),"format2")
+checkEqualsNumeric(as.numeric(OpenFLUID.getObserverParam(ofdata,"tests.obsB","precision")),12)
 
 # dataset deletions
 

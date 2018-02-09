@@ -13,7 +13,7 @@ SET(OpenFLUID_R_TITLE "R Interface to OpenFLUID Platform Framework for Modelling
 SET(OpenFLUID_R_DESC "Provides a collection of functions to load, parameterize, run and analyze OpenFLUID simulations within the GNU R environment.")
 
 # Version
-SET(OpenFLUID_R_VERSION_PATCH "20180208")
+SET(OpenFLUID_R_VERSION_PATCH "20180209")
 
 
 # ===========================================================================================
