@@ -15,7 +15,7 @@ Package: \tab ROpenFLUID\cr
 Type: \tab Package\cr
 Version: \tab @openfluid_R_VERSION@\cr
 Date: \tab @openfluid_R_DATE@\cr
-License: \tab GPLv3 with special exception\cr
+License: \tab GPLv3\cr
 LazyLoad: \tab yes\cr
 }
 }
