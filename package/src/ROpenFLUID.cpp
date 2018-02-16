@@ -46,6 +46,8 @@
 #include <openfluid/machine/SimulatorPluginsManager.hpp>
 #include <openfluid/machine/ModelInstance.hpp>
 #include <openfluid/fluidx/FluidXDescriptor.hpp>
+#include <openfluid/fluidx/AdvancedDomainDescriptor.hpp>
+#include <openfluid/fluidx/AdvancedModelDescriptor.hpp>
 #include <openfluid/fluidx/AdvancedMonitoringDescriptor.hpp>
 #include <openfluid/fluidx/SimulatorDescriptor.hpp>
 #include <openfluid/fluidx/GeneratorDescriptor.hpp>
@@ -1173,6 +1175,240 @@ void ROpenFLUID_SetAttribute(ROpenFLUID_ExtBlob_t* BlobHandle,
     }
   }
 
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+const char* ROpenFLUID_GetGeneratorsVarNames(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitsClass)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string VarNamesStr("");
+  std::string UnitsClassStr(UnitsClass);
+  std::ostringstream ssVarNames;
+  std::string sep = "";
+
+  for (auto& ItItem : Data->FluidXDesc.modelDescriptor().items())
+  {
+    if ( (ItItem->isType(openfluid::ware::WareType::GENERATOR))
+      && (((openfluid::fluidx::GeneratorDescriptor*)ItItem)->getUnitsClass() == UnitsClassStr) )
+    {
+      ssVarNames << sep << ((openfluid::fluidx::GeneratorDescriptor*)ItItem)->getVariableName();
+      sep = ";";
+    }
+  }
+
+  VarNamesStr = ssVarNames.str();
+  STRING_TO_ALLOCATED_CARRAY(VarNamesStr,CStr);
+  return CStr;
+
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+const char* ROpenFLUID_GetSimulatorsIDs(ROpenFLUID_ExtBlob_t* BlobHandle)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string SimIDsStr("");
+  std::ostringstream ssSimIDs;
+  std::string sep = "";
+  openfluid::fluidx::AdvancedModelDescriptor AdvModDesc(Data->FluidXDesc.modelDescriptor());
+
+  for (auto& ItItem : AdvModDesc.items())
+  {
+    if (ItItem->isType(openfluid::ware::WareType::SIMULATOR))
+    {
+      ssSimIDs << sep << AdvModDesc.getID(ItItem);
+      sep = ";";
+    }
+  }
+
+  SimIDsStr = ssSimIDs.str();
+  STRING_TO_ALLOCATED_CARRAY(SimIDsStr,CStr);
+  return CStr;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+const char* ROpenFLUID_GetObserversIDs(ROpenFLUID_ExtBlob_t* BlobHandle)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string ObsIDsStr("");
+  std::ostringstream ssObsIDs;
+  std::string sep = "";
+  openfluid::fluidx::AdvancedMonitoringDescriptor AdvMonDesc(Data->FluidXDesc.monitoringDescriptor());
+
+  for (auto& ItItem : AdvMonDesc.items())
+  {
+    ssObsIDs << sep << AdvMonDesc.getID(ItItem);
+    sep = ";";
+  }
+
+  ObsIDsStr = ssObsIDs.str();
+  STRING_TO_ALLOCATED_CARRAY(ObsIDsStr,CStr);
+  return CStr;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+const char* ROpenFLUID_GetModelGlobalParamNames(ROpenFLUID_ExtBlob_t* BlobHandle)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string ParamNamesStr("");
+  std::ostringstream ssParamNames;
+  std::string sep = "";
+
+  for (auto& ItParam : Data->FluidXDesc.modelDescriptor().getGlobalParameters())
+  {
+    ssParamNames << sep << ItParam.first;
+    sep = ";";
+  }
+
+  ParamNamesStr = ssParamNames.str();
+  STRING_TO_ALLOCATED_CARRAY(ParamNamesStr,CStr);
+  return CStr;
+
+}
+
+
+// =====================================================================
+// =====================================================================
+
+const char* ROpenFLUID_GetGeneratorParamNames(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitsClass, const char* VarName)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string VarNameStr(VarName);
+  std::string UnitsClassStr(UnitsClass);
+  std::string ParamNamesStr("");
+  std::ostringstream ssParamNames;
+  std::string sep = "";
+
+  for (auto& ItItem : Data->FluidXDesc.modelDescriptor().items())
+  {
+    if ( (ItItem->isType(openfluid::ware::WareType::GENERATOR))
+      && (((openfluid::fluidx::GeneratorDescriptor*)ItItem)->getVariableName() == VarNameStr)
+      && (((openfluid::fluidx::GeneratorDescriptor*)ItItem)->getUnitsClass() == UnitsClassStr) )
+    {
+      for (auto& ItParam : ItItem->parameters())
+      {
+        ssParamNames << sep << ItParam.first;
+        sep = ";";
+      }
+      break;
+    }
+  }
+
+  ParamNamesStr = ssParamNames.str();
+  STRING_TO_ALLOCATED_CARRAY(ParamNamesStr,CStr);
+  return CStr;
+
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+const char* ROpenFLUID_GetSimulatorParamNames(ROpenFLUID_ExtBlob_t* BlobHandle, const char* SimID)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string SimIDStr(SimID);
+  std::string ParamNamesStr("");
+  std::ostringstream ssParamNames;
+  std::string sep = "";
+  openfluid::fluidx::AdvancedModelDescriptor AdvModDesc(Data->FluidXDesc.modelDescriptor());
+  int ItemIndex = AdvModDesc.findFirstItem(SimIDStr);
+  if (ItemIndex < 0)
+    return "";
+  openfluid::fluidx::ModelItemDescriptor Item = AdvModDesc.itemAt(ItemIndex);
+  if (!Item.isType(openfluid::ware::WareType::SIMULATOR))
+    return "";
+
+  for (auto& ItParam : Item.parameters())
+  {
+    ssParamNames << sep << ItParam.first;
+    sep = ";";
+  }
+
+  ParamNamesStr = ssParamNames.str();
+  STRING_TO_ALLOCATED_CARRAY(ParamNamesStr,CStr);
+  return CStr;
+
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+const char* ROpenFLUID_GetObserverParamNames(ROpenFLUID_ExtBlob_t* BlobHandle, const char* ObsID)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+
+  std::string ObsIDStr(ObsID);
+  std::string ParamNamesStr("");
+  std::ostringstream ssParamNames;
+  std::string sep = "";
+  openfluid::fluidx::AdvancedMonitoringDescriptor AdvMonDesc(Data->FluidXDesc.monitoringDescriptor());
+  int ItemIndex = AdvMonDesc.findFirstItem(ObsIDStr);
+  if (ItemIndex < 0)
+    return "";
+  openfluid::fluidx::ObserverDescriptor Item = AdvMonDesc.itemAt(ItemIndex);
+  if (!Item.isType(openfluid::ware::WareType::OBSERVER))
+    return "";
+
+  for (auto& ItParam : Item.parameters())
+  {
+    ssParamNames << sep << ItParam.first;
+    sep = ";";
+  }
+
+  ParamNamesStr = ssParamNames.str();
+  STRING_TO_ALLOCATED_CARRAY(ParamNamesStr,CStr);
+  return CStr;
+
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+const char* ROpenFLUID_GetAttributesNames(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitsClass)
+{
+  ROpenFLUID_Blob_t* Data(reinterpret_cast<ROpenFLUID_Blob_t*>(BlobHandle));
+  std::string UnitClassStr(UnitsClass);
+  std::string AttrNamesStr("");
+  std::ostringstream ssAttrNames;
+  std::string sep = "";
+  openfluid::fluidx::AdvancedDomainDescriptor AdvDomDesc(Data->FluidXDesc.spatialDomainDescriptor());
+
+  for (std::string ItName : AdvDomDesc.getAttributesNames(UnitsClass))
+  {
+    ssAttrNames << sep << ItName;
+    sep = ";";
+  }
+
+  AttrNamesStr = ssAttrNames.str();
+  STRING_TO_ALLOCATED_CARRAY(AttrNamesStr,CStr);
+  return CStr;
 }
 
 

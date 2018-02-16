@@ -131,6 +131,22 @@ int* ROpenFLUID_GetUnitsIDs(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitCl
 
 unsigned int ROpenFLUID_GetUnitsIDsCount(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass);
 
+const char* ROpenFLUID_GetGeneratorsVarNames(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass);
+
+const char* ROpenFLUID_GetSimulatorsIDs(ROpenFLUID_ExtBlob_t* BlobHandle);
+
+const char* ROpenFLUID_GetObserversIDs(ROpenFLUID_ExtBlob_t* BlobHandle);
+
+const char* ROpenFLUID_GetModelGlobalParamNames(ROpenFLUID_ExtBlob_t* BlobHandle);
+
+const char* ROpenFLUID_GetGeneratorParamNames(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, const char* VarName);
+
+const char* ROpenFLUID_GetSimulatorParamNames(ROpenFLUID_ExtBlob_t* BlobHandle, const char* SimID);
+
+const char* ROpenFLUID_GetObserverParamNames(ROpenFLUID_ExtBlob_t* BlobHandle, const char* ObsID);
+
+const char* ROpenFLUID_GetAttributesNames(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitsClass);
+
 void ROpenFLUID_CreateAttribute(ROpenFLUID_ExtBlob_t* BlobHandle,const char* UnitClass, const char* AttrName, const char* AttrValue);
 
 void ROpenFLUID_SetAttribute(ROpenFLUID_ExtBlob_t* BlobHandle, const char* UnitClass, int UnitID, const char* AttrName, const char* AttrValue);
