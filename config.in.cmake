@@ -7,13 +7,14 @@ IF(WIN32)
   SET(BUILDDIR "${BUILDDIR}-win32")
 ENDIF()
 SET(PACKAGEBUILDDIR "${BUILDDIR}/ROpenFLUID")
+SET(REQUIRED_OPENFLUID_VERSION "2.1.6")
 
 # Title and description
 SET(OpenFLUID_R_TITLE "R Interface to OpenFLUID Platform Framework for Modelling and Simulation of Landscapes")
 SET(OpenFLUID_R_DESC "Provides a collection of functions to load, parameterize, run and analyze OpenFLUID simulations within the GNU R environment.")
 
 # Version
-SET(OpenFLUID_R_VERSION_PATCH "20180216")
+SET(OpenFLUID_R_VERSION_PATCH "20180726")
 
 
 # ===========================================================================================
@@ -56,6 +57,11 @@ STRING(REGEX REPLACE
 
 IF(OpenFLUID_R_VERSION_PATCH)
   SET(OpenFLUID_R_VERSION "${OpenFLUID_R_VERSION}-${OpenFLUID_R_VERSION_PATCH}")
+ENDIF()
+
+
+IF(${OpenFLUID_VERSION} VERSION_LESS ${REQUIRED_OPENFLUID_VERSION})
+  MESSAGE(FATAL_ERROR " Required OpenFLUID version is ${REQUIRED_OPENFLUID_VERSION} or higher (found version ${OpenFLUID_VERSION})")
 ENDIF()
 
 
