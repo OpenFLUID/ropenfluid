@@ -9,12 +9,18 @@ ENDIF()
 SET(PACKAGEBUILDDIR "${BUILDDIR}/ROpenFLUID")
 SET(BUILDLIBRDIR "${BUILDDIR}/_Rlibrary")
 
+# Required R packages
+SET(REQUIRED_R_PACKAGES "RUnit" "roxygen2")
+IF(WIN32)
+  SET(REQUIRED_R_PACKAGES "RUnit")
+ENDIF()
+
 # Title and description
 SET(OpenFLUID_R_TITLE "R Interface to OpenFLUID Platform Framework for Modelling and Simulation of Landscapes")
 SET(OpenFLUID_R_DESC "Provides a collection of functions to load, parameterize, run and analyze OpenFLUID simulations within the GNU R environment.")
 
 # ROpenFLUID Version
-SET(OpenFLUID_R_VERSION_PATCH "20180726")
+SET(OpenFLUID_R_VERSION_PATCH "20180910")
 
 # Required OpenFLUID version
 SET(REQUIRED_OPENFLUID_VERSION "2.1.6")
