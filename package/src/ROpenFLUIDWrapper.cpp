@@ -132,13 +132,13 @@ void ROpenFLUID_SetAttribute(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP AttrNa
 SEXP ROpenFLUID_GetAttribute(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP AttrName);
 void ROpenFLUID_RemoveAttribute(SEXP Blob, SEXP UnitClass, SEXP AttrName);
 
-SEXP ROpenFLUID_SetDefaultDeltaT(SEXP Blob, SEXP DeltaT);
+void ROpenFLUID_SetDefaultDeltaT(SEXP Blob, SEXP DeltaT);
 SEXP ROpenFLUID_GetDefaultDeltaT(SEXP Blob);
-SEXP ROpenFLUID_SetPeriod(SEXP Blob, SEXP Begin, SEXP End);
+void ROpenFLUID_SetPeriod(SEXP Blob, SEXP Begin, SEXP End);
 SEXP ROpenFLUID_GetPeriodBeginDate(SEXP Blob);
 SEXP ROpenFLUID_GetPeriodEndDate(SEXP Blob);
 
-SEXP ROpenFLUID_AddVariablesExportAsCSV(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP VarName, SEXP Prec);
+void ROpenFLUID_AddVariablesExportAsCSV(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP VarName, SEXP Prec);
 
 
 
@@ -1014,7 +1014,7 @@ void ROpenFLUID_RemoveAttribute(SEXP Blob, SEXP UnitClass, SEXP AttrName)
 // =====================================================================
 
 
-SEXP ROpenFLUID_SetDefaultDeltaT(SEXP Blob, SEXP DeltaT)
+void ROpenFLUID_SetDefaultDeltaT(SEXP Blob, SEXP DeltaT)
 {
   reinterpret_cast<openfluid::utils::Binding*>(R_ExternalPtrAddr(Blob))->
       setDefaultDeltaT(INTEGER(DeltaT)[0]);
@@ -1043,7 +1043,7 @@ SEXP ROpenFLUID_GetDefaultDeltaT(SEXP Blob)
 // =====================================================================
 
 
-SEXP ROpenFLUID_SetPeriod(SEXP Blob, SEXP Begin, SEXP End)
+void ROpenFLUID_SetPeriod(SEXP Blob, SEXP Begin, SEXP End)
 {
   reinterpret_cast<openfluid::utils::Binding*>(R_ExternalPtrAddr(Blob))->
       setPeriod(CHAR(STRING_ELT(Begin,0)),CHAR(STRING_ELT(End,0)));
@@ -1096,7 +1096,7 @@ SEXP ROpenFLUID_GetPeriodEndDate(SEXP Blob)
 // =====================================================================
 
 
-SEXP ROpenFLUID_AddVariablesExportAsCSV(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP VarName, SEXP Prec)
+void ROpenFLUID_AddVariablesExportAsCSV(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP VarName, SEXP Prec)
 {
   reinterpret_cast<openfluid::utils::Binding*>(R_ExternalPtrAddr(Blob))->
       addVariablesExportAsCSV("ropenfluid",
