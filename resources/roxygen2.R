@@ -1,2 +1,2 @@
 library(roxygen2)
-roxygenize(package.dir='.',roclets = c("rd"), clean = TRUE)
+roxygenize(package.dir = ".", roclets = c("rd"), load = "source", clean = TRUE)
