@@ -10,5 +10,5 @@ INCLUDE("cmake/preprocess.cmake")
 
 
 EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}" 
-                "-E" "chdir" "${BUILDDIR}"
+                "-E" "chdir" "${BUILD_PATH}"
                 "R" "CMD" "build" "ROpenFLUID")
