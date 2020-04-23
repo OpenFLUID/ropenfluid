@@ -22,7 +22,7 @@ The R part of the code is written following the [Tidyverse coding style](https:/
 
 
 
-# Build and installation
+# Development and Build
 
 The ROpenFLUID package requires for building process:
 - The OpenFLUID framework
@@ -32,6 +32,14 @@ The ROpenFLUID package requires for building process:
 
 On Windows platforms, the MinGW compiler provided by Qt have to be used from an MSYS terminal.
 
+
+The build/doc commands are launched using the CMake tool in script mode. In this mode, 
+configuration variables passed on the command line must be placed before the `-P <script>` argument.
+
+
+Each following command produces results in a build directory. 
+The default name for this directory is `_build` and is located at the root of the ROpenFLUID sources.
+To override this default build directory, you can set a custom absolute path through the `BUILD_PATH` variable of the CMake command (e.g. `cmake -DBUILD_PATH=/path/to/build/dir -P check.cmake`)
 
 
 ## Checking ROpenFLUID package
@@ -45,7 +53,6 @@ The CRAN mode can be enabled to apply the CRAN submission requirements for packa
 ```
 cmake -DAS_CRAN_MODE=ON -P check.cmake
 ```
-
 
 
 ## Building ROpenFLUID package

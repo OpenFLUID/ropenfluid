@@ -1,13 +1,13 @@
-FILE(MAKE_DIRECTORY ${BUILDDIR})
-FILE(REMOVE_RECURSE ${PACKAGEBUILDDIR})
-FILE(MAKE_DIRECTORY ${PACKAGEBUILDDIR})
-FILE(MAKE_DIRECTORY ${BUILDLIBRDIR})
+FILE(MAKE_DIRECTORY ${BUILD_PATH})
+FILE(REMOVE_RECURSE ${PACKAGE_BUILD_PATH})
+FILE(MAKE_DIRECTORY ${PACKAGE_BUILD_PATH})
+FILE(MAKE_DIRECTORY ${LIBR_BUILD_PATH})
 
 
 FOREACH(PACK ${REQUIRED_R_PACKAGES})
   EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}"
-                          "-E" "chdir" "${PACKAGEBUILDDIR}"
-                          "Rscript"  "--vanilla" "${RESOURCESDIR}/checkPackage.R" "${PACK}"
+                          "-E" "chdir" "${PACKAGE_BUILD_PATH}"
+                          "Rscript"  "--vanilla" "${RESOURCES_PATH}/checkPackage.R" "${PACK}"
                   RESULT_VARIABLE CHECK_STATUS)
   IF(NOT ${CHECK_STATUS})
     MESSAGE(FATAL_ERROR "R package ${PACK} is not installed")
@@ -18,25 +18,25 @@ ENDFOREACH()
 
 
 
-FILE(COPY "${PACKAGESRCDIR}/"
-       DESTINATION "${PACKAGEBUILDDIR}"
+FILE(COPY "${PACKAGE_SRC_PATH}/"
+       DESTINATION "${PACKAGE_BUILD_PATH}"
        PATTERN ".*" EXCLUDE
        PATTERN "_*" EXCLUDE
        PATTERN "*.cmake" EXCLUDE)
 
 
-CONFIGURE_FILE(${RESOURCESDIR}/DESCRIPTION.in ${PACKAGEBUILDDIR}/DESCRIPTION @ONLY)
+CONFIGURE_FILE(${RESOURCES_PATH}/DESCRIPTION.in ${PACKAGE_BUILD_PATH}/DESCRIPTION @ONLY)
 
-CONFIGURE_FILE(${RESOURCESDIR}/man/ROpenFLUID-package.Rd.in ${PACKAGEBUILDDIR}/man/ROpenFLUID-package.Rd @ONLY)
-CONFIGURE_FILE(${RESOURCESDIR}/tests/00tests.R.in ${PACKAGEBUILDDIR}/tests/00tests.R @ONLY)
-CONFIGURE_FILE(${RESOURCESDIR}/tests/PrimitivesExample.R.in ${PACKAGEBUILDDIR}/tests/PrimitivesExample.R @ONLY)
-CONFIGURE_FILE(${RESOURCESDIR}/tests/PrimitivesExampleVerbose.R.in ${PACKAGEBUILDDIR}/tests/PrimitivesExampleVerbose.R @ONLY)
-CONFIGURE_FILE(${RESOURCESDIR}/tests/PrimitivesExampleSelectedOutputs.R.in ${PACKAGEBUILDDIR}/tests/PrimitivesExampleSelectedOutputs.R @ONLY)
+CONFIGURE_FILE(${RESOURCES_PATH}/man/ROpenFLUID-package.Rd.in ${PACKAGE_BUILD_PATH}/man/ROpenFLUID-package.Rd @ONLY)
+CONFIGURE_FILE(${RESOURCES_PATH}/tests/00tests.R.in ${PACKAGE_BUILD_PATH}/tests/00tests.R @ONLY)
+CONFIGURE_FILE(${RESOURCES_PATH}/tests/PrimitivesExample.R.in ${PACKAGE_BUILD_PATH}/tests/PrimitivesExample.R @ONLY)
+CONFIGURE_FILE(${RESOURCES_PATH}/tests/PrimitivesExampleVerbose.R.in ${PACKAGE_BUILD_PATH}/tests/PrimitivesExampleVerbose.R @ONLY)
+CONFIGURE_FILE(${RESOURCES_PATH}/tests/PrimitivesExampleSelectedOutputs.R.in ${PACKAGE_BUILD_PATH}/tests/PrimitivesExampleSelectedOutputs.R @ONLY)
 
 
 
 EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}"
-                "-E" "chdir" "${PACKAGEBUILDDIR}"
-                "R" "CMD" "BATCH" "--vanilla" "${RESOURCESDIR}/roxygen2.R")
+                "-E" "chdir" "${PACKAGE_BUILD_PATH}"
+                "R" "CMD" "BATCH" "--vanilla" "${RESOURCES_PATH}/roxygen2.R")
 
-FILE(REMOVE "${PACKAGEBUILDDIR}/roxygen2.Rout")
+FILE(REMOVE "${PACKAGE_BUILD_PATH}/roxygen2.Rout")

@@ -17,10 +17,10 @@ INCLUDE("cmake/preprocess.cmake")
 
 
 EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}"
-                "-E" "chdir" "${BUILDDIR}"
+                "-E" "chdir" "${BUILD_PATH}"
                 "R" "CMD" "build" "ROpenFLUID")
 
 EXECUTE_PROCESS(COMMAND "${CMAKE_COMMAND}"
-                "-E" "chdir" "${BUILDDIR}"
+                "-E" "chdir" "${BUILD_PATH}"
                 "R" "CMD" "INSTALL" "--build" "--no-test-load"
-                                    "--library=${BUILDLIBRDIR}" "ROpenFLUID")
+                                    "--library=${LIBR_BUILD_PATH}" "ROpenFLUID")
