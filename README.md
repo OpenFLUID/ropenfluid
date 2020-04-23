@@ -10,6 +10,17 @@ This package uses the following R packages:
 - roxygen2 (during package development only, not for installation or usage) 
 
 
+# Source code
+
+Package heavily relies on binding facilities provided by the OpenFLUID Framework. See `openfluid/utils/Binding.hpp` and related headers in the [OpenFLUID sourec code](https://github.com/OpenFLUID/openfluid).
+
+
+The R part of the code is written following the [Tidyverse coding style](https://style.tidyverse.org/), with the following exceptions:
+
+* line length is not stricly limited to 80 characters and can be extended to 120 characters if needed
+* case style of functions names is not restricted to the recommended snake case 
+
+
 
 # Build and installation
 
@@ -20,6 +31,7 @@ The ROpenFLUID package requires for building process:
 - The GCC compiler suite 4.8 or higher (for C++11 compatibility) 
 
 On Windows platforms, the MinGW compiler provided by Qt have to be used from an MSYS terminal.
+
 
 
 ## Checking ROpenFLUID package
@@ -58,6 +70,4 @@ See the `win32-env.sh.tpl` file for an example.
 ```
 cmake -P htmldoc.cmake
 ```
-
-
 
