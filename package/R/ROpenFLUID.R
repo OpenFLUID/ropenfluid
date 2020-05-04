@@ -235,7 +235,13 @@ OpenFLUID.getAttributes <- function(ofblob,unitclass,unitids,attrnames,unitidsAs
 {
   stopifnot(!is.null(ofblob))
   stopifnot(is.character(unitclass))
+  if ( is.null(unitids) || (length(unitids)==0) ) {
+    return(NULL)
+  }
   stopifnot(is.vector(unitids,mode="numeric"))
+  if ( is.null(attrnames) || (length(attrnames)==0) ) {
+    return(NULL)
+  }
   stopifnot(is.vector(attrnames,mode="character"))
 
   if (length(unitids) == 1) {
@@ -397,6 +403,9 @@ OpenFLUID.getGeneratorParams <- function(ofblob,unitclass,varname,paramnames)
   stopifnot(!is.null(ofblob))
   stopifnot(is.character(unitclass))
   stopifnot(is.character(varname))
+  if ( is.null(paramnames) || (length(paramnames)==0) ) {
+    return(NULL)
+  }
   stopifnot(is.vector(paramnames,mode="character"))
 
   if (length(paramnames) == 1) {
@@ -464,7 +473,10 @@ OpenFLUID.getModelGlobalParam <- function(ofblob,paramname)
 OpenFLUID.getModelGlobalParams <- function(ofblob,paramnames)
 {
   stopifnot(!is.null(ofblob))
-  stopifnot(is.vector(paramnames,mode="character"))
+  if ( is.null(paramnames) || (length(paramnames)==0) ) {
+    return(NULL)
+  }
+  stopifnot(is.vector(paramnames,mode="character") )
 
   if (length(paramnames) == 1) {
 
@@ -536,6 +548,9 @@ OpenFLUID.getObserverParams <- function(ofblob,obsid,paramnames)
 {
   stopifnot(!is.null(ofblob))
   stopifnot(is.character(obsid))
+  if ( is.null(paramnames) || (length(paramnames)==0) ) {
+    return(NULL)
+  }
   stopifnot(is.vector(paramnames,mode="character"))
 
   if (length(paramnames) == 1) {
@@ -675,6 +690,9 @@ OpenFLUID.getSimulatorParams <- function(ofblob,simid,paramnames)
 {
   stopifnot(!is.null(ofblob))
   stopifnot(is.character(simid))
+  if ( is.null(paramnames) || (length(paramnames)==0) ) {
+    return(NULL)
+  }
   stopifnot(is.vector(paramnames,mode="character"))
 
   if (length(paramnames) == 1) {

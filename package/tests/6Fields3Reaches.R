@@ -18,6 +18,12 @@ checkEqualsNumeric(as.numeric(OpenFLUID.getSimulatorParam(ofdata,"tests.funcC","
 checkEquals(OpenFLUID.getSimulatorParam(ofdata,"tests.funcC","fakeparam"),"")
 checkEquals(OpenFLUID.getSimulatorParam(ofdata,"tests.fakefunc","fakeparam"),"")
 
+# tests get simulator params if paramnames is empty
+dfSimParams = OpenFLUID.getSimulatorParams(ofdata,"tests.funcC",NULL)
+checkEquals(dfSimParams,NULL)
+dfSimParams = OpenFLUID.getSimulatorParams(ofdata,"tests.funcC",c())
+checkEquals(dfSimParams,NULL)
+
 dfSimParams = OpenFLUID.getSimulatorParams(ofdata,"tests.funcC",c("pC2","pC3"))
 checkEqualsNumeric(as.numeric(dfSimParams["tests.funcC","pC2"]),0.045)
 dfSimParamsOneCol = OpenFLUID.getSimulatorParams(ofdata,"tests.funcC",c("pC2"))
@@ -27,6 +33,12 @@ checkEqualsNumeric(as.numeric(OpenFLUID.getGeneratorParam(ofdata,"SU","tests.fix
 checkEqualsNumeric(as.numeric(OpenFLUID.getGeneratorParam(ofdata,"RS","tests.random","min")),20.53)
 checkEqualsNumeric(as.numeric(OpenFLUID.getGeneratorParam(ofdata,"RS","tests.random","max")),50)
 
+# tests get generator params if paramnames is empty
+dfGenParams = OpenFLUID.getGeneratorParams(ofdata,"RS","tests.random",NULL)
+checkEquals(dfGenParams,NULL)
+dfGenParams = OpenFLUID.getGeneratorParams(ofdata,"RS","tests.random",c())
+checkEquals(dfGenParams,NULL)
+
 dfGenParams = OpenFLUID.getGeneratorParams(ofdata,"RS","tests.random",c("min","max"))
 checkEqualsNumeric(as.numeric(dfGenParams["tests.random","min"]),20.53)
 dfGenParamsOneCol = OpenFLUID.getGeneratorParams(ofdata,"RS","tests.random",c("min"))
@@ -34,6 +46,12 @@ checkEqualsNumeric(as.numeric(dfGenParamsOneCol["tests.random","min"]),20.53)
 
 checkEquals(OpenFLUID.getModelGlobalParam(ofdata,"gparam1"),"1.1;2.1")
 checkEquals(OpenFLUID.getModelGlobalParam(ofdata,"gfakeparam"),"")
+
+# tests get global model params if paramnames is empty
+dfGlobParams = OpenFLUID.getModelGlobalParams(ofdata,NULL)
+checkEquals(dfGlobParams,NULL)
+dfGlobParams = OpenFLUID.getModelGlobalParams(ofdata,c())
+checkEquals(dfGlobParams,NULL)
 
 dfGlobParams = OpenFLUID.getModelGlobalParams(ofdata,c("gparam1","gparam2"))
 checkEquals(dfGlobParams["global","gparam1"],"1.1;2.1")
@@ -45,11 +63,16 @@ checkEquals(OpenFLUID.getObserverParam(ofdata,"tests.obsA","pA2"),"valA2")
 checkEquals(OpenFLUID.getObserverParam(ofdata,"tests.obsA","fakeparam"),"")
 checkEquals(OpenFLUID.getObserverParam(ofdata,"tests.fakeobs","fakeparam"),"")
 
+# tests get observer params if paramnames is empty
+dfObsParams = OpenFLUID.getObserverParams(ofdata,"tests.obsA",NULL)
+checkEquals(dfObsParams,NULL)
+dfObsParams = OpenFLUID.getObserverParams(ofdata,"tests.obsA",c())
+checkEquals(dfObsParams,NULL)
+
 dfObsParams = OpenFLUID.getObserverParams(ofdata,"tests.obsA",c("pA2","pA1"))
 checkEquals(dfObsParams["tests.obsA","pA2"],"valA2")
 dfObsParamsOneCol = OpenFLUID.getObserverParams(ofdata,"tests.obsA",c("pA2"))
 checkEquals(dfObsParamsOneCol["tests.obsA","pA2"],"valA2")
-
 
 checkEqualsNumeric(as.numeric(OpenFLUID.getAttribute(ofdata,"SU",1,"area")),1216.29)
 checkEqualsNumeric(as.numeric(OpenFLUID.getAttribute(ofdata,"SU",5,"area")),3024.27)
@@ -57,6 +80,20 @@ checkEqualsNumeric(as.numeric(OpenFLUID.getAttribute(ofdata,"SU",3,"slope")),0.0
 checkEqualsNumeric(as.numeric(OpenFLUID.getAttribute(ofdata,"RS",2,"length")),170)
 checkEqualsNumeric(OpenFLUID.getAttribute(ofdata,"RS",18,"length"),"")
 checkEqualsNumeric(OpenFLUID.getAttribute(ofdata,"RS",1,"fakedata"),"")
+
+# tests get attributes if either unitids or attrnames are empty
+dfAttrs = OpenFLUID.getAttributes(ofdata,"SU",NULL,c("area"))
+checkEquals(dfAttrs,NULL)
+dfAttrs = OpenFLUID.getAttributes(ofdata,"SU",c(1,5),NULL)
+checkEquals(dfAttrs,NULL)
+dfAttrs = OpenFLUID.getAttributes(ofdata,"SU",c(),c("area"))
+checkEquals(dfAttrs,NULL)
+dfAttrs = OpenFLUID.getAttributes(ofdata,"SU",c(1,5),c())
+checkEquals(dfAttrs,NULL)
+dfAttrs = OpenFLUID.getAttributes(ofdata,"SU",NULL,NULL)
+checkEquals(dfAttrs,NULL)
+dfAttrs = OpenFLUID.getAttributes(ofdata,"SU",c(),c())
+checkEquals(dfAttrs,NULL)
 
 # check get attributes in batch mode
 dfVal = OpenFLUID.getAttributes(ofdata,"SU",c(1,5),c("area","slope"))
