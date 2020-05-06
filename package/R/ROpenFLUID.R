@@ -264,6 +264,26 @@ OpenFLUID.openDataset <- function(path) {
 }
 
 
+#' Writes a dataset on disk from a simulation definition blob
+#'
+#' @param ofblob the simulation definition blob
+#' @param path the full path where the datset is written
+#'
+#' @examples \dontrun{
+#' OpenFLUID.writeDataset(ofsim ,"/path/to/dataset")
+#' }
+#'
+#' @seealso \code{\link{OpenFLUID.openDataset}}
+OpenFLUID.writeDataset <- function(ofblob, path) {
+  stopifnot(!is.null(ofblob))
+  stopifnot(is.character(path))
+
+  .Call("WriteDataset", ofblob, path, PACKAGE = "ROpenFLUID")
+
+  return(invisible(NULL))
+}
+
+
 #' Opens a project and returns a simulation definition blob
 #'
 #' @param path the full project to open
@@ -1674,6 +1694,46 @@ OpenFLUID.runSimulation <- function(ofblob, verbose = FALSE) {
   .Call("RunSimulation", ofblob, as.integer(verbose), PACKAGE = "ROpenFLUID")
 
   return(invisible(NULL))
+}
+
+
+#' Runs a simulation from a simulation definition blob
+#' as an external independent process
+#'
+#' @param ofblob the simulation definition blob
+#' @param workpath a workspace for simulation files.
+#' Inside this path, an IN directory will be created to store
+#' the input dataset, and an out directory will be created for output data.
+#' If this workpath is not provided or is NULL, a temporary path
+#' will be automatically generated
+#' @param verbose the verbose mode for the run. Possible values are similar
+#' than the R system2 built-in function, e.g. FALSE for quiet mode, "" for
+#' console output, a path string for file log.
+#'
+#' @examples \dontrun{
+#' OpenFLUID.runSimulationAsExternalProcess(ofsim)
+#' OpenFLUID.runSimulationAsExternalProcess(ofsim, workpath = "/path/to/work")
+#' }
+#'
+#' @seealso \code{\link{OpenFLUID.runSimulation}}
+OpenFLUID.runSimulationAsExternalProcess <- function(ofblob, workpath = NULL, verbose = FALSE) {
+  stopifnot(!is.null(ofblob))
+
+  if (is.null(workpath)) {
+    workpath <- tempdir()
+  }
+
+  inpath <- paste(workpath, "IN", sep = "/")
+  outpath <- paste(workpath, "OUT", sep = "/")
+
+  OpenFLUID.writeDataset(ofblob, inpath)
+
+  command <- "openfluid"
+  args <- c("run", inpath, outpath)
+  ret <- system2(command, args, wait = TRUE,
+                 stdout = verbose, stderr = verbose, input = NULL)
+
+  return(ret)
 }
 
 

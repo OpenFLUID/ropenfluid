@@ -98,6 +98,7 @@ SEXP ROpenFLUID_GetExtraObserversPaths();
 SEXP ROpenFLUID_NewBlob();
 SEXP ROpenFLUID_OpenProject(SEXP Path);
 SEXP ROpenFLUID_OpenDataset(SEXP Path);
+void ROpenFLUID_WriteDataset(SEXP Blob, SEXP Path);
 void ROpenFLUID_SetCurrentOutputDir(SEXP Path);
 void ROpenFLUID_RunSimulation(SEXP Blob, SEXP Verbose);
 
@@ -161,6 +162,7 @@ static R_CallMethodDef callEntries[] = {
   { "GetExtraObserversPaths", (DL_FUNC) &ROpenFLUID_GetExtraObserversPaths, 0},
   { "NewBlob", (DL_FUNC) &ROpenFLUID_NewBlob, 0},
   { "OpenDataset", (DL_FUNC) &ROpenFLUID_OpenDataset, 1},
+  { "WriteDataset", (DL_FUNC) &ROpenFLUID_WriteDataset, 2},
   { "SetCurrentOutputDir", (DL_FUNC) &ROpenFLUID_SetCurrentOutputDir, 1},
   { "OpenProject", (DL_FUNC) &ROpenFLUID_OpenProject, 1},
   { "RunSimulation", (DL_FUNC) &ROpenFLUID_RunSimulation, 2},
@@ -528,6 +530,20 @@ SEXP ROpenFLUID_OpenDataset(SEXP Path)
   }
 
   return Ret;
+}
+
+
+// =====================================================================
+// =====================================================================
+
+
+void ROpenFLUID_WriteDataset(SEXP Blob, SEXP Path)
+{
+  if (reinterpret_cast<openfluid::utils::Binding*>(R_ExternalPtrAddr(Blob))
+        ->writeDataset(CHAR(STRING_ELT(Path, 0)),true) != 1)
+  {
+    Rf_error(openfluid::utils::Binding::getLastError());
+  }
 }
 
 
