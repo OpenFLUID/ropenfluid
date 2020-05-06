@@ -31,7 +31,7 @@ SET(OpenFLUID_R_VERSION_PATCH "20200423")
 
 
 # Required OpenFLUID version
-SET(REQUIRED_OPENFLUID_VERSION "2.1.7")
+SET(REQUIRED_OPENFLUID_VERSION "2.1.10")
 
 
 # ===========================================================================================
