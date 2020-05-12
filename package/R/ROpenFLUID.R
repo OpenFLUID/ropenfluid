@@ -348,6 +348,9 @@ OpenFLUID.getSimulatorParam <- function(ofblob, simid, paramname) {
 OpenFLUID.getSimulatorParams <- function(ofblob, simid, paramnames) {
   stopifnot(!is.null(ofblob))
   stopifnot(is.character(simid))
+  if (is.null(paramnames) || (length(paramnames) == 0)) {
+    return(NULL)
+  }
   stopifnot(is.vector(paramnames, mode = "character"))
 
   if (length(paramnames) == 1) {
@@ -541,6 +544,9 @@ OpenFLUID.getGeneratorParams <- function(ofblob,
   stopifnot(!is.null(ofblob))
   stopifnot(is.character(unitclass))
   stopifnot(is.character(varname))
+  if (is.null(paramnames) || (length(paramnames) == 0)) {
+    return(NULL)
+  }
   stopifnot(is.vector(paramnames, mode = "character"))
 
   if (length(paramnames) == 1) {
@@ -710,6 +716,9 @@ OpenFLUID.getModelGlobalParam <- function(ofblob, paramname) {
 #' @seealso \code{\link{OpenFLUID.getSimulatorParams}}
 OpenFLUID.getModelGlobalParams <- function(ofblob, paramnames) {
   stopifnot(!is.null(ofblob))
+  if (is.null(paramnames) || (length(paramnames) == 0)) {
+    return(NULL)
+  }
   stopifnot(is.vector(paramnames, mode = "character"))
 
   if (length(paramnames) == 1) {
@@ -1027,7 +1036,13 @@ OpenFLUID.getAttributes <- function(ofblob,
                                     unitidsAsRownames = TRUE) {
   stopifnot(!is.null(ofblob))
   stopifnot(is.character(unitclass))
+  if (is.null(unitids) || (length(unitids) == 0)) {
+    return(NULL)
+  }
   stopifnot(is.vector(unitids, mode = "numeric"))
+  if (is.null(attrnames) || (length(attrnames) == 0)) {
+    return(NULL)
+  }
   stopifnot(is.vector(attrnames, mode = "character"))
 
   if (length(unitids) == 1) {
@@ -1278,6 +1293,9 @@ OpenFLUID.getObserverParam <- function(ofblob, obsid, paramname) {
 OpenFLUID.getObserverParams <- function(ofblob, obsid, paramnames) {
   stopifnot(!is.null(ofblob))
   stopifnot(is.character(obsid))
+  if (is.null(paramnames) || (length(paramnames) == 0)) {
+    return(NULL)
+  }
   stopifnot(is.vector(paramnames, mode = "character"))
 
   if (length(paramnames) == 1) {
