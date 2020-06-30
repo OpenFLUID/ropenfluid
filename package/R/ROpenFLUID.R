@@ -1673,7 +1673,6 @@ OpenFLUID.printSimulationInfo <- function(ofblob) {
 #'
 #' @param path the full path of the dataset to open
 #' @param verbose enable/disable verbose mode
-#' @return a simulation definition blob
 #'
 #' @examples \dontrun{
 #' ofsim = OpenFLUID.runProject("/path/to/dataset")
@@ -1688,8 +1687,10 @@ OpenFLUID.runProject <- function(path, verbose = FALSE) {
   ofdata <- OpenFLUID.openProject(path)
 
   OpenFLUID.runSimulation(ofdata, verbose)
-
-  return(ofdata)
+  
+  .Call("DeleteBlob", ofdata, PACKAGE = "ROpenFLUID")
+  
+  return(invisible(NULL))
 }
 
 
