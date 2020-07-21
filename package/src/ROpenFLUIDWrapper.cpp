@@ -278,6 +278,7 @@ SEXP ROpenFLUID_GetSimulationOutputDir(SEXP Blob)
 void ROpenFLUID_DeleteBlob(SEXP Blob)
 {
   openfluid::utils::Binding::destroy(reinterpret_cast<openfluid::utils::Binding*>(R_ExternalPtrAddr(Blob)));
+  R_ClearExternalPtr(Blob);
 }
 
 

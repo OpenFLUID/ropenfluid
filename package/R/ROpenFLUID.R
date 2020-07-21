@@ -1666,6 +1666,22 @@ OpenFLUID.printSimulationInfo <- function(ofblob) {
 }
 
 
+#' Delete simulation blob
+#'
+#' @param ofblob the simulation definition blob
+#'
+#' @examples \dontrun{
+#' OpenFLUID.deleteSimulationBlob(ofsim)
+#' }
+OpenFLUID.deleteSimulationBlob <- function(ofblob) {
+  stopifnot(!is.null(ofblob))
+
+  .Call("DeleteBlob", ofblob, PACKAGE = "ROpenFLUID")
+
+  return(invisible(NULL))
+}
+
+
 # Simulation execution ##############################
 
 
@@ -1688,7 +1704,7 @@ OpenFLUID.runProject <- function(path, verbose = FALSE) {
 
   OpenFLUID.runSimulation(ofdata, verbose)
   
-  .Call("DeleteBlob", ofdata, PACKAGE = "ROpenFLUID")
+  OpenFLUID.deleteSimulationBlob(ofdata)
   
   return(invisible(NULL))
 }
