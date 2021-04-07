@@ -3,7 +3,7 @@
 This package allows to load, parameterize, run and analyze OpenFLUID simulations 
 from the GNU R environment 
 
-The ROpenFLUID license is available in the package/LICENSE file
+The ROpenFLUID license is available in the [package/LICENSE](package/LICENSE) file
 
 This package uses the following R packages:
 - Runit (for tests only)
@@ -12,7 +12,8 @@ This package uses the following R packages:
 
 # Source code
 
-Package heavily relies on binding facilities provided by the OpenFLUID Framework. See `openfluid/utils/Binding.hpp` and related headers in the [OpenFLUID sourec code](https://github.com/OpenFLUID/openfluid).
+Package heavily relies on binding facilities provided by the OpenFLUID Framework. 
+See `openfluid/utils/Binding.hpp` and related headers in the [OpenFLUID source code](https://github.com/OpenFLUID/openfluid).
 
 
 The R part of the code is written following the [Tidyverse coding style](https://style.tidyverse.org/), with the following exceptions:
@@ -49,7 +50,7 @@ This will run the R checking process for the package:
 cmake -P check.cmake
 ```
 
-The CRAN mode can be enabled to apply the CRAN submission requirements for package submissions:
+The CRAN mode can be enabled to apply the CRAN submission requirements during the checking process:
 ```
 cmake -DAS_CRAN_MODE=ON -P check.cmake
 ```
