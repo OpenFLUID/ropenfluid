@@ -1,3 +1,6 @@
+[![R check build](https://github.com/OpenFLUID/ropenfluid/actions/workflows/CI.yaml/badge.svg)](https://github.com/OpenFLUID/ropenfluid/actions/workflows/CI.yaml)
+
+
 # Overview
 
 This package allows to load, parameterize, run and analyze OpenFLUID simulations 
