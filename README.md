@@ -29,13 +29,11 @@ The R part of the code is written following the [Tidyverse coding style](https:/
 # Development and Build
 
 The ROpenFLUID package requires for building process:
-- The OpenFLUID framework
-- The R development framework
-- The CMake build tools family
-- The GCC compiler suite 4.8 or higher (for C++11 compatibility) 
 
-On Windows platforms, the MinGW compiler provided by Qt have to be used from an MSYS terminal.
-
+* The OpenFLUID framework
+* The R development framework
+* The CMake build tools family, version 3.1 or higher
+* The GCC compiler version 5.3 or higher (for C++14 compatibility) 
 
 The build/doc commands are launched using the CMake tool in script mode. In this mode, 
 configuration variables passed on the command line must be placed before the `-P <script>` argument.
@@ -44,6 +42,9 @@ configuration variables passed on the command line must be placed before the `-P
 Each following command produces results in a build directory. 
 The default name for this directory is `_build` and is located at the root of the ROpenFLUID sources.
 To override this default build directory, you can set a custom absolute path through the `BUILD_PATH` variable of the CMake command (e.g. `cmake -DBUILD_PATH=/path/to/build/dir -P check.cmake`)
+
+On Windows platforms, the commands below have to be run in an MSYS2 terminal, using the mingw64 toolchain. 
+See the `msys2-mingw64-env.sh.tpl` file for configuration of the build environment.
 
 
 ## Checking ROpenFLUID package
@@ -61,19 +62,10 @@ cmake -DAS_CRAN_MODE=ON -P check.cmake
 
 ## Building ROpenFLUID package
 
-This will create the package. 
-
-On Linux/Unix platforms, run the following command in a terminal:
+This will create the package:
 ```
 cmake -P build.cmake
 ```
-
-On Windows platforms, run the following command in an MSYS terminal:
-```
-cmake -P build-win32.cmake
-```
-Before running this command on Windows platform, you may have to configure the run environment.
-See the `win32-env.sh.tpl` file for an example.
 
 
 ## Generating HTML doc for ROpenFLUID package

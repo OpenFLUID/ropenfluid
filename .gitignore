@@ -3,7 +3,17 @@
 .pydevproject
 .settings
 .DS_Store
+
+# build folders
 _*
+
+# local config files
 CMake.in.local.config
 CMake.in.local.cmake
+
+# local env files
 /win32-env.sh
+/msys2-mingw64-env.sh
+
+# roxygen2 side effect
+/resources/*.Rout  
