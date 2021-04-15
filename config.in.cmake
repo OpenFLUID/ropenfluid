@@ -5,9 +5,6 @@ SET(RESOURCES_PATH "${CMAKE_CURRENT_SOURCE_DIR}/resources")
 
 IF(NOT BUILD_PATH)
   SET(BUILD_PATH "${CMAKE_CURRENT_SOURCE_DIR}/_build")
-  IF(WIN32)
-    SET(BUILD_PATH "${BUILD_PATH}-win32")
-  ENDIF()
 ENDIF()
 
 SET(PACKAGE_BUILD_PATH "${BUILD_PATH}/ROpenFLUID")
@@ -27,7 +24,7 @@ SET(OpenFLUID_R_DESC "Provides a collection of functions to load, parameterize, 
 
 
 # ROpenFLUID Version
-SET(OpenFLUID_R_VERSION_PATCH "20210407")
+SET(OpenFLUID_R_VERSION_PATCH "20210420")
 
 
 # Required OpenFLUID version

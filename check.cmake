@@ -4,6 +4,11 @@
 # usage : cmake -P check.cmake 
 
 
+IF(NOT UNIX)
+  MESSAGE(FATAL_ERROR "System not supported")
+ENDIF()
+
+
 INCLUDE("config.in.cmake")
 
 INCLUDE("cmake/display-infos.cmake")
