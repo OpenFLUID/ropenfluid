@@ -7,16 +7,16 @@
       <param name="gparam2" value="global" />
     </gparams>
 
-    <generator varname="tests.fixed" unitclass="SU" method="fixed">
+    <generator varname="tests.fixed" unitsclass="SU" method="fixed">
       <param name="fixedvalue" value="12.7" />
     </generator>
 
-    <generator varname="tests.random" unitclass="SU" method="random">
+    <generator varname="tests.random" unitsclass="SU" method="random">
       <param name="min" value="0.53" />
       <param name="max" value="5" />
     </generator>
 
-    <generator varname="tests.random" unitclass="RS" method="random">
+    <generator varname="tests.random" unitsclass="RS" method="random">
       <param name="min" value="20.53" />
       <param name="max" value="50" />
     </generator>

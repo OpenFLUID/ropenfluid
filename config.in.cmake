@@ -24,11 +24,11 @@ SET(OpenFLUID_R_DESC "Provides a collection of functions to load, parameterize, 
 
 
 # ROpenFLUID Version
-SET(OpenFLUID_R_VERSION_PATCH "20210420")
+SET(OpenFLUID_R_VERSION_PATCH "20210929")
 
 
 # Required OpenFLUID version
-SET(REQUIRED_OPENFLUID_VERSION "2.1.10")
+SET(REQUIRED_OPENFLUID_VERSION "2.2.0")
 
 
 # ===========================================================================================
