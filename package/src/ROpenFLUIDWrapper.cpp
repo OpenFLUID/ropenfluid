@@ -105,8 +105,8 @@ void ROpenFLUID_RunSimulation(SEXP Blob, SEXP Verbose);
 void ROpenFLUID_SetSimulatorParam(SEXP Blob, SEXP SimulatorID, SEXP ParamName, SEXP ParamVal);
 SEXP ROpenFLUID_GetSimulatorParam(SEXP Blob, SEXP SimulatorID, SEXP ParamName);
 void ROpenFLUID_RemoveSimulatorParam(SEXP Blob, SEXP SimulatorID, SEXP ParamName);
-void ROpenFLUID_SetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName, SEXP ParamVal);
-SEXP ROpenFLUID_GetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName);
+void ROpenFLUID_SetGeneratorParam(SEXP Blob, SEXP UnitsClass, SEXP VarName, SEXP ParamName, SEXP ParamVal);
+SEXP ROpenFLUID_GetGeneratorParam(SEXP Blob, SEXP UnitsClass, SEXP VarName, SEXP ParamName);
 void ROpenFLUID_SetModelGlobalParam(SEXP Blob, SEXP ParamName, SEXP ParamVal);
 SEXP ROpenFLUID_GetModelGlobalParam(SEXP Blob, SEXP ParamName);
 void ROpenFLUID_RemoveModelGlobalParam(SEXP Blob, SEXP ParamName);
@@ -115,23 +115,23 @@ SEXP ROpenFLUID_GetObserverParam(SEXP Blob, SEXP ObserverID, SEXP ParamName);
 void ROpenFLUID_RemoveObserverParam(SEXP Blob, SEXP ObserverID, SEXP ParamName);
 
 SEXP ROpenFLUID_GetUnitsClasses(SEXP Blob);
-SEXP ROpenFLUID_GetUnitsIDs(SEXP Blob, SEXP UnitClass);
+SEXP ROpenFLUID_GetUnitsIDs(SEXP Blob, SEXP UnitsClass);
 
-SEXP ROpenFLUID_GetGeneratorsVarNames(SEXP Blob, SEXP UnitClass);
+SEXP ROpenFLUID_GetGeneratorsVarNames(SEXP Blob, SEXP UnitsClass);
 SEXP ROpenFLUID_GetSimulatorsIDs(SEXP Blob);
 SEXP ROpenFLUID_GetObserversIDs(SEXP Blob);
 
 SEXP ROpenFLUID_GetModelGlobalParamNames(SEXP Blob);
-SEXP ROpenFLUID_GetGeneratorParamNames(SEXP Blob, SEXP UnitClass, SEXP VarName);
+SEXP ROpenFLUID_GetGeneratorParamNames(SEXP Blob, SEXP UnitsClass, SEXP VarName);
 SEXP ROpenFLUID_GetSimulatorParamNames(SEXP Blob, SEXP SimID);
 SEXP ROpenFLUID_GetObserverParamNames(SEXP Blob, SEXP ObsID);
 
-SEXP ROpenFLUID_GetAttributesNames(SEXP Blob, SEXP UnitClass);
+SEXP ROpenFLUID_GetAttributesNames(SEXP Blob, SEXP UnitsClass);
 
-void ROpenFLUID_CreateAttribute(SEXP Blob,SEXP UnitClass, SEXP AttrName, SEXP AttrValue);
-void ROpenFLUID_SetAttribute(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP AttrName, SEXP AttrValue);
-SEXP ROpenFLUID_GetAttribute(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP AttrName);
-void ROpenFLUID_RemoveAttribute(SEXP Blob, SEXP UnitClass, SEXP AttrName);
+void ROpenFLUID_CreateAttribute(SEXP Blob,SEXP UnitsClass, SEXP AttrName, SEXP AttrValue);
+void ROpenFLUID_SetAttribute(SEXP Blob, SEXP UnitsClass, SEXP UnitID, SEXP AttrName, SEXP AttrValue);
+SEXP ROpenFLUID_GetAttribute(SEXP Blob, SEXP UnitsClass, SEXP UnitID, SEXP AttrName);
+void ROpenFLUID_RemoveAttribute(SEXP Blob, SEXP UnitsClass, SEXP AttrName);
 
 void ROpenFLUID_SetDefaultDeltaT(SEXP Blob, SEXP DeltaT);
 SEXP ROpenFLUID_GetDefaultDeltaT(SEXP Blob);
@@ -139,7 +139,7 @@ void ROpenFLUID_SetPeriod(SEXP Blob, SEXP Begin, SEXP End);
 SEXP ROpenFLUID_GetPeriodBeginDate(SEXP Blob);
 SEXP ROpenFLUID_GetPeriodEndDate(SEXP Blob);
 
-void ROpenFLUID_AddVariablesExportAsCSV(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP VarName, SEXP Prec);
+void ROpenFLUID_AddVariablesExportAsCSV(SEXP Blob, SEXP UnitsClass, SEXP UnitID, SEXP VarName, SEXP Prec);
 
 
 
@@ -618,11 +618,11 @@ void ROpenFLUID_RemoveSimulatorParam(SEXP Blob, SEXP SimulatorID, SEXP ParamName
 // =====================================================================
 
 
-void ROpenFLUID_SetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName, SEXP ParamVal)
+void ROpenFLUID_SetGeneratorParam(SEXP Blob, SEXP UnitsClass, SEXP VarName, SEXP ParamName, SEXP ParamVal)
 
 {
   reinterpret_cast<openfluid::utils::Binding*>(R_ExternalPtrAddr(Blob))->
-      setGeneratorParam(CHAR(STRING_ELT(UnitClass, 0)),CHAR(STRING_ELT(VarName, 0)),
+      setGeneratorParam(CHAR(STRING_ELT(UnitsClass, 0)),CHAR(STRING_ELT(VarName, 0)),
                         CHAR(STRING_ELT(ParamName, 0)),CHAR(STRING_ELT(ParamVal, 0)));
 }
 
@@ -631,13 +631,13 @@ void ROpenFLUID_SetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP 
 // =====================================================================
 
 
-SEXP ROpenFLUID_GetGeneratorParam(SEXP Blob, SEXP UnitClass, SEXP VarName, SEXP ParamName)
+SEXP ROpenFLUID_GetGeneratorParam(SEXP Blob, SEXP UnitsClass, SEXP VarName, SEXP ParamName)
 
 {
   SEXP Ret;
 
   const char* Val = reinterpret_cast<openfluid::utils::Binding*>(R_ExternalPtrAddr(Blob))->
-      getGeneratorParam(CHAR(STRING_ELT(UnitClass, 0)),CHAR(STRING_ELT(VarName, 0)),CHAR(STRING_ELT(ParamName, 0)));
+      getGeneratorParam(CHAR(STRING_ELT(UnitsClass, 0)),CHAR(STRING_ELT(VarName, 0)),CHAR(STRING_ELT(ParamName, 0)));
 
   PROTECT(Ret = allocVector(STRSXP, 1));
 
@@ -776,19 +776,19 @@ SEXP ROpenFLUID_GetUnitsClasses(SEXP Blob)
 // =====================================================================
 
 
-SEXP ROpenFLUID_GetUnitsIDs(SEXP Blob, SEXP UnitClass)
+SEXP ROpenFLUID_GetUnitsIDs(SEXP Blob, SEXP UnitsClass)
 {
   SEXP Ret;
 
   unsigned int IDsCount = reinterpret_cast<openfluid::utils::Binding*>(R_ExternalPtrAddr(Blob))->
-      getUnitsIDsCount(CHAR(STRING_ELT(UnitClass, 0)));
+      getUnitsIDsCount(CHAR(STRING_ELT(UnitsClass, 0)));
 
   PROTECT(Ret = allocVector(INTSXP, IDsCount));
 
   if (IDsCount > 0)
   {
     int* IDs = reinterpret_cast<openfluid::utils::Binding*>(R_ExternalPtrAddr(Blob))->
-        getUnitsIDs(CHAR(STRING_ELT(UnitClass, 0)));
+        getUnitsIDs(CHAR(STRING_ELT(UnitsClass, 0)));
 
     unsigned int i;
 
@@ -808,12 +808,12 @@ SEXP ROpenFLUID_GetUnitsIDs(SEXP Blob, SEXP UnitClass)
 // =====================================================================
 
 
-SEXP ROpenFLUID_GetGeneratorsVarNames(SEXP Blob, SEXP UnitClass)
+SEXP ROpenFLUID_GetGeneratorsVarNames(SEXP Blob, SEXP UnitsClass)
 {
   SEXP Ret;
 
   const char* Val = reinterpret_cast<openfluid::utils::Binding*>(R_ExternalPtrAddr(Blob))->
-      getGeneratorsVarNames(CHAR(STRING_ELT(UnitClass, 0)));
+      getGeneratorsVarNames(CHAR(STRING_ELT(UnitsClass, 0)));
 
   PROTECT(Ret = allocVector(STRSXP, 1));
 
@@ -955,12 +955,12 @@ SEXP ROpenFLUID_GetObserverParamNames(SEXP Blob, SEXP ObsID)
 // =====================================================================
 
 
-SEXP ROpenFLUID_GetAttributesNames(SEXP Blob, SEXP UnitClass)
+SEXP ROpenFLUID_GetAttributesNames(SEXP Blob, SEXP UnitsClass)
 {
   SEXP Ret;
 
   const char* Val = reinterpret_cast<openfluid::utils::Binding*>(R_ExternalPtrAddr(Blob))->
-      getAttributesNames(CHAR(STRING_ELT(UnitClass, 0)));
+      getAttributesNames(CHAR(STRING_ELT(UnitsClass, 0)));
 
   PROTECT(Ret = allocVector(STRSXP, 1));
 
@@ -976,10 +976,10 @@ SEXP ROpenFLUID_GetAttributesNames(SEXP Blob, SEXP UnitClass)
 // =====================================================================
 
 
-void ROpenFLUID_CreateAttribute(SEXP Blob,SEXP UnitClass, SEXP AttrName, SEXP AttrValue)
+void ROpenFLUID_CreateAttribute(SEXP Blob,SEXP UnitsClass, SEXP AttrName, SEXP AttrValue)
 {
   reinterpret_cast<openfluid::utils::Binding*>(R_ExternalPtrAddr(Blob))->
-      createAttribute(CHAR(STRING_ELT(UnitClass, 0)),CHAR(STRING_ELT(AttrName, 0)),CHAR(STRING_ELT(AttrValue, 0)));
+      createAttribute(CHAR(STRING_ELT(UnitsClass, 0)),CHAR(STRING_ELT(AttrName, 0)),CHAR(STRING_ELT(AttrValue, 0)));
 }
 
 
@@ -987,10 +987,10 @@ void ROpenFLUID_CreateAttribute(SEXP Blob,SEXP UnitClass, SEXP AttrName, SEXP At
 // =====================================================================
 
 
-void ROpenFLUID_SetAttribute(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP AttrName, SEXP AttrValue)
+void ROpenFLUID_SetAttribute(SEXP Blob, SEXP UnitsClass, SEXP UnitID, SEXP AttrName, SEXP AttrValue)
 {
   reinterpret_cast<openfluid::utils::Binding*>(R_ExternalPtrAddr(Blob))->
-      setAttribute(CHAR(STRING_ELT(UnitClass, 0)),INTEGER(UnitID)[0],
+      setAttribute(CHAR(STRING_ELT(UnitsClass, 0)),INTEGER(UnitID)[0],
                    CHAR(STRING_ELT(AttrName, 0)),CHAR(STRING_ELT(AttrValue, 0)));
 }
 
@@ -999,12 +999,12 @@ void ROpenFLUID_SetAttribute(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP AttrNa
 // =====================================================================
 
 
-SEXP ROpenFLUID_GetAttribute(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP AttrName)
+SEXP ROpenFLUID_GetAttribute(SEXP Blob, SEXP UnitsClass, SEXP UnitID, SEXP AttrName)
 {
   SEXP Ret;
 
   const char* Val = reinterpret_cast<openfluid::utils::Binding*>(R_ExternalPtrAddr(Blob))->
-      getAttribute(CHAR(STRING_ELT(UnitClass, 0)),INTEGER(UnitID)[0],CHAR(STRING_ELT(AttrName, 0)));
+      getAttribute(CHAR(STRING_ELT(UnitsClass, 0)),INTEGER(UnitID)[0],CHAR(STRING_ELT(AttrName, 0)));
 
   PROTECT(Ret = allocVector(STRSXP, 1));
 
@@ -1020,10 +1020,10 @@ SEXP ROpenFLUID_GetAttribute(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP AttrNa
 // =====================================================================
 
 
-void ROpenFLUID_RemoveAttribute(SEXP Blob, SEXP UnitClass, SEXP AttrName)
+void ROpenFLUID_RemoveAttribute(SEXP Blob, SEXP UnitsClass, SEXP AttrName)
 {
   reinterpret_cast<openfluid::utils::Binding*>(R_ExternalPtrAddr(Blob))->
-      removeAttribute(CHAR(STRING_ELT(UnitClass, 0)),CHAR(STRING_ELT(AttrName, 0)));
+      removeAttribute(CHAR(STRING_ELT(UnitsClass, 0)),CHAR(STRING_ELT(AttrName, 0)));
 }
 
 
@@ -1113,11 +1113,11 @@ SEXP ROpenFLUID_GetPeriodEndDate(SEXP Blob)
 // =====================================================================
 
 
-void ROpenFLUID_AddVariablesExportAsCSV(SEXP Blob, SEXP UnitClass, SEXP UnitID, SEXP VarName, SEXP Prec)
+void ROpenFLUID_AddVariablesExportAsCSV(SEXP Blob, SEXP UnitsClass, SEXP UnitID, SEXP VarName, SEXP Prec)
 {
   reinterpret_cast<openfluid::utils::Binding*>(R_ExternalPtrAddr(Blob))->
       addVariablesExportAsCSV("ropenfluid",
-                              CHAR(STRING_ELT(UnitClass, 0)),CHAR(STRING_ELT(UnitID, 0)),
+                              CHAR(STRING_ELT(UnitsClass, 0)),CHAR(STRING_ELT(UnitID, 0)),
                               CHAR(STRING_ELT(VarName, 0)),INTEGER(Prec)[0]);
 }
 

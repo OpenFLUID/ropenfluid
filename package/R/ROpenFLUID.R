@@ -500,7 +500,7 @@ OpenFLUID.removeSimulatorParam <- function(ofblob, simid, paramname) {
 #' Returns a the value of a generator parameter
 #'
 #' @param ofblob the simulation definition blob
-#' @param unitclass the unit class to which the generator is applied
+#' @param unitsclass the unit class to which the generator is applied
 #' @param varname the variable name to which the generator is applied
 #' @param paramname the name of the parameter
 #' @return the parameter value
@@ -510,15 +510,15 @@ OpenFLUID.removeSimulatorParam <- function(ofblob, simid, paramname) {
 #' }
 #'
 #' @seealso \code{\link{OpenFLUID.setGeneratorParam}}
-OpenFLUID.getGeneratorParam <- function(ofblob, unitclass, varname, paramname) {
+OpenFLUID.getGeneratorParam <- function(ofblob, unitsclass, varname, paramname) {
   stopifnot(!is.null(ofblob))
-  stopifnot(is.character(unitclass))
+  stopifnot(is.character(unitsclass))
   stopifnot(is.character(varname))
   stopifnot(is.character(paramname))
 
   .Call(
     "GetGeneratorParam",
-    ofblob, unitclass, varname, paramname,
+    ofblob, unitsclass, varname, paramname,
     PACKAGE = "ROpenFLUID"
   )
 }
@@ -527,7 +527,7 @@ OpenFLUID.getGeneratorParam <- function(ofblob, unitclass, varname, paramname) {
 #' Returns the values of generator parameters
 #'
 #' @param ofblob the simulation definition blob
-#' @param unitclass the unit class to which the generator is applied
+#' @param unitsclass the unit class to which the generator is applied
 #' @param varname the variable name to which the generator is applied
 #' @param paramnames the names of the parameters
 #' @return the parameter values
@@ -540,9 +540,9 @@ OpenFLUID.getGeneratorParam <- function(ofblob, unitclass, varname, paramname) {
 #' @seealso \code{\link{OpenFLUID.getObserverParams}}
 #' @seealso \code{\link{OpenFLUID.getSimulatorParams}}
 OpenFLUID.getGeneratorParams <- function(ofblob,
-                                         unitclass, varname, paramnames) {
+                                         unitsclass, varname, paramnames) {
   stopifnot(!is.null(ofblob))
-  stopifnot(is.character(unitclass))
+  stopifnot(is.character(unitsclass))
   stopifnot(is.character(varname))
   if (is.null(paramnames) || (length(paramnames) == 0)) {
     return(NULL)
@@ -554,7 +554,7 @@ OpenFLUID.getGeneratorParams <- function(ofblob,
              stringsAsFactors = FALSE,
              x = .Call(
                    "GetGeneratorParam",
-                   ofblob, unitclass, varname, paramnames[1],
+                   ofblob, unitsclass, varname, paramnames[1],
                    PACKAGE = "ROpenFLUID"
                  )
            )
@@ -567,7 +567,7 @@ OpenFLUID.getGeneratorParams <- function(ofblob,
                      paramnames,
                      function(paramname) .Call(
                        "GetGeneratorParam",
-                       ofblob, unitclass, varname, paramname,
+                       ofblob, unitsclass, varname, paramname,
                        PACKAGE = "ROpenFLUID"
                      )
                    )
@@ -583,7 +583,7 @@ OpenFLUID.getGeneratorParams <- function(ofblob,
 #' Returns all parameters names of a generator
 #'
 #' @param ofblob the simulation definition blob
-#' @param unitclass the name of the variable generated
+#' @param unitsclass the name of the variable generated
 #' @param varname the name of the variable generated
 #' @return a vector of parameters names
 #'
@@ -594,12 +594,12 @@ OpenFLUID.getGeneratorParams <- function(ofblob,
 #' @seealso \code{\link{OpenFLUID.getModelGlobalParamNames}}
 #' @seealso \code{\link{OpenFLUID.getSimulatorParamNames}}
 #' @seealso \code{\link{OpenFLUID.getObserverParamNames}}
-OpenFLUID.getGeneratorParamNames <- function(ofblob, unitclass, varname) {
+OpenFLUID.getGeneratorParamNames <- function(ofblob, unitsclass, varname) {
   stopifnot(!is.null(ofblob))
 
   ret <- .Call(
            "GetGeneratorParamNames",
-           ofblob, unitclass, varname,
+           ofblob, unitsclass, varname,
            PACKAGE = "ROpenFLUID")
 
   if (ret == "")
@@ -613,7 +613,7 @@ OpenFLUID.getGeneratorParamNames <- function(ofblob, unitclass, varname) {
 #' Sets a value for a generator parameter
 #'
 #' @param ofblob the simulation definition blob
-#' @param unitclass the unit class to which the generator is applied
+#' @param unitsclass the unit class to which the generator is applied
 #' @param varname the variable name to which the generator is applied
 #' @param paramname the name of the parameter
 #' @param paramval the value of the parameter
@@ -624,16 +624,16 @@ OpenFLUID.getGeneratorParamNames <- function(ofblob, unitclass, varname) {
 #'
 #' @seealso \code{\link{OpenFLUID.getGeneratorParam}}
 OpenFLUID.setGeneratorParam <- function(ofblob,
-                                        unitclass, varname,
+                                        unitsclass, varname,
                                         paramname, paramval) {
   stopifnot(!is.null(ofblob))
-  stopifnot(is.character(unitclass))
+  stopifnot(is.character(unitsclass))
   stopifnot(is.character(varname))
   stopifnot(is.character(paramname))
 
   .Call(
     "SetGeneratorParam",
-    ofblob, unitclass, varname,
+    ofblob, unitsclass, varname,
     paramname, as.character(paramval),
     PACKAGE = "ROpenFLUID"
   )
@@ -645,7 +645,7 @@ OpenFLUID.setGeneratorParam <- function(ofblob,
 #' Sets values of generator parameters
 #'
 #' @param ofblob the simulation definition blob
-#' @param unitclass the unit class to which the generator is applied
+#' @param unitsclass the unit class to which the generator is applied
 #' @param varname the variable name to which the generator is applied
 #' @param paramvals the value of the parameters in a data.frame,
 #' with parameters names as columns names
@@ -662,16 +662,16 @@ OpenFLUID.setGeneratorParam <- function(ofblob,
 #' @seealso \code{\link{OpenFLUID.setObserverParams}}
 #' @seealso \code{\link{OpenFLUID.setSimulatorParams}}
 OpenFLUID.setGeneratorParams <- function(ofblob,
-                                         unitclass, varname, paramvals) {
+                                         unitsclass, varname, paramvals) {
   stopifnot(!is.null(ofblob))
-  stopifnot(is.character(unitclass))
+  stopifnot(is.character(unitsclass))
   stopifnot(is.character(varname))
   stopifnot(is.data.frame(paramvals))
 
   for (paramname in colnames(paramvals)) {
     .Call(
       "SetGeneratorParam",
-      ofblob, unitclass, varname,
+      ofblob, unitsclass, varname,
       paramname, as.character(paramvals[paramname][1]),
       PACKAGE = "ROpenFLUID"
     )
@@ -756,7 +756,7 @@ OpenFLUID.getModelGlobalParams <- function(ofblob, paramnames) {
 #' Returns all the variables names generated by generators
 #'
 #' @param ofblob the simulation definition blob
-#' @param unitclass the units class
+#' @param unitsclass the units class
 #' @return a vector of variables names
 #'
 #' @examples \dontrun{
@@ -765,12 +765,12 @@ OpenFLUID.getModelGlobalParams <- function(ofblob, paramnames) {
 #'
 #' @seealso \code{\link{OpenFLUID.getSimulatorsIDs}}
 #' @seealso \code{\link{OpenFLUID.getObserversIDs}}
-OpenFLUID.getGeneratorsVarNames <- function(ofblob, unitclass) {
+OpenFLUID.getGeneratorsVarNames <- function(ofblob, unitsclass) {
   stopifnot(!is.null(ofblob))
 
   ret <- .Call(
            "GetGeneratorsVarNames",
-           ofblob, unitclass,
+           ofblob, unitsclass,
            PACKAGE = "ROpenFLUID"
          )
 
@@ -933,7 +933,7 @@ OpenFLUID.getUnitsClasses <- function(ofblob) {
 #' Returns the existing units IDs for a given units class
 #'
 #' @param ofblob the simulation definition blob
-#' @param unitclass the units class
+#' @param unitsclass the units class
 #' @return a vector of units IDs
 #'
 #' @examples \dontrun{
@@ -941,10 +941,10 @@ OpenFLUID.getUnitsClasses <- function(ofblob) {
 #' }
 #'
 #' @seealso \code{\link{OpenFLUID.getUnitsClasses}}
-OpenFLUID.getUnitsIDs <- function(ofblob, unitclass) {
+OpenFLUID.getUnitsIDs <- function(ofblob, unitsclass) {
   stopifnot(!is.null(ofblob))
 
-  .Call("GetUnitsIDs", ofblob, unitclass, PACKAGE = "ROpenFLUID")
+  .Call("GetUnitsIDs", ofblob, unitsclass, PACKAGE = "ROpenFLUID")
 }
 
 
@@ -956,7 +956,7 @@ OpenFLUID.getUnitsIDs <- function(ofblob, unitclass) {
 #' initialized with a default value
 #'
 #' @param ofblob the simulation definition blob
-#' @param unitclass the unit class
+#' @param unitsclass the unit class
 #' @param attrname the attribute name
 #' @param attrval the default attribute value for alla units
 #'
@@ -968,14 +968,14 @@ OpenFLUID.getUnitsIDs <- function(ofblob, unitclass) {
 #' @seealso \code{\link{OpenFLUID.getAttribute}}
 #' @seealso \code{\link{OpenFLUID.setAttribute}}
 #' @seealso \code{\link{OpenFLUID.removeAttribute}}
-OpenFLUID.createAttribute <- function(ofblob, unitclass, attrname, attrval) {
+OpenFLUID.createAttribute <- function(ofblob, unitsclass, attrname, attrval) {
   stopifnot(!is.null(ofblob))
-  stopifnot(is.character(unitclass))
+  stopifnot(is.character(unitsclass))
   stopifnot(is.character(attrname))
 
   .Call(
     "CreateAttribute",
-    ofblob, unitclass, attrname, as.character(attrval),
+    ofblob, unitsclass, attrname, as.character(attrval),
     PACKAGE = "ROpenFLUID"
   )
 
@@ -986,7 +986,7 @@ OpenFLUID.createAttribute <- function(ofblob, unitclass, attrname, attrval) {
 #' Returns an attribute value for a given spatial unit
 #'
 #' @param ofblob the simulation definition blob
-#' @param unitclass the unit class
+#' @param unitsclass the unit class
 #' @param unitid the unit ID
 #' @param attrname the name of the attribute
 #' @return the attribute value
@@ -998,15 +998,15 @@ OpenFLUID.createAttribute <- function(ofblob, unitclass, attrname, attrval) {
 #' @seealso \code{\link{OpenFLUID.createAttribute}}
 #' @seealso \code{\link{OpenFLUID.setAttribute}}
 #' @seealso \code{\link{OpenFLUID.removeAttribute}}
-OpenFLUID.getAttribute <- function(ofblob, unitclass, unitid, attrname) {
+OpenFLUID.getAttribute <- function(ofblob, unitsclass, unitid, attrname) {
   stopifnot(!is.null(ofblob))
-  stopifnot(is.character(unitclass))
+  stopifnot(is.character(unitsclass))
   stopifnot(is.numeric(unitid))
   stopifnot(is.character(attrname))
 
   ret <- .Call(
            "GetAttribute",
-           ofblob, unitclass, as.integer(unitid), attrname,
+           ofblob, unitsclass, as.integer(unitid), attrname,
            PACKAGE = "ROpenFLUID"
          )
 
@@ -1019,7 +1019,7 @@ OpenFLUID.getAttribute <- function(ofblob, unitclass, unitid, attrname) {
 #' Returns the attributes values for given spatial units and attributes names
 #'
 #' @param ofblob the simulation definition blob
-#' @param unitclass the unit class
+#' @param unitsclass the unit class
 #' @param unitids the vector of unit IDs
 #' @param attrnames the vector of names of the attributes
 #' @param unitidsAsRownames if TRUE rename row as unitids,
@@ -1032,10 +1032,10 @@ OpenFLUID.getAttribute <- function(ofblob, unitclass, unitid, attrname) {
 #'
 #' @seealso \code{\link{OpenFLUID.setAttributes}}
 OpenFLUID.getAttributes <- function(ofblob,
-                                    unitclass, unitids, attrnames,
+                                    unitsclass, unitids, attrnames,
                                     unitidsAsRownames = TRUE) {
   stopifnot(!is.null(ofblob))
-  stopifnot(is.character(unitclass))
+  stopifnot(is.character(unitsclass))
   if (is.null(unitids) || (length(unitids) == 0)) {
     return(NULL)
   }
@@ -1051,7 +1051,7 @@ OpenFLUID.getAttributes <- function(ofblob,
                stringsAsFactors = FALSE,
                x = .Call(
                      "GetAttribute",
-                     ofblob, unitclass, as.integer(unitids[1]), attrnames[1],
+                     ofblob, unitsclass, as.integer(unitids[1]), attrnames[1],
                      PACKAGE = "ROpenFLUID"
                    )
              )
@@ -1064,7 +1064,7 @@ OpenFLUID.getAttributes <- function(ofblob,
                        attrnames,
                        function(attrname) .Call(
                          "GetAttribute",
-                         ofblob, unitclass,
+                         ofblob, unitsclass,
                          as.integer(unitids[1]), attrname,
                          PACKAGE = "ROpenFLUID"
                        )
@@ -1081,7 +1081,7 @@ OpenFLUID.getAttributes <- function(ofblob,
                      unitids,
                      function(unitid) .Call(
                        "GetAttribute",
-                       ofblob, unitclass, as.integer(unitid), attrname,
+                       ofblob, unitsclass, as.integer(unitid), attrname,
                        PACKAGE = "ROpenFLUID"
                      )
                    )
@@ -1089,7 +1089,7 @@ OpenFLUID.getAttributes <- function(ofblob,
            )
   }
 
-  unitidNames <- paste(unitclass, unitids, sep = "#")
+  unitidNames <- paste(unitsclass, unitids, sep = "#")
 
   if (unitidsAsRownames)
     rownames(ret) <- unitidNames
@@ -1111,21 +1111,21 @@ OpenFLUID.getAttributes <- function(ofblob,
 #' Returns all the attributes names of an units class
 #'
 #' @param ofblob the simulation definition blob
-#' @param unitclass the class unit
+#' @param unitsclass the class unit
 #' @return a vector of attributes names
 #'
 #' @examples \dontrun{
-#' varnames = OpenFLUID.getAttributesNames(ofsim, unitclass)
+#' varnames = OpenFLUID.getAttributesNames(ofsim, unitsclass)
 #' }
 #'
 #' @seealso \code{\link{OpenFLUID.getModelGlobalParamNames}}
 #' @seealso \code{\link{OpenFLUID.getGeneratorParamNames}}
 #' @seealso \code{\link{OpenFLUID.getSimulatorParamNames}}
 #' @seealso \code{\link{OpenFLUID.getObserverParamNames}}
-OpenFLUID.getAttributesNames <- function(ofblob, unitclass) {
+OpenFLUID.getAttributesNames <- function(ofblob, unitsclass) {
   stopifnot(!is.null(ofblob))
 
-  ret <- .Call("GetAttributesNames", ofblob, unitclass, PACKAGE = "ROpenFLUID")
+  ret <- .Call("GetAttributesNames", ofblob, unitsclass, PACKAGE = "ROpenFLUID")
 
   if (ret == "")
     return(NULL)
@@ -1138,7 +1138,7 @@ OpenFLUID.getAttributesNames <- function(ofblob, unitclass) {
 #' Sets an attribute value for a given spatial unit
 #'
 #' @param ofblob the simulation definition blob
-#' @param unitclass the unit class
+#' @param unitsclass the unit class
 #' @param unitid the unit ID
 #' @param attrname the name of the attribute
 #' @param attrval the value of the attribute
@@ -1152,16 +1152,16 @@ OpenFLUID.getAttributesNames <- function(ofblob, unitclass) {
 #' @seealso \code{\link{OpenFLUID.getAttribute}}
 #' @seealso \code{\link{OpenFLUID.removeAttribute}}
 OpenFLUID.setAttribute <- function(ofblob,
-                                   unitclass, unitid,
+                                   unitsclass, unitid,
                                    attrname, attrval) {
   stopifnot(!is.null(ofblob))
-  stopifnot(is.character(unitclass))
+  stopifnot(is.character(unitsclass))
   stopifnot(is.numeric(unitid))
   stopifnot(is.character(attrname))
 
   .Call(
     "SetAttribute",
-    ofblob, unitclass, as.integer(unitid), attrname,
+    ofblob, unitsclass, as.integer(unitid), attrname,
     as.character(attrval),
     PACKAGE = "ROpenFLUID"
   )
@@ -1173,7 +1173,7 @@ OpenFLUID.setAttribute <- function(ofblob,
 #' Sets attributes values for given spatial units and attributes names
 #'
 #' @param ofblob the simulation definition blob
-#' @param unitclass the unit class
+#' @param unitsclass the unit class
 #' @param attrvals the data.frame of values (unit id x attribute name)
 #'
 #' @examples \dontrun{
@@ -1189,14 +1189,14 @@ OpenFLUID.setAttribute <- function(ofblob,
 #' }
 #'
 #' @seealso \code{\link{OpenFLUID.getAttributes}}
-OpenFLUID.setAttributes <- function(ofblob, unitclass, attrvals) {
+OpenFLUID.setAttributes <- function(ofblob, unitsclass, attrvals) {
   stopifnot(!is.null(ofblob))
-  stopifnot(is.character(unitclass))
+  stopifnot(is.character(unitsclass))
   stopifnot(is.data.frame(attrvals))
 
   if ("unitid" %in% rownames(attrvals)) {
     unitids <- as.integer(gsub(
-                            paste(unitclass, "#", sep = ""),
+                            paste(unitsclass, "#", sep = ""),
                             "",
                             attrvals$unitid
                           )
@@ -1204,7 +1204,7 @@ OpenFLUID.setAttributes <- function(ofblob, unitclass, attrvals) {
   }
   else {
     unitids <- as.integer(gsub(
-                            paste(unitclass, "#", sep = ""),
+                            paste(unitsclass, "#", sep = ""),
                             "",
                             rownames(attrvals)
                           )
@@ -1216,7 +1216,7 @@ OpenFLUID.setAttributes <- function(ofblob, unitclass, attrvals) {
     for (j in seq(length(attrnames))) {
       .Call(
         "SetAttribute",
-        ofblob, unitclass, unitids[i],
+        ofblob, unitsclass, unitids[i],
         attrnames[j], as.character(attrvals[i, j]),
         PACKAGE = "ROpenFLUID"
       )
@@ -1229,7 +1229,7 @@ OpenFLUID.setAttributes <- function(ofblob, unitclass, attrvals) {
 #' Removes an attribute for a given spatial units class
 #'
 #' @param ofblob the simulation definition blob
-#' @param unitclass the unit class
+#' @param unitsclass the unit class
 #' @param attrname the name of the attribute
 #'
 #' @examples \dontrun{
@@ -1239,12 +1239,12 @@ OpenFLUID.setAttributes <- function(ofblob, unitclass, attrvals) {
 #' @seealso \code{\link{OpenFLUID.createAttribute}}
 #' @seealso \code{\link{OpenFLUID.getAttribute}}
 #' @seealso \code{\link{OpenFLUID.setAttribute}}
-OpenFLUID.removeAttribute <- function(ofblob, unitclass, attrname) {
+OpenFLUID.removeAttribute <- function(ofblob, unitsclass, attrname) {
   stopifnot(!is.null(ofblob))
-  stopifnot(is.character(unitclass))
+  stopifnot(is.character(unitsclass))
   stopifnot(is.character(attrname))
 
-  .Call("RemoveAttribute", ofblob, unitclass, attrname, PACKAGE = "ROpenFLUID")
+  .Call("RemoveAttribute", ofblob, unitsclass, attrname, PACKAGE = "ROpenFLUID")
 
   return(invisible(NULL))
 }
@@ -1466,7 +1466,7 @@ OpenFLUID.getObserversIDs <- function(ofblob) {
 #' Adds export of simulation variables as CSV files for a given units class
 #'
 #' @param ofblob the simulation definition blob
-#' @param unitclass the units class to add for simulation variables export
+#' @param unitsclass the units class to add for simulation variables export
 #' @param unitid the unit ID (optional)
 #' @param varname the name of the variable(s) (optional)
 #' @param precision the number of digits of the variables (optional)
@@ -1482,11 +1482,11 @@ OpenFLUID.getObserversIDs <- function(ofblob) {
 #'
 #' @seealso \code{\link{OpenFLUID.loadResult}}
 OpenFLUID.addVariablesExportAsCSV <- function(ofblob,
-                                              unitclass,
+                                              unitsclass,
                                               unitid = NULL,
                                               varname = "*", precision = 0) {
   stopifnot(!is.null(ofblob))
-  stopifnot(is.character(unitclass))
+  stopifnot(is.character(unitsclass))
   stopifnot(
     is.numeric(unitid) |
     is.vector(unitid, mode = "numeric") |
@@ -1511,7 +1511,7 @@ OpenFLUID.addVariablesExportAsCSV <- function(ofblob,
 
   .Call(
     "AddVariablesExportAsCSV",
-    ofblob, unitclass, unitids, varnames, as.integer(precision),
+    ofblob, unitsclass, unitids, varnames, as.integer(precision),
     PACKAGE = "ROpenFLUID"
   )
 
@@ -1779,7 +1779,7 @@ OpenFLUID.runSimulationAsExternalProcess <- function(ofblob, workpath = NULL, ve
 #' Loads results as a dataframe, giving dataset informations
 #'
 #' @param ofblob the simulation definition blob
-#' @param unitclass the unit class
+#' @param unitsclass the unit class
 #' @param unitid the unit ID
 #' @param varname the variable name
 #' @return a dataframe containing the simulation results
@@ -1790,17 +1790,17 @@ OpenFLUID.runSimulationAsExternalProcess <- function(ofblob, workpath = NULL, ve
 #' }
 #'
 #' @seealso \code{\link{OpenFLUID.loadResultFile}}
-OpenFLUID.loadResult <- function(ofblob, unitclass, unitid, varname) {
+OpenFLUID.loadResult <- function(ofblob, unitsclass, unitid, varname) {
   stopifnot(!is.null(ofblob))
-  stopifnot(is.character(unitclass))
+  stopifnot(is.character(unitsclass))
   stopifnot(is.numeric(unitid))
   stopifnot(is.character(varname))
 
   filename <- .Call("GetSimulationOutputDir", ofblob, PACKAGE = "ROpenFLUID")
 
   filename <- paste(filename, "ropenfluid", sep = "/")
-  filename <- paste(filename, unitclass, sep = "")
-  filename <- paste(filename, unitclass, sep = "_")
+  filename <- paste(filename, unitsclass, sep = "")
+  filename <- paste(filename, unitsclass, sep = "_")
   filename <- paste(filename, as.integer(unitid), sep = "")
   filename <- paste(filename, varname, sep = "_")
   filename <- paste(filename, ".csv", sep = "")
