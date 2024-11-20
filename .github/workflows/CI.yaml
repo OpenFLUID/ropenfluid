@@ -6,7 +6,7 @@ on: [push, pull_request]
 jobs:
 
   check-build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Installation of dependencies
@@ -14,7 +14,6 @@ jobs:
           sudo apt update && sudo apt install -y \
             cmake \
             libboost-all-dev libgdal-dev rapidjson-dev \
-            qt5-default qtbase5-dev-tools qttools5-dev-tools libqt5svg5-dev \
             gnuplot p7zip-full graphviz
       - name: Installation of required R packages
         run: |
