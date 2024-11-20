@@ -10,6 +10,7 @@
     <generator varname="tests.random" unitsclass="TestUnits" method="random">
       <param name="min" value="20.53" />
       <param name="max" value="50" />
+      <param name="seed" value="1000" />
     </generator>
 
     <generator varname="tests.interp" unitsclass="TestUnits" method="interp">
@@ -33,6 +34,10 @@
     <generator varname="tests.inject" unitsclass="TestUnits" method="inject">
       <param name="sources" value="sourcesinject.xml" />
       <param name="distribution" value="distri.dat" />
+    </generator>
+
+    <generator variables="TestUnits#*:gas.atm.V.speed;TestUnits#*:gas.atm.degree.maindir" method="inject-multicol" enabled="true">
+        <param name="datafile" value="data-multicol.csv"/>
     </generator>
 
   </model>
