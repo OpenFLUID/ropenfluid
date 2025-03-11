@@ -4,7 +4,7 @@ Title: @OpenFLUID_R_TITLE@
 Version: @OpenFLUID_R_VERSION@
 Date: @OpenFLUID_R_DATE@
 Author: Jean-Christophe Fabre <jean-christophe.fabre@supagro.inra.fr>
-Maintainer: Jean-Christophe Fabre <jean-christophe.fabre@supagro.inra.fr>
+Maintainer: Armel Thoni <armel.thoni@inrae.fr>
 Description: @OpenFLUID_R_DESC@
 URL: http://www.openfluid-project.org
 License: GPL-3 + file LICENSE
