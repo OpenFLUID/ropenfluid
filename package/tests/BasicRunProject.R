@@ -8,6 +8,9 @@ library("ROpenFLUID")
 OpenFLUID.runProject("Generators.PRJ")
 checkTrue(file.exists("Generators.PRJ/OUT/openfluid-messages.log"))
 
+#   RERUN
+OpenFLUID.runProject("Generators.PRJ")
+
 
 # DELETE SIMULATION BLOB
 
